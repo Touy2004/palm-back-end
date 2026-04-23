@@ -23,9 +23,7 @@ type RegisterInput struct {
 	LastName  string `json:"last_name"`
 	Phone     string `json:"phone"`
 	Password  string `json:"password"`
-	Role      string `json:"role"`
 }
-
 type LoginInput struct {
 	Phone    string `json:"phone"`
 	Password string `json:"password"`
@@ -42,7 +40,7 @@ func (s *AuthService) Register(input RegisterInput) (*model.User, error) {
 		LastName:  input.LastName,
 		Phone:     input.Phone,
 		Password:  hashed,
-		Role:      input.Role,
+		Role:      "user",
 	}
 
 	if err := s.userRepo.Create(user); err != nil {
