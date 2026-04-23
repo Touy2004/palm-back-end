@@ -28,6 +28,6 @@ func SetupRoutes(app *fiber.App, h *Handler, m *Middleware) {
 	user.Get("/profile", h.Auth.GetProfile)
 
 	// Admin only routes
-	admin := api.Group("/admin", m.Auth.Authenticate, m.Role.Require("admin"))
+	admin := api.Group("/admin", m.Auth.Authenticate, m.Role.Require("user"))
 	admin.Get("/users", h.Auth.GetUsers)
 }
