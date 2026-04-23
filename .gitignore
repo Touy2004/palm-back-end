@@ -1,0 +1,36 @@
+.env
+.env.*
+.env.local
+
+# Binaries for programs and plugins
+/bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# Output of the go coverage tool
+coverage.out
+
+# Vendor directory
+/vendor/
+
+# IDE/editor folders
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Golang pkg and module cache (optional)
+# pkg/
+# /pkg/mod/
+
+# Node modules (if present)
+node_modules/
