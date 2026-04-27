@@ -23,9 +23,8 @@ type RegisterInput struct {
 	LastName  string `json:"last_name"`
 	Phone     string `json:"phone"`
 	Password  string `json:"password"`
-	Role      string `json:"role"`
+	Role	  string `json:"role"`
 }
-
 type LoginInput struct {
 	Phone    string `json:"phone"`
 	Password string `json:"password"`
