@@ -32,11 +32,14 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"user": fiber.Map{
-			"id":         user.ID,
-			"first_name": user.FirstName,
-			"last_name":  user.LastName,
-			"phone":      user.Phone,
-			"role":       user.Role,
+			"id":            user.ID,
+			"employee_code": user.EmployeeCode,
+			"full_name":     user.FullName,
+			"email":         user.Email,
+			"department":    user.Department,
+			"phone":         user.Phone,
+			"role":          user.Role,
+			"status":        user.Status,
 		},
 	})
 }
@@ -44,20 +47,39 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 func (h *AuthHandler) Login(c *fiber.Ctx) error {
 	var input service.LoginInput
 	if err := c.BodyParser(&input); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "invalid request body",
-		})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request body"})
 	}
 
-	token, err := h.authService.Login(input)
+	user, accessToken, refreshToken, err := h.authService.Login(input)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	return c.JSON(fiber.Map{
-		"token": token,
+		"success":       true,
+		"user":          user,
+		"access_token":  accessToken,
+		"refresh_token": refreshToken,
+	})
+}
+
+func (h *AuthHandler) Refresh(c *fiber.Ctx) error {
+	var input struct {
+		RefreshToken string `json:"refresh_token"`
+	}
+	if err := c.BodyParser(&input); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request body"})
+	}
+
+	accessToken, newRefreshToken, err := h.authService.RefreshToken(input.RefreshToken)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.JSON(fiber.Map{
+		"success":       true,
+		"access_token":  accessToken,
+		"refresh_token": newRefreshToken,
 	})
 }
 func (h *AuthHandler) GetProfile(c *fiber.Ctx) error {
@@ -72,11 +94,14 @@ func (h *AuthHandler) GetProfile(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{
 		"user": fiber.Map{
-			"id":         user.ID,
-			"first_name": user.FirstName,
-			"last_name":  user.LastName,
-			"phone":      user.Phone,
-			"role":       user.Role,
+			"id":            user.ID,
+			"employee_code": user.EmployeeCode,
+			"full_name":     user.FullName,
+			"email":         user.Email,
+			"department":    user.Department,
+			"phone":         user.Phone,
+			"role":          user.Role,
+			"status":        user.Status,
 		},
 	})
 }

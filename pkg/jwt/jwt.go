@@ -8,7 +8,7 @@ import (
 )
 
 type Claims struct {
-	UserID uint   `json:"user_id"`
+	UserID string `json:"user_id"`
 	Phone  string `json:"phone"`
 	Role   string `json:"role"`
 	jwt.RegisteredClaims
@@ -26,13 +26,26 @@ func New(secret string, expiry time.Duration) *JWT {
 	}
 }
 
-func (j *JWT) GenerateToken(userID uint, phone, role string) (string, error) {
+func (j *JWT) GenerateToken(userID string, role string) (string, error) {
 	claims := &Claims{
 		UserID: userID,
-		Phone:  phone,
 		Role:   role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(j.expiry)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(j.secret))
+}
+
+func (j *JWT) GenerateRefreshToken(userID, role string) (string, error) {
+	claims := &Claims{
+		UserID: userID,
+		Role:   role,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(j.expiry * 24 * 7)), // Refresh token lasts 7 times longer
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}

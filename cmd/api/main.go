@@ -35,13 +35,33 @@ func main() {
 
 	// Init repositories
 	userRepo := repository.NewUserRepository(db)
+	deviceRepo := repository.NewDeviceRepository(db)
+	attendanceRepo := repository.NewAttendanceRepository(db)
+	pairingRepo := repository.NewPairingRepository(db)
+	palmRepo := repository.NewPalmRepository(db)
+	attemptRepo := repository.NewAttemptRepository(db)
+
+	// Init Crypto Service (using dummy 32-byte key for dev)
+	cryptoSvc, err := service.NewCryptoService("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=")
+	if err != nil {
+		log.Fatal("Error initializing crypto service: ", err)
+	}
 
 	// Init services
 	authService := service.NewAuthService(userRepo, jwtPkg)
+	adminService := service.NewAdminService(userRepo, deviceRepo, attendanceRepo)
+	userService := service.NewUserService(userRepo, palmRepo, attendanceRepo)
+	deviceService := service.NewDeviceService(deviceRepo, pairingRepo)
+	pairingService := service.NewPairingService(pairingRepo)
+	palmService := service.NewPalmService(palmRepo, pairingRepo, cryptoSvc, attemptRepo)
+	attendanceService := service.NewAttendanceService(attendanceRepo, palmRepo, deviceRepo, userRepo, attemptRepo, cryptoSvc)
 
 	// Init handlers
 	h := &handler.Handler{
-		Auth: handler.NewAuthHandler(authService),
+		Auth:   handler.NewAuthHandler(authService),
+		Admin:  handler.NewAdminHandler(adminService),
+		User:   handler.NewUserHandler(userService, pairingService),
+		Device: handler.NewDeviceHandler(deviceService, palmService, attendanceService),
 	}
 
 	// Init middlewares

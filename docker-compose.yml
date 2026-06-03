@@ -11,6 +11,7 @@ services:
       - "${DB_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
       interval: 10s
@@ -29,8 +30,10 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_HOST=db
       - DB_PORT=5432
+      - APP_PORT=${APP_PORT:-8080}
+      - JWT_SECRET=${JWT_SECRET}
     ports:
-      - "3000:3000"
+      - "${APP_PORT:-8080}:8080"
     depends_on:
       db:
         condition: service_healthy

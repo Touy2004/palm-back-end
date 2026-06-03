@@ -19,11 +19,13 @@ func NewAuthService(userRepo *repository.UserRepository, jwt *jwt.JWT) *AuthServ
 }
 
 type RegisterInput struct { 
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Phone     string `json:"phone"`
-	Password  string `json:"password"`
-	Role	  string `json:"role"`
+	FullName     string `json:"full_name"`
+	EmployeeCode string `json:"employee_code"`
+	Email        string `json:"email"`
+	Department   string `json:"department"`
+	Phone        string `json:"phone"`
+	Password     string `json:"password"`
+	Role         string `json:"role"`
 }
 type LoginInput struct {
 	Phone    string `json:"phone"`
@@ -37,11 +39,13 @@ func (s *AuthService) Register(input RegisterInput) (*model.User, error) {
 	}
 
 	user := &model.User{
-		FirstName: input.FirstName,
-		LastName:  input.LastName,
-		Phone:     input.Phone,
-		Password:  hashed,
-		Role:      input.Role,
+		FullName:     input.FullName,
+		EmployeeCode: input.EmployeeCode,
+		Email:        input.Email,
+		Department:   input.Department,
+		Phone:        input.Phone,
+		PasswordHash: hashed,
+		Role:         input.Role,
 	}
 
 	if err := s.userRepo.Create(user); err != nil {
@@ -51,19 +55,49 @@ func (s *AuthService) Register(input RegisterInput) (*model.User, error) {
 	return user, nil
 }
 
-func (s *AuthService) Login(input LoginInput) (string, error) {
+func (s *AuthService) Login(input LoginInput) (*model.User, string, string, error) {
 	user, err := s.userRepo.FindByPhone(input.Phone)
 	if err != nil {
-		return "", errors.New("invalid credentials")
+		return nil, "", "", errors.New("invalid credentials")
 	}
 
-	if !hash.CheckPassword(input.Password, user.Password) {
-		return "", errors.New("invalid credentials")
+	if !hash.CheckPassword(input.Password, user.PasswordHash) {
+		return nil, "", "", errors.New("invalid credentials")
 	}
 
-	return s.jwt.GenerateToken(user.ID, user.Phone, user.Role)
+	accessToken, err := s.jwt.GenerateToken(user.ID.String(), user.Role)
+	if err != nil {
+		return nil, "", "", errors.New("failed to generate access token")
+	}
+
+	refreshToken, err := s.jwt.GenerateRefreshToken(user.ID.String(), user.Role)
+	if err != nil {
+		return nil, "", "", errors.New("failed to generate refresh token")
+	}
+
+	return user, accessToken, refreshToken, nil
 }
-func (s *AuthService) GetProfile(userID uint) (*model.User, error) {
+
+func (s *AuthService) RefreshToken(tokenStr string) (string, string, error) {
+	claims, err := s.jwt.Parse(tokenStr)
+	if err != nil {
+		return "", "", errors.New("invalid or expired refresh token")
+	}
+
+	accessToken, err := s.jwt.GenerateToken(claims.UserID, claims.Role)
+	if err != nil {
+		return "", "", errors.New("failed to generate access token")
+	}
+
+	refreshToken, err := s.jwt.GenerateRefreshToken(claims.UserID, claims.Role)
+	if err != nil {
+		return "", "", errors.New("failed to generate new refresh token")
+	}
+
+	return accessToken, refreshToken, nil
+}
+
+func (s *AuthService) GetProfile(userID string) (*model.User, error) {
 	return s.userRepo.FindByID(userID)
 }
 

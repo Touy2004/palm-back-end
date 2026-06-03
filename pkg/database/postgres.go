@@ -21,7 +21,14 @@ func Connect(cfg *config.Config) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(
+		&model.User{},
+		&model.Device{},
+		&model.DevicePairingSession{},
+		&model.PalmTemplate{},
+		&model.AttendanceLog{},
+		&model.PalmAuthAttempt{},
+	)
 
 	return db, nil
 }
