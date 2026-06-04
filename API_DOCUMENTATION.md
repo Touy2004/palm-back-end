@@ -19,7 +19,19 @@ This documentation covers **every** endpoint in the system, organized by applica
     "email": "jane@example.com"
   }
   ```
-* **Response (201 Created):** Returns user details and tokens.
+* **Response (201 Created):**
+  ```json
+  {
+    "success": true,
+    "user": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "full_name": "Jane Doe",
+      "role": "employee"
+    },
+    "access_token": "eyJhbGciOi...",
+    "refresh_token": "eyJhbGciOi..."
+  }
+  ```
 
 ### 1.2 Login
 **POST** `/auth/login`
@@ -30,17 +42,36 @@ This documentation covers **every** endpoint in the system, organized by applica
     "password": "securepassword"
   }
   ```
-* **Response (200 OK):** Returns `user`, `access_token`, and `refresh_token`.
+* **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "user": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "full_name": "Jane Doe",
+      "role": "employee"
+    },
+    "access_token": "eyJhbGciOi...",
+    "refresh_token": "eyJhbGciOi..."
+  }
+  ```
 
 ### 1.3 Refresh Token
 **POST** `/auth/refresh`
 * **Body:**
   ```json
   {
-    "refresh_token": "eyJhb..."
+    "refresh_token": "eyJhbGciOi..."
   }
   ```
-* **Response (200 OK):** Returns a new `access_token` and `refresh_token`.
+* **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "access_token": "new_eyJhbGciOi...",
+    "refresh_token": "new_eyJhbGciOi..."
+  }
+  ```
 
 ---
 
@@ -50,22 +81,85 @@ This documentation covers **every** endpoint in the system, organized by applica
 
 ### 2.1 Get My Profile
 **GET** `/me`
-* **Response:** Returns the authenticated user's JSON details.
+* **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "user": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "employee_code": "EMP-001",
+      "full_name": "Jane Doe",
+      "email": "jane@example.com",
+      "phone": "0812345678",
+      "role": "employee",
+      "department": "IT",
+      "status": "active",
+      "created_at": "2026-06-03T10:00:00Z"
+    }
+  }
+  ```
 
 ### 2.2 Change Password
 **PATCH** `/me/password`
-* **Body:** `{"old_password": "...", "new_password": "..."}`
+* **Body:** 
+  ```json
+  {
+    "old_password": "currentpassword",
+    "new_password": "newpassword123"
+  }
+  ```
+* **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "message": "Password changed successfully"
+  }
+  ```
 
 ### 2.3 View My Attendance
 **GET** `/me/attendance?page=1&limit=30`
-* **Response:** Returns paginated attendance logs for the logged-in user.
+* **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "data": [
+      {
+         "id": "att-123",
+         "attendance_date": "2026-06-03T00:00:00Z",
+         "check_in_time": "2026-06-03T08:00:00Z",
+         "check_out_time": "2026-06-03T17:00:00Z",
+         "status": "present"
+      }
+    ],
+    "pagination": { "page": 1, "limit": 30, "total": 1 }
+  }
+  ```
 
 ### 2.4 Manage Enrolled Palms
 **GET** `/me/palm-templates`
-* **Response:** Returns list of active palm templates registered to this user.
+* **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "data": [
+      {
+        "id": "tpl-123",
+        "hand_side": "right",
+        "status": "active",
+        "created_at": "2026-06-01T12:00:00Z"
+      }
+    ]
+  }
+  ```
 
 **DELETE** `/me/palm-templates/:id`
-* **Response:** Revokes a specific palm template.
+* **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "message": "Palm template revoked"
+  }
+  ```
 
 ---
 
@@ -75,13 +169,39 @@ This documentation covers **every** endpoint in the system, organized by applica
 
 ### 3.1 Scan QR Code
 **POST** `/pairing/scan`
-* **Body:** `{"session_token": "hex-string-from-qr"}`
-* **Response:** Returns pairing session details.
+* **Body:** 
+  ```json
+  {
+    "session_token": "a1b2c3d4e5f6..."
+  }
+  ```
+* **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "session_id": "session-uuid",
+    "device_id": "device-uuid",
+    "device_name": "Front Door Scanner",
+    "purpose": "enrollment"
+  }
+  ```
 
 ### 3.2 Approve Pairing
 **POST** `/pairing/approve`
-* **Body:** `{"session_id": "uuid", "purpose": "enrollment"}`
-* **Response:** Approves the session, linking the user to the physical device.
+* **Body:** 
+  ```json
+  {
+    "session_id": "session-uuid",
+    "purpose": "enrollment"
+  }
+  ```
+* **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "message": "Pairing approved successfully"
+  }
+  ```
 
 ---
 
@@ -92,16 +212,37 @@ This documentation covers **every** endpoint in the system, organized by applica
 ### 4.1 Device Heartbeat
 **POST** `/devices/heartbeat`
 * **Body:** `{"device_code": "DEV-001"}`
-* **Response:** Updates `last_seen_at`.
+* **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "message": "Heartbeat updated"
+  }
+  ```
 
 ### 4.2 Create Pairing Session (Generate QR)
 **POST** `/devices/pairing-sessions`
 * **Body:** `{"device_code": "DEV-001", "purpose": "enrollment"}`
-* **Response:** Returns `session_id` and `session_token` (used to display QR).
+* **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "session_id": "session-uuid",
+    "session_token": "a1b2c3d4e5f6...",
+    "expires_at": "2026-06-04T10:05:00Z"
+  }
+  ```
 
 ### 4.3 Check Pairing Status
 **GET** `/devices/pairing-sessions/:session_id/status`
-* **Response:** Returns status (`pending`, `scanned`, `approved`, `completed`).
+* **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "status": "approved",
+    "user_id": "user-uuid"
+  }
+  ```
 
 ### 4.4 Enroll Palm
 **POST** `/devices/palm/enroll`
@@ -109,11 +250,11 @@ This documentation covers **every** endpoint in the system, organized by applica
   ```json
   {
     "device_code": "DEV-001",
-    "session_token": "hex-string",
+    "session_token": "a1b2c3d4e5f6...",
     "hand_side": "right",
     "model_version": "v1.0",
     "embedding_dim": 128,
-    "embeddings": [[0.12, 0.44...]],
+    "embeddings": [[0.12, 0.44]],
     "liveness_passed": true,
     "quality_score": 0.98,
     "thermal_min": 33.5,
@@ -121,16 +262,44 @@ This documentation covers **every** endpoint in the system, organized by applica
     "thermal_avg": 35.1
   }
   ```
+* **Response (201 Created):**
+  ```json
+  {
+    "success": true,
+    "message": "Palm enrolled successfully"
+  }
+  ```
 
 ### 4.5 Identify Palm (No Attendance)
 **POST** `/devices/palm/identify`
 * **Body:** Requires `device_code`, `embedding`, and thermal/quality metrics.
-* **Response:** Returns the identified user.
+* **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "user": {
+      "id": "user-uuid",
+      "full_name": "Jane Doe"
+    },
+    "score": 0.95
+  }
+  ```
 
 ### 4.6 Process Attendance (Check In/Out)
 **POST** `/devices/attendance/palm`
 * **Body:** Same as 4.5.
-* **Response:** Returns user details and action (`check_in` or `check_out`).
+* **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "action": "check_in",
+    "user": {
+      "id": "user-uuid",
+      "full_name": "Jane Doe"
+    },
+    "message": "Check-in successful"
+  }
+  ```
 
 ---
 
@@ -141,40 +310,130 @@ This documentation covers **every** endpoint in the system, organized by applica
 
 ### 5.1 User Management
 **GET** `/admin/users?page=1&limit=20`
-* **Response:** Paginated list of all users.
+* **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "data": [
+      {
+        "id": "user-uuid",
+        "employee_code": "EMP-001",
+        "full_name": "Jane Doe",
+        "email": "jane@example.com",
+        "role": "employee",
+        "status": "active"
+      }
+    ],
+    "pagination": { "page": 1, "limit": 20, "total": 100 }
+  }
+  ```
 
 **GET** `/admin/users/search?q=John`
-* **Response:** Searches users by name, email, phone, or employee_code.
+* **Response (200 OK):** (Same array of users as above, without pagination).
 
 **GET** `/admin/users/:id`
-* **Response:** Get details of a specific user.
+* **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "data": {
+        "id": "user-uuid",
+        "employee_code": "EMP-001",
+        "full_name": "Jane Doe",
+        "status": "active"
+    }
+  }
+  ```
 
 **POST** `/admin/users`
-* **Body:** `{"phone": "...", "full_name": "...", "password": "...", "role": "employee", "department": "IT"}`
-* **Response:** Creates a new user (Admin portal creation).
+* **Body:** `{"phone": "0811111111", "full_name": "John", "password": "pass", "role": "employee"}`
+* **Response (201 Created):**
+  ```json
+  {
+    "success": true,
+    "message": "User created successfully",
+    "data": { "id": "user-uuid" }
+  }
+  ```
 
 **PATCH** `/admin/users/:id`
 * **Body:** `{"full_name": "Jane", "department": "HR", "status": "active"}`
-* **Response:** Updates user info.
+* **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "message": "User updated"
+  }
+  ```
 
 **DELETE** `/admin/users/:id`
-* **Response:** Deletes a user completely.
+* **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "message": "User deleted"
+  }
+  ```
 
 ### 5.2 Device Management
 **GET** `/admin/devices?page=1&limit=20`
-* **Response:** Paginated list of registered devices.
+* **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "data": [
+      {
+        "id": "device-uuid",
+        "device_code": "DEV-001",
+        "device_name": "Main Entrance",
+        "location_name": "Lobby",
+        "status": "active",
+        "last_seen_at": "2026-06-04T10:00:00Z"
+      }
+    ]
+  }
+  ```
 
 **POST** `/admin/devices`
 * **Body:** `{"device_code": "DEV-002", "name": "Entrance B", "location": "Lobby"}`
-* **Response:** Registers a new physical scanner device.
+* **Response (201 Created):**
+  ```json
+  {
+    "success": true,
+    "message": "Device registered"
+  }
+  ```
 
 **PATCH** `/admin/devices/:id`
 * **Body:** `{"name": "New Name", "status": "inactive"}`
-* **Response:** Updates device info.
+* **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "message": "Device updated"
+  }
+  ```
 
 ### 5.3 Global Attendance Monitoring
 **GET** `/admin/attendance?page=1&limit=50`
-* **Response:** View global attendance history across the whole company.
+* **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "data": [
+      {
+         "id": "att-123",
+         "user_id": "user-uuid",
+         "device_id": "device-uuid",
+         "attendance_date": "2026-06-03T00:00:00Z",
+         "check_in_time": "2026-06-03T08:00:00Z",
+         "check_out_time": "2026-06-03T17:00:00Z",
+         "status": "present"
+      }
+    ],
+    "pagination": { "page": 1, "limit": 50, "total": 1000 }
+  }
+  ```
 
 **GET** `/admin/attendance/users/:user_id/history?page=1&limit=30`
-* **Response:** View the attendance history of a specific user.
+* **Response (200 OK):** (Same format as above, filtered for the specific user ID).
