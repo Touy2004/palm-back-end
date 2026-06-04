@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/Touy2004/palm-back-end/config"
@@ -16,10 +17,8 @@ import (
 )
 
 func main() {
-	// Load .env
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// Load .env if it exists
+	_ = godotenv.Load()
 
 	// Load config
 	cfg := config.Load()
@@ -76,7 +75,9 @@ func main() {
 
 	// Setup routes
 	handler.SetupRoutes(app, h, m)
-
+	for _, route := range app.GetRoutes() {
+		fmt.Printf("%s %s\n", route.Method, route.Path)
+	}
 	// Start server
 	log.Fatal(app.Listen(":" + cfg.AppPort))
 }
