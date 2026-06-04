@@ -1,34 +1,28 @@
 package database
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/Touy2004/palm-back-end/config"
-	"github.com/Touy2004/palm-back-end/internal/model"
-
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func Connect(cfg *config.Config) (*gorm.DB, error) {
+func Connect(cfg *config.Config) (*pgxpool.Pool, error) {
 	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
-		cfg.DBHost, cfg.DBUser, cfg.DBPassword, cfg.DBName, cfg.DBPort,
+		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		cfg.DBUser, cfg.DBPassword, cfg.DBHost, cfg.DBPort, cfg.DBName,
 	)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	poolConfig, err := pgxpool.ParseConfig(dsn)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to parse dsn: %v", err)
 	}
 
-	db.AutoMigrate(
-		&model.User{},
-		&model.Device{},
-		&model.DevicePairingSession{},
-		&model.PalmTemplate{},
-		&model.AttendanceLog{},
-		&model.PalmAuthAttempt{},
-	)
+	pool, err := pgxpool.NewWithConfig(context.Background(), poolConfig)
+	if err != nil {
+		return nil, fmt.Errorf("unable to create connection pool: %v", err)
+	}
 
-	return db, nil
+	return pool, nil
 }
