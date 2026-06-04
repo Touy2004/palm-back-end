@@ -1,156 +1,119 @@
 # Palm Recognition System - API Documentation
 
-This documentation is designed to help Frontend and Mobile Developers connect to the Palm Recognition Backend API. 
+This documentation covers **every** endpoint in the system, organized by application roles: Public/Auth, Mobile App (User), Hardware Device (Raspberry Pi), and Web Admin (Admin).
 
-**Base URL:** `http://localhost:8080/api/v1` (Update port/host based on your `.env` configuration)
+**Base URL:** `http://localhost:8080/api/v1`
 
 ---
 
-## 1. Authentication & Security Workflow
+## 1. Authentication & Public Workflow
 
-All protected routes require an `Authorization` header containing the JWT access token.
-**Format:** `Authorization: Bearer <access_token>`
-
-### 1.1 Login
-**POST** `/auth/login`
-Logs in the user and returns an access token (for requests) and a refresh token (to get a new access token without logging in again).
+### 1.1 Register a new account
+**POST** `/auth/register`
 * **Body:**
   ```json
   {
     "phone": "0812345678",
-    "password": "mysecretpassword"
+    "password": "securepassword",
+    "full_name": "Jane Doe",
+    "email": "jane@example.com"
   }
   ```
-* **Response (200 OK):**
+* **Response (201 Created):** Returns user details and tokens.
+
+### 1.2 Login
+**POST** `/auth/login`
+* **Body:**
   ```json
   {
-    "success": true,
-    "user": { "id": "uuid", "full_name": "John Doe", "role": "employee" },
-    "access_token": "eyJhb...",
-    "refresh_token": "eyJhb..."
+    "phone": "0812345678",
+    "password": "securepassword"
   }
   ```
+* **Response (200 OK):** Returns `user`, `access_token`, and `refresh_token`.
 
-### 1.2 Refresh Token
+### 1.3 Refresh Token
 **POST** `/auth/refresh`
-When the access token expires, use this to get a new pair.
 * **Body:**
   ```json
   {
     "refresh_token": "eyJhb..."
   }
   ```
-* **Response (200 OK):**
-  ```json
-  {
-    "success": true,
-    "access_token": "new_eyJhb...",
-    "refresh_token": "new_eyJhb..."
-  }
-  ```
+* **Response (200 OK):** Returns a new `access_token` and `refresh_token`.
 
 ---
 
-## 2. Mobile App: User Profile & Management Workflow
+## 2. Mobile App (User) APIs
 
-*Note: All endpoints below require the `Authorization: Bearer <access_token>` header.*
+*Requires Header: `Authorization: Bearer <access_token>`*
 
 ### 2.1 Get My Profile
 **GET** `/me`
-Fetches the currently authenticated user's details.
-* **Response (200 OK):** Returns the user JSON object.
+* **Response:** Returns the authenticated user's JSON details.
 
 ### 2.2 Change Password
 **PATCH** `/me/password`
-Allows the user to securely change their password.
-* **Body:**
-  ```json
-  {
-    "old_password": "currentPassword123",
-    "new_password": "newSecurePassword456"
-  }
-  ```
+* **Body:** `{"old_password": "...", "new_password": "..."}`
 
 ### 2.3 View My Attendance
 **GET** `/me/attendance?page=1&limit=30`
-Fetches the user's daily attendance logs.
-* **Response (200 OK):**
-  ```json
-  {
-    "success": true,
-    "data": [
-      {
-         "attendance_date": "2026-06-03",
-         "check_in_time": "2026-06-03T08:00:00Z",
-         "check_out_time": "2026-06-03T17:00:00Z",
-         "status": "present"
-      }
-    ],
-    "pagination": { "page": 1, "limit": 30, "total": 1 }
-  }
-  ```
+* **Response:** Returns paginated attendance logs for the logged-in user.
 
 ### 2.4 Manage Enrolled Palms
 **GET** `/me/palm-templates`
-Returns all palm templates currently enrolled for the user.
+* **Response:** Returns list of active palm templates registered to this user.
 
 **DELETE** `/me/palm-templates/:id`
-Deletes a specific palm template by its UUID.
+* **Response:** Revokes a specific palm template.
 
 ---
 
-## 3. The QR Pairing Flow (Mobile App + Hardware Device)
+## 3. Pairing Flow (Mobile App <-> Device)
 
-This is the flow used when a user wants to enroll a new palm using the physical scanner device.
+*Requires Header: `Authorization: Bearer <access_token>`*
 
-### Step 1: Device requests a QR Code
-**POST** `/devices/pairing-sessions` (Called by Raspberry Pi)
-* **Body:** `{"device_code": "DEV-001", "purpose": "enrollment"}`
-* **Response:** Returns a `session_id` and a `session_token` (The device converts `session_token` into a visual QR code on its screen).
+### 3.1 Scan QR Code
+**POST** `/pairing/scan`
+* **Body:** `{"session_token": "hex-string-from-qr"}`
+* **Response:** Returns pairing session details.
 
-### Step 2: Mobile App Scans the QR Code
-**POST** `/pairing/scan` (Called by Mobile App, requires Auth)
-* **Body:**
-  ```json
-  {
-    "session_token": "hex-string-from-qr-code"
-  }
-  ```
-* **Response (200 OK):** Returns the `session_id` and device details so the mobile app can ask the user "Do you want to connect to Scanner DEV-001?"
-
-### Step 3: Mobile App Approves the Pairing
-**POST** `/pairing/approve` (Called by Mobile App, requires Auth)
-* **Body:**
-  ```json
-  {
-    "session_id": "uuid-from-step-2",
-    "purpose": "enrollment"
-  }
-  ```
-* **Result:** The backend links the user's ID to the device session. The device screen will now update and ask the user to place their hand on the scanner.
+### 3.2 Approve Pairing
+**POST** `/pairing/approve`
+* **Body:** `{"session_id": "uuid", "purpose": "enrollment"}`
+* **Response:** Approves the session, linking the user to the physical device.
 
 ---
 
-## 4. Hardware Device Operations (Raspberry Pi)
+## 4. Hardware Device APIs (Raspberry Pi)
 
-*Note: Device endpoints do not use JWT. They authenticate using the physical `device_code`.*
+*Authenticates using `device_code` in the JSON body. No JWT required.*
 
-### 4.1 Device Heartbeat (Status check)
+### 4.1 Device Heartbeat
 **POST** `/devices/heartbeat`
 * **Body:** `{"device_code": "DEV-001"}`
+* **Response:** Updates `last_seen_at`.
 
-### 4.2 Enroll a Palm (After QR Pairing)
+### 4.2 Create Pairing Session (Generate QR)
+**POST** `/devices/pairing-sessions`
+* **Body:** `{"device_code": "DEV-001", "purpose": "enrollment"}`
+* **Response:** Returns `session_id` and `session_token` (used to display QR).
+
+### 4.3 Check Pairing Status
+**GET** `/devices/pairing-sessions/:session_id/status`
+* **Response:** Returns status (`pending`, `scanned`, `approved`, `completed`).
+
+### 4.4 Enroll Palm
 **POST** `/devices/palm/enroll`
-Saves the physical palm scan into the database (encrypted).
 * **Body:**
   ```json
   {
     "device_code": "DEV-001",
-    "session_token": "hex-string-from-qr-code",
+    "session_token": "hex-string",
     "hand_side": "right",
     "model_version": "v1.0",
     "embedding_dim": 128,
-    "embeddings": [[0.12, 0.44, 0.55, ...]], 
+    "embeddings": [[0.12, 0.44...]],
     "liveness_passed": true,
     "quality_score": 0.98,
     "thermal_min": 33.5,
@@ -159,33 +122,59 @@ Saves the physical palm scan into the database (encrypted).
   }
   ```
 
-### 4.3 Check-in / Check-out (Daily Attendance)
-**POST** `/devices/attendance/palm`
-The user places their hand on the scanner. The backend figures out who they are using Cosine Similarity and automatically records a Check-in or Check-out.
-* **Body:**
-  ```json
-  {
-    "device_code": "DEV-001",
-    "model_version": "v1.0",
-    "embedding_dim": 128,
-    "embedding": [0.12, 0.44, 0.55, ...], 
-    "liveness_passed": true,
-    "quality_score": 0.98,
-    "thermal_min": 33.5,
-    "thermal_max": 36.2,
-    "thermal_avg": 35.1
-  }
-  ```
-* **Response (200 OK):**
-  ```json
-  {
-    "success": true,
-    "action": "check_in",
-    "user": { "id": "uuid", "full_name": "John Doe" },
-    "message": "Check-in success"
-  }
-  ```
-
-### 4.4 Pure Identification (No Attendance Logging)
+### 4.5 Identify Palm (No Attendance)
 **POST** `/devices/palm/identify`
-Same body as `4.3`, but this endpoint simply returns who the user is without saving anything to the attendance logs (useful for unlocking a door).
+* **Body:** Requires `device_code`, `embedding`, and thermal/quality metrics.
+* **Response:** Returns the identified user.
+
+### 4.6 Process Attendance (Check In/Out)
+**POST** `/devices/attendance/palm`
+* **Body:** Same as 4.5.
+* **Response:** Returns user details and action (`check_in` or `check_out`).
+
+---
+
+## 5. Web Admin APIs
+
+*Requires Header: `Authorization: Bearer <access_token>`*
+*Requires Role: `admin`*
+
+### 5.1 User Management
+**GET** `/admin/users?page=1&limit=20`
+* **Response:** Paginated list of all users.
+
+**GET** `/admin/users/search?q=John`
+* **Response:** Searches users by name, email, phone, or employee_code.
+
+**GET** `/admin/users/:id`
+* **Response:** Get details of a specific user.
+
+**POST** `/admin/users`
+* **Body:** `{"phone": "...", "full_name": "...", "password": "...", "role": "employee", "department": "IT"}`
+* **Response:** Creates a new user (Admin portal creation).
+
+**PATCH** `/admin/users/:id`
+* **Body:** `{"full_name": "Jane", "department": "HR", "status": "active"}`
+* **Response:** Updates user info.
+
+**DELETE** `/admin/users/:id`
+* **Response:** Deletes a user completely.
+
+### 5.2 Device Management
+**GET** `/admin/devices?page=1&limit=20`
+* **Response:** Paginated list of registered devices.
+
+**POST** `/admin/devices`
+* **Body:** `{"device_code": "DEV-002", "name": "Entrance B", "location": "Lobby"}`
+* **Response:** Registers a new physical scanner device.
+
+**PATCH** `/admin/devices/:id`
+* **Body:** `{"name": "New Name", "status": "inactive"}`
+* **Response:** Updates device info.
+
+### 5.3 Global Attendance Monitoring
+**GET** `/admin/attendance?page=1&limit=50`
+* **Response:** View global attendance history across the whole company.
+
+**GET** `/admin/attendance/users/:user_id/history?page=1&limit=30`
+* **Response:** View the attendance history of a specific user.
