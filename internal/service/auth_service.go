@@ -3,6 +3,9 @@ package service
 import (
 	"errors"
 
+	"strings"
+
+	"github.com/Touy2004/palm-back-end/internal/constant"
 	"github.com/Touy2004/palm-back-end/internal/model"
 	"github.com/Touy2004/palm-back-end/internal/repository"
 	"github.com/Touy2004/palm-back-end/pkg/hash"
@@ -38,6 +41,11 @@ func (s *AuthService) Register(input RegisterInput) (*model.User, error) {
 		return nil, err
 	}
 
+	role := strings.ToUpper(input.Role)
+	if role == "" {
+		role = constant.ROLE_EMPLOYEE
+	}
+
 	user := &model.User{
 		FullName:     input.FullName,
 		EmployeeCode: input.EmployeeCode,
@@ -45,7 +53,7 @@ func (s *AuthService) Register(input RegisterInput) (*model.User, error) {
 		Department:   input.Department,
 		Phone:        input.Phone,
 		PasswordHash: hashed,
-		Role:         input.Role,
+		Role:         role,
 	}
 
 	if err := s.userRepo.Create(user); err != nil {

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/Touy2004/palm-back-end/internal/constant"
 	"github.com/Touy2004/palm-back-end/internal/middleware"
 
 	"github.com/gofiber/fiber/v2"
@@ -41,7 +42,7 @@ func SetupRoutes(app *fiber.App, h *Handler, m *Middleware) {
 	pairing.Post("/approve", h.User.ApprovePairingQR)
 
 	// Admin only routes
-	admin := api.Group("/admin", m.Auth.Authenticate, m.Role.Require("admin"))
+	admin := api.Group("/admin", m.Auth.Authenticate, m.Role.Require(constant.ROLE_ADMIN))
 	
 	// Admin Users (Search must be before :id to prevent collision in some routers)
 	admin.Get("/users/search", h.Admin.SearchUsers)

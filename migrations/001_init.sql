@@ -12,7 +12,7 @@ CREATE TABLE users (
     email VARCHAR(100) UNIQUE,
     phone VARCHAR(20) UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
-    role VARCHAR(20) DEFAULT 'employee',
+    role VARCHAR(20) DEFAULT 'EMPLOYEE',
     department VARCHAR(50),
     status VARCHAR(20) DEFAULT 'active',
     created_at TIMESTAMP DEFAULT NOW(),
