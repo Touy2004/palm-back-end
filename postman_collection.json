@@ -426,6 +426,19 @@
 					}
 				},
 				{
+					"name": "Delete User Palm Template",
+					"request": {
+						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/users/user-uuid/palm-templates/template-uuid",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "users", "user-uuid", "palm-templates", "template-uuid"]
+						}
+					}
+				},
+				{
 					"name": "Get Devices",
 					"request": {
 						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },

@@ -522,6 +522,18 @@ These endpoints power the Admin Dashboard.
   }
   ```
 
+* **Use for:** Revoking/deleting a specific palm template for a user.
+* **DELETE** `/admin/users/:user_id/palm-templates/:template_id`
+* **Response (200 OK):**
+  ```json
+  {
+    "code": 200,
+    "status": "OK",
+    "message": "User palm template deleted successfully",
+    "data": null
+  }
+  ```
+
 ### 5.2 Device Management
 * **Use for:** Listing all registered physical palm scanners and checking their last seen status.
 * **GET** `/admin/devices`

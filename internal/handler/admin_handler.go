@@ -164,3 +164,15 @@ func (h *AdminHandler) GetUserPalmTemplates(c *fiber.Ctx) error {
 
 	return response.Success(c, fiber.StatusOK, "User palm templates retrieved successfully", templates)
 }
+
+func (h *AdminHandler) DeleteUserPalmTemplate(c *fiber.Ctx) error {
+	userID := c.Params("user_id")
+	templateID := c.Params("template_id")
+
+	err := h.adminService.DeleteUserPalmTemplate(userID, templateID)
+	if err != nil {
+		return response.Error(c, fiber.StatusInternalServerError, "Failed to delete user palm template", err.Error())
+	}
+
+	return response.Success(c, fiber.StatusOK, "User palm template deleted successfully", nil)
+}

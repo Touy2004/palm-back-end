@@ -146,3 +146,7 @@ func (s *AdminService) GetUserAttendanceHistory(userID string, page, limit int) 
 func (s *AdminService) GetUserPalmTemplates(userID string) ([]model.PalmTemplate, error) {
 	return s.palmRepo.FindByUserID(userID)
 }
+
+func (s *AdminService) DeleteUserPalmTemplate(userID, templateID string) error {
+	return s.palmRepo.Delete(templateID, userID)
+}

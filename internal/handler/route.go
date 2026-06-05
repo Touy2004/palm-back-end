@@ -56,6 +56,7 @@ func SetupRoutes(app *fiber.App, h *Handler, m *Middleware) {
 	admin.Patch("/users/:id", h.Admin.UpdateUser)
 	admin.Delete("/users/:id", h.Admin.DeleteUser)
 	admin.Get("/users/:user_id/palm-templates", h.Admin.GetUserPalmTemplates)
+	admin.Delete("/users/:user_id/palm-templates/:template_id", h.Admin.DeleteUserPalmTemplate)
 
 	// Admin Devices
 	admin.Get("/devices", h.Admin.GetDevices)
