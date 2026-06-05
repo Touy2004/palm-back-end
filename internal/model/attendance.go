@@ -22,6 +22,9 @@ type AttendanceLog struct {
 	CreatedAt        time.Time  `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt        time.Time  `gorm:"autoUpdateTime" json:"updated_at"`
 
+	DeviceName *string `json:"device_name,omitempty" gorm:"-"`
+	DeviceCode *string `json:"device_code,omitempty" gorm:"-"`
+
 	User   *User   `gorm:"foreignKey:UserID" json:"user,omitempty"`
 	Device *Device `gorm:"foreignKey:DeviceID" json:"device,omitempty"`
 }

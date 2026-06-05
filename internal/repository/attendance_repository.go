@@ -30,7 +30,13 @@ func (r *AttendanceRepository) FindAll(page, limit int) ([]model.AttendanceLog, 
 	}
 
 	offset := (page - 1) * limit
-	query := `SELECT id, user_id, device_id, attendance_date, check_in_time, check_out_time, check_in_score, check_out_score, check_in_liveness, check_out_liveness, status, created_at FROM attendance_logs ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+	query := `
+		SELECT a.id, a.user_id, a.device_id, a.attendance_date, a.check_in_time, a.check_out_time, 
+		       a.check_in_score, a.check_out_score, a.check_in_liveness, a.check_out_liveness, a.status, a.created_at,
+		       d.device_name, d.device_code
+		FROM attendance_logs a
+		LEFT JOIN devices d ON a.device_id = d.id
+		ORDER BY a.created_at DESC LIMIT $1 OFFSET $2`
 	
 	rows, err := r.db.Query(context.Background(), query, limit, offset)
 	if err != nil {
@@ -44,6 +50,7 @@ func (r *AttendanceRepository) FindAll(page, limit int) ([]model.AttendanceLog, 
 			&log.ID, &log.UserID, &log.DeviceID, &log.AttendanceDate,
 			&log.CheckInTime, &log.CheckOutTime, &log.CheckInScore, &log.CheckOutScore,
 			&log.CheckInLiveness, &log.CheckOutLiveness, &log.Status, &log.CreatedAt,
+			&log.DeviceName, &log.DeviceCode,
 		); err != nil {
 			return nil, 0, err
 		}
@@ -63,7 +70,14 @@ func (r *AttendanceRepository) FindByUserID(userID string, page, limit int) ([]m
 	}
 
 	offset := (page - 1) * limit
-	query := `SELECT id, user_id, device_id, attendance_date, check_in_time, check_out_time, check_in_score, check_out_score, check_in_liveness, check_out_liveness, status, created_at FROM attendance_logs WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3`
+	query := `
+		SELECT a.id, a.user_id, a.device_id, a.attendance_date, a.check_in_time, a.check_out_time, 
+		       a.check_in_score, a.check_out_score, a.check_in_liveness, a.check_out_liveness, a.status, a.created_at,
+		       d.device_name, d.device_code
+		FROM attendance_logs a
+		LEFT JOIN devices d ON a.device_id = d.id
+		WHERE a.user_id = $1 
+		ORDER BY a.created_at DESC LIMIT $2 OFFSET $3`
 	
 	rows, err := r.db.Query(context.Background(), query, userID, limit, offset)
 	if err != nil {
@@ -77,6 +91,7 @@ func (r *AttendanceRepository) FindByUserID(userID string, page, limit int) ([]m
 			&log.ID, &log.UserID, &log.DeviceID, &log.AttendanceDate,
 			&log.CheckInTime, &log.CheckOutTime, &log.CheckInScore, &log.CheckOutScore,
 			&log.CheckInLiveness, &log.CheckOutLiveness, &log.Status, &log.CreatedAt,
+			&log.DeviceName, &log.DeviceCode,
 		); err != nil {
 			return nil, 0, err
 		}
@@ -89,12 +104,19 @@ func (r *AttendanceRepository) FindTodayByUserID(userID string) (*model.Attendan
 	var log model.AttendanceLog
 	today := time.Now().Truncate(24 * time.Hour)
 	
-	query := `SELECT id, user_id, device_id, attendance_date, check_in_time, check_out_time, check_in_score, check_out_score, check_in_liveness, check_out_liveness, status, created_at FROM attendance_logs WHERE user_id = $1 AND attendance_date >= $2`
+	query := `
+		SELECT a.id, a.user_id, a.device_id, a.attendance_date, a.check_in_time, a.check_out_time, 
+		       a.check_in_score, a.check_out_score, a.check_in_liveness, a.check_out_liveness, a.status, a.created_at,
+		       d.device_name, d.device_code
+		FROM attendance_logs a
+		LEFT JOIN devices d ON a.device_id = d.id
+		WHERE a.user_id = $1 AND a.attendance_date >= $2`
 	
 	err := r.db.QueryRow(context.Background(), query, userID, today).Scan(
 		&log.ID, &log.UserID, &log.DeviceID, &log.AttendanceDate,
 		&log.CheckInTime, &log.CheckOutTime, &log.CheckInScore, &log.CheckOutScore,
 		&log.CheckInLiveness, &log.CheckOutLiveness, &log.Status, &log.CreatedAt,
+		&log.DeviceName, &log.DeviceCode,
 	)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {

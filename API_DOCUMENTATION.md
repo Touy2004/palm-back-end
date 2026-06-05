@@ -169,7 +169,9 @@ These endpoints are used by the mobile application for normal employees.
          "attendance_date": "2026-06-03T00:00:00Z",
          "check_in_time": "2026-06-03T08:00:00Z",
          "check_out_time": "2026-06-03T17:00:00Z",
-         "status": "present"
+         "status": "present",
+         "device_name": "Main Entrance Scanner",
+         "device_code": "DEV-001"
       }
     ],
     "meta": {
@@ -622,7 +624,9 @@ These endpoints power the Admin Dashboard.
          "attendance_date": "2026-06-03T00:00:00Z",
          "check_in_time": "2026-06-03T08:00:00Z",
          "check_out_time": "2026-06-03T17:00:00Z",
-         "status": "present"
+         "status": "present",
+         "device_name": "Main Entrance Scanner",
+         "device_code": "DEV-001"
       }
     ],
     "meta": {
