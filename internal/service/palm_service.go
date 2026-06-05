@@ -172,6 +172,8 @@ func (s *PalmService) EnrollPalm(input EnrollInput) (*model.PalmTemplate, error)
 		TemplateNonce:      nonce,
 		EmbeddingDim:       input.EmbeddingDim,
 		ModelVersion:       input.ModelVersion,
+		Status:             "active",
+		Threshold:          0.8200,
 		RegisteredDeviceID: &session.DeviceID,
 	}
 
