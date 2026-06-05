@@ -116,18 +116,45 @@ func (h *DeviceHandler) EnrollPalm(c *fiber.Ctx) error {
 }
 
 func (h *DeviceHandler) ProcessAttendance(c *fiber.Ctx) error {
-	var payload service.ProcessAttendanceInput
+	var payload struct {
+		DeviceCode     string      `json:"device_code"`
+		ModelVersion   string      `json:"model_version"`
+		EmbeddingDim   int         `json:"embedding_dim"`
+		Embeddings     [][]float32 `json:"embeddings"`
+		LivenessPassed bool        `json:"liveness_passed"`
+		QualityScore   float64     `json:"quality_score"`
+		ThermalMin     float64     `json:"thermal_min"`
+		ThermalMax     float64     `json:"thermal_max"`
+		ThermalAvg     float64     `json:"thermal_avg"`
+	}
+
 	if err := c.BodyParser(&payload); err != nil {
 		return response.Error(c, fiber.StatusBadRequest, "Invalid payload", err.Error())
 	}
 
-	result, err := h.attendanceSvc.ProcessPalmAttendance(payload)
+	if len(payload.Embeddings) == 0 {
+		return response.Error(c, fiber.StatusBadRequest, "Invalid payload", "embeddings cannot be empty")
+	}
+
+	input := service.ProcessAttendanceInput{
+		DeviceCode:     payload.DeviceCode,
+		ModelVersion:   payload.ModelVersion,
+		EmbeddingDim:   payload.EmbeddingDim,
+		Embedding:      payload.Embeddings[0], // Extract the first embedding
+		LivenessPassed: payload.LivenessPassed,
+		QualityScore:   payload.QualityScore,
+		ThermalMin:     payload.ThermalMin,
+		ThermalMax:     payload.ThermalMax,
+		ThermalAvg:     payload.ThermalAvg,
+	}
+
+	result, err := h.attendanceSvc.ProcessPalmAttendance(input)
 	if err != nil {
 		return response.Error(c, fiber.StatusUnauthorized, "Failed to process attendance", err.Error())
 	}
 
 	return response.Success(c, fiber.StatusOK, result.Message, fiber.Map{
-		"action":  result.Action,
+		"action": result.Action,
 		"user": fiber.Map{
 			"id":        result.UserID,
 			"full_name": result.FullName,
@@ -136,12 +163,39 @@ func (h *DeviceHandler) ProcessAttendance(c *fiber.Ctx) error {
 }
 
 func (h *DeviceHandler) IdentifyPalm(c *fiber.Ctx) error {
-	var payload service.ProcessAttendanceInput
+	var payload struct {
+		DeviceCode     string      `json:"device_code"`
+		ModelVersion   string      `json:"model_version"`
+		EmbeddingDim   int         `json:"embedding_dim"`
+		Embeddings     [][]float32 `json:"embeddings"`
+		LivenessPassed bool        `json:"liveness_passed"`
+		QualityScore   float64     `json:"quality_score"`
+		ThermalMin     float64     `json:"thermal_min"`
+		ThermalMax     float64     `json:"thermal_max"`
+		ThermalAvg     float64     `json:"thermal_avg"`
+	}
+
 	if err := c.BodyParser(&payload); err != nil {
 		return response.Error(c, fiber.StatusBadRequest, "Invalid payload", err.Error())
 	}
 
-	result, err := h.attendanceSvc.IdentifyPalm(payload)
+	if len(payload.Embeddings) == 0 {
+		return response.Error(c, fiber.StatusBadRequest, "Invalid payload", "embeddings cannot be empty")
+	}
+
+	input := service.ProcessAttendanceInput{
+		DeviceCode:     payload.DeviceCode,
+		ModelVersion:   payload.ModelVersion,
+		EmbeddingDim:   payload.EmbeddingDim,
+		Embedding:      payload.Embeddings[0],
+		LivenessPassed: payload.LivenessPassed,
+		QualityScore:   payload.QualityScore,
+		ThermalMin:     payload.ThermalMin,
+		ThermalMax:     payload.ThermalMax,
+		ThermalAvg:     payload.ThermalAvg,
+	}
+
+	result, err := h.attendanceSvc.IdentifyPalm(input)
 	if err != nil {
 		return response.Error(c, fiber.StatusUnauthorized, "Failed to identify palm", err.Error())
 	}
