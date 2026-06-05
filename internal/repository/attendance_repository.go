@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Touy2004/palm-back-end/internal/model"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -105,16 +106,23 @@ func (r *AttendanceRepository) FindTodayByUserID(userID string) (*model.Attendan
 }
 
 func (r *AttendanceRepository) Create(log *model.AttendanceLog) error {
+	if log.ID == uuid.Nil {
+		log.ID = uuid.New()
+	}
+	if log.CreatedAt.IsZero() {
+		log.CreatedAt = time.Now()
+	}
+
 	query := `
 		INSERT INTO attendance_logs (id, user_id, device_id, attendance_date, check_in_time, check_out_time, check_in_score, check_out_score, check_in_liveness, check_out_liveness, status, created_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-		RETURNING id`
+		RETURNING id, created_at`
 	
 	return r.db.QueryRow(context.Background(), query,
 		log.ID, log.UserID, log.DeviceID, log.AttendanceDate,
 		log.CheckInTime, log.CheckOutTime, log.CheckInScore, log.CheckOutScore,
 		log.CheckInLiveness, log.CheckOutLiveness, log.Status, log.CreatedAt,
-	).Scan(&log.ID)
+	).Scan(&log.ID, &log.CreatedAt)
 }
 
 func (r *AttendanceRepository) Update(log *model.AttendanceLog) error {

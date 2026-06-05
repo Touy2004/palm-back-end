@@ -5,8 +5,10 @@ import (
 	"errors"
 
 	"github.com/Touy2004/palm-back-end/internal/model"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"time"
 )
 
 type UserRepository struct {
@@ -18,16 +20,25 @@ func NewUserRepository(db *pgxpool.Pool) *UserRepository {
 }
 
 func (r *UserRepository) Create(user *model.User) error {
+	if user.ID == uuid.Nil {
+		user.ID = uuid.New()
+	}
+	if user.CreatedAt.IsZero() {
+		now := time.Now()
+		user.CreatedAt = now
+		user.UpdatedAt = now
+	}
+
 	query := `
 		INSERT INTO users (id, employee_code, full_name, email, phone, password_hash, role, department, status, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-		RETURNING id`
+		RETURNING id, created_at, updated_at`
 	
 	return r.db.QueryRow(context.Background(), query,
 		user.ID, user.EmployeeCode, user.FullName, user.Email, user.Phone,
 		user.PasswordHash, user.Role, user.Department, user.Status,
 		user.CreatedAt, user.UpdatedAt,
-	).Scan(&user.ID)
+	).Scan(&user.ID, &user.CreatedAt, &user.UpdatedAt)
 }
 
 func (r *UserRepository) FindByPhone(phone string) (*model.User, error) {
@@ -94,17 +105,15 @@ func (r *UserRepository) Update(user *model.User) error {
 	query := `
 		UPDATE users 
 		SET employee_code = $1, full_name = $2, email = $3, phone = $4, password_hash = $5, role = $6, department = $7, status = $8, updated_at = NOW()
-		WHERE id = $9`
+		WHERE id = $9
+		RETURNING updated_at`
 	
-	commandTag, err := r.db.Exec(context.Background(), query,
+	err := r.db.QueryRow(context.Background(), query,
 		user.EmployeeCode, user.FullName, user.Email, user.Phone,
 		user.PasswordHash, user.Role, user.Department, user.Status, user.ID,
-	)
+	).Scan(&user.UpdatedAt)
 	if err != nil {
 		return err
-	}
-	if commandTag.RowsAffected() == 0 {
-		return errors.New("no rows updated")
 	}
 	return nil
 }

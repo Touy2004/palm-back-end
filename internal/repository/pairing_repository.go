@@ -5,8 +5,10 @@ import (
 	"errors"
 
 	"github.com/Touy2004/palm-back-end/internal/model"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"time"
 )
 
 type PairingRepository struct {
@@ -18,16 +20,23 @@ func NewPairingRepository(db *pgxpool.Pool) *PairingRepository {
 }
 
 func (r *PairingRepository) Create(session *model.DevicePairingSession) error {
+	if session.ID == uuid.Nil {
+		session.ID = uuid.New()
+	}
+	if session.CreatedAt.IsZero() {
+		session.CreatedAt = time.Now()
+	}
+
 	query := `
 		INSERT INTO device_pairing_sessions (id, device_id, session_token, user_id, purpose, status, expires_at, scanned_at, approved_at, completed_at, created_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-		RETURNING id`
+		RETURNING id, created_at`
 	
 	return r.db.QueryRow(context.Background(), query,
 		session.ID, session.DeviceID, session.SessionToken, session.UserID,
 		session.Purpose, session.Status, session.ExpiresAt, session.ScannedAt,
 		session.ApprovedAt, session.CompletedAt, session.CreatedAt,
-	).Scan(&session.ID)
+	).Scan(&session.ID, &session.CreatedAt)
 }
 
 func (r *PairingRepository) FindByID(id string) (*model.DevicePairingSession, error) {

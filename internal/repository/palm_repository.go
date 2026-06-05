@@ -4,7 +4,9 @@ import (
 	"context"
 
 	"github.com/Touy2004/palm-back-end/internal/model"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"time"
 )
 
 type PalmRepository struct {
@@ -16,17 +18,26 @@ func NewPalmRepository(db *pgxpool.Pool) *PalmRepository {
 }
 
 func (r *PalmRepository) Create(template *model.PalmTemplate) error {
+	if template.ID == uuid.Nil {
+		template.ID = uuid.New()
+	}
+	if template.CreatedAt.IsZero() {
+		now := time.Now()
+		template.CreatedAt = now
+		template.UpdatedAt = now
+	}
+
 	query := `
 		INSERT INTO palm_templates (id, user_id, hand_side, template_encrypted, template_nonce, embedding_dim, model_version, threshold, status, registered_device_id, created_at, updated_at, revoked_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-		RETURNING id`
+		RETURNING id, created_at, updated_at`
 	
 	return r.db.QueryRow(context.Background(), query,
 		template.ID, template.UserID, template.HandSide, template.TemplateEncrypted,
 		template.TemplateNonce, template.EmbeddingDim, template.ModelVersion,
 		template.Threshold, template.Status, template.RegisteredDeviceID,
 		template.CreatedAt, template.UpdatedAt, template.RevokedAt,
-	).Scan(&template.ID)
+	).Scan(&template.ID, &template.CreatedAt, &template.UpdatedAt)
 }
 
 func (r *PalmRepository) FindByUserID(userID string) ([]model.PalmTemplate, error) {

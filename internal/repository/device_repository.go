@@ -5,8 +5,10 @@ import (
 	"errors"
 
 	"github.com/Touy2004/palm-back-end/internal/model"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"time"
 )
 
 type DeviceRepository struct {
@@ -18,15 +20,22 @@ func NewDeviceRepository(db *pgxpool.Pool) *DeviceRepository {
 }
 
 func (r *DeviceRepository) Create(device *model.Device) error {
+	if device.ID == uuid.Nil {
+		device.ID = uuid.New()
+	}
+	if device.CreatedAt.IsZero() {
+		device.CreatedAt = time.Now()
+	}
+
 	query := `
 		INSERT INTO devices (id, device_code, name, location, status, last_seen_at, created_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
-		RETURNING id`
+		RETURNING id, created_at`
 	
 	return r.db.QueryRow(context.Background(), query,
 		device.ID, device.DeviceCode, device.DeviceName, device.LocationName,
 		device.Status, device.LastSeenAt, device.CreatedAt,
-	).Scan(&device.ID)
+	).Scan(&device.ID, &device.CreatedAt)
 }
 
 func (r *DeviceRepository) FindAll() ([]model.Device, error) {
