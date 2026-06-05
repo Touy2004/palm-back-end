@@ -7,23 +7,18 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted # This tells GitHub to run the script directly on your server!
     
     steps:
-      - name: Deploy to Server via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            # Navigate to the folder where your backend is stored
-            # (Change 'palm-back-end' if your folder name is different on the server)
-            cd palm-back-end
-            
-            # Pull the latest code you just pushed
-            git pull origin main
-            
-            # Restart the Docker containers with the new code
-            sudo docker-compose down
-            sudo docker-compose up -d --build
+      - name: Deploy new code
+        run: |
+          # Navigate to the folder where your backend is stored
+          # Change this path if your code is located somewhere else on your server!
+          cd ~/palm-back-end || cd /home/ubuntu/palm-back-end || cd /root/palm-back-end
+          
+          # Pull the latest code you just pushed
+          git pull origin main
+          
+          # Restart the Docker containers with the new code
+          sudo docker-compose down
+          sudo docker-compose up -d --build
