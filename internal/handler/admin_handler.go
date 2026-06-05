@@ -120,8 +120,10 @@ func (h *AdminHandler) UpdateDevice(c *fiber.Ctx) error {
 func (h *AdminHandler) GetAttendanceHistory(c *fiber.Ctx) error {
 	page, _ := strconv.Atoi(c.Query("page", "1"))
 	limit, _ := strconv.Atoi(c.Query("limit", "20"))
+	startDate := c.Query("start_date")
+	endDate := c.Query("end_date")
 
-	logs, total, err := h.adminService.GetAttendanceHistory(page, limit)
+	logs, total, err := h.adminService.GetAttendanceHistory(page, limit, startDate, endDate)
 	if err != nil {
 		return response.Error(c, fiber.StatusInternalServerError, "Failed to fetch attendance history", err.Error())
 	}
@@ -139,8 +141,10 @@ func (h *AdminHandler) GetUserAttendanceHistory(c *fiber.Ctx) error {
 	userID := c.Params("user_id")
 	page, _ := strconv.Atoi(c.Query("page", "1"))
 	limit, _ := strconv.Atoi(c.Query("limit", "20"))
+	startDate := c.Query("start_date")
+	endDate := c.Query("end_date")
 
-	logs, total, err := h.adminService.GetUserAttendanceHistory(userID, page, limit)
+	logs, total, err := h.adminService.GetUserAttendanceHistory(userID, page, limit, startDate, endDate)
 	if err != nil {
 		return response.Error(c, fiber.StatusInternalServerError, "Failed to fetch user attendance history", err.Error())
 	}

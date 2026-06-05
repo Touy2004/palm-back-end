@@ -138,12 +138,12 @@ func (s *AdminService) UpdateDevice(id string, input map[string]interface{}) (*m
 }
 
 // Attendance methods
-func (s *AdminService) GetAttendanceHistory(page, limit int) ([]model.AttendanceLog, int64, error) {
-	return s.attendanceRepo.FindAll(page, limit)
+func (s *AdminService) GetAttendanceHistory(page, limit int, startDate, endDate string) ([]model.AttendanceLog, int64, error) {
+	return s.attendanceRepo.FindAll(page, limit, startDate, endDate)
 }
 
-func (s *AdminService) GetUserAttendanceHistory(userID string, page, limit int) ([]model.AttendanceLog, int64, error) {
-	return s.attendanceRepo.FindByUserID(userID, page, limit)
+func (s *AdminService) GetUserAttendanceHistory(userID string, page, limit int, startDate, endDate string) ([]model.AttendanceLog, int64, error) {
+	return s.attendanceRepo.FindByUserID(userID, page, limit, startDate, endDate)
 }
 
 func (s *AdminService) GetDashboardSummary() (*repository.DashboardSummary, error) {

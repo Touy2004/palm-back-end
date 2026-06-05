@@ -156,7 +156,9 @@ These endpoints are used by the mobile application for normal employees.
 
 ### 2.3 View My Attendance
 * **Use for:** Fetching a paginated history of the user's check-ins and check-outs for their personal records.
-* **GET** `/me/attendance?page=1&limit=30`
+* **GET** `/me/attendance?page=1&limit=30&start_date=2026-06-01&end_date=2026-06-07`
+  * `start_date` (optional): Filter records from this date (YYYY-MM-DD).
+  * `end_date` (optional): Filter records up to this date (YYYY-MM-DD).
 * **Response (200 OK):**
   ```json
   {
@@ -607,9 +609,11 @@ These endpoints power the Admin Dashboard.
   }
   ```
 
-### 5.3 Global Attendance Monitoring
-* **Use for:** Displaying the global company-wide attendance log on the admin dashboard.
-* **GET** `/admin/attendance?page=1&limit=50`
+### 5.5 View Global Attendance History
+* **Use for:** Fetching a paginated history of all check-ins and check-outs across the entire company.
+* **GET** `/admin/attendance?page=1&limit=30&start_date=2026-06-01&end_date=2026-06-07`
+  * `start_date` (optional): Filter records from this date (YYYY-MM-DD).
+  * `end_date` (optional): Filter records up to this date (YYYY-MM-DD).
 * **Response (200 OK):**
   ```json
   {
@@ -635,6 +639,9 @@ These endpoints power the Admin Dashboard.
   }
   ```
 
+### 5.6 View Employee Attendance History
 * **Use for:** Investigating the attendance history of a specific employee.
-* **GET** `/admin/attendance/users/:user_id/history?page=1&limit=30`
+* **GET** `/admin/attendance/users/:user_id/history?page=1&limit=30&start_date=2026-06-01&end_date=2026-06-07`
+  * `start_date` (optional): Filter records from this date (YYYY-MM-DD).
+  * `end_date` (optional): Filter records up to this date (YYYY-MM-DD).
 * **Response (200 OK):** (Same format as above, filtered for the specific user ID).

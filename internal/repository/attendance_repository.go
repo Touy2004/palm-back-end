@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/Touy2004/palm-back-end/internal/model"
@@ -19,12 +20,26 @@ func NewAttendanceRepository(db *pgxpool.Pool) *AttendanceRepository {
 	return &AttendanceRepository{db: db}
 }
 
-func (r *AttendanceRepository) FindAll(page, limit int) ([]model.AttendanceLog, int64, error) {
+func (r *AttendanceRepository) FindAll(page, limit int, startDate, endDate string) ([]model.AttendanceLog, int64, error) {
 	var logs []model.AttendanceLog
 	var total int64
 	
-	countQuery := `SELECT count(*) FROM attendance_logs`
-	err := r.db.QueryRow(context.Background(), countQuery).Scan(&total)
+	countQuery := `SELECT count(*) FROM attendance_logs WHERE 1=1`
+	var countArgs []interface{}
+	argIdx := 1
+
+	if startDate != "" {
+		countQuery += fmt.Sprintf(" AND attendance_date >= $%d", argIdx)
+		countArgs = append(countArgs, startDate)
+		argIdx++
+	}
+	if endDate != "" {
+		countQuery += fmt.Sprintf(" AND attendance_date <= $%d", argIdx)
+		countArgs = append(countArgs, endDate)
+		argIdx++
+	}
+
+	err := r.db.QueryRow(context.Background(), countQuery, countArgs...).Scan(&total)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -36,9 +51,26 @@ func (r *AttendanceRepository) FindAll(page, limit int) ([]model.AttendanceLog, 
 		       d.name, d.device_code
 		FROM attendance_logs a
 		LEFT JOIN devices d ON a.device_id = d.id
-		ORDER BY a.created_at DESC LIMIT $1 OFFSET $2`
+		WHERE 1=1`
 	
-	rows, err := r.db.Query(context.Background(), query, limit, offset)
+	var args []interface{}
+	argIdx = 1
+
+	if startDate != "" {
+		query += fmt.Sprintf(" AND a.attendance_date >= $%d", argIdx)
+		args = append(args, startDate)
+		argIdx++
+	}
+	if endDate != "" {
+		query += fmt.Sprintf(" AND a.attendance_date <= $%d", argIdx)
+		args = append(args, endDate)
+		argIdx++
+	}
+
+	query += fmt.Sprintf(" ORDER BY a.attendance_date DESC, a.created_at DESC LIMIT $%d OFFSET $%d", argIdx, argIdx+1)
+	args = append(args, limit, offset)
+	
+	rows, err := r.db.Query(context.Background(), query, args...)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -59,12 +91,26 @@ func (r *AttendanceRepository) FindAll(page, limit int) ([]model.AttendanceLog, 
 	return logs, total, rows.Err()
 }
 
-func (r *AttendanceRepository) FindByUserID(userID string, page, limit int) ([]model.AttendanceLog, int64, error) {
+func (r *AttendanceRepository) FindByUserID(userID string, page, limit int, startDate, endDate string) ([]model.AttendanceLog, int64, error) {
 	var logs []model.AttendanceLog
 	var total int64
 	
 	countQuery := `SELECT count(*) FROM attendance_logs WHERE user_id = $1`
-	err := r.db.QueryRow(context.Background(), countQuery, userID).Scan(&total)
+	countArgs := []interface{}{userID}
+	argIdx := 2
+
+	if startDate != "" {
+		countQuery += fmt.Sprintf(" AND attendance_date >= $%d", argIdx)
+		countArgs = append(countArgs, startDate)
+		argIdx++
+	}
+	if endDate != "" {
+		countQuery += fmt.Sprintf(" AND attendance_date <= $%d", argIdx)
+		countArgs = append(countArgs, endDate)
+		argIdx++
+	}
+
+	err := r.db.QueryRow(context.Background(), countQuery, countArgs...).Scan(&total)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -76,10 +122,26 @@ func (r *AttendanceRepository) FindByUserID(userID string, page, limit int) ([]m
 		       d.name, d.device_code
 		FROM attendance_logs a
 		LEFT JOIN devices d ON a.device_id = d.id
-		WHERE a.user_id = $1 
-		ORDER BY a.created_at DESC LIMIT $2 OFFSET $3`
+		WHERE a.user_id = $1`
 	
-	rows, err := r.db.Query(context.Background(), query, userID, limit, offset)
+	args := []interface{}{userID}
+	argIdx = 2
+
+	if startDate != "" {
+		query += fmt.Sprintf(" AND a.attendance_date >= $%d", argIdx)
+		args = append(args, startDate)
+		argIdx++
+	}
+	if endDate != "" {
+		query += fmt.Sprintf(" AND a.attendance_date <= $%d", argIdx)
+		args = append(args, endDate)
+		argIdx++
+	}
+	
+	query += fmt.Sprintf(" ORDER BY a.attendance_date DESC, a.created_at DESC LIMIT $%d OFFSET $%d", argIdx, argIdx+1)
+	args = append(args, limit, offset)
+	
+	rows, err := r.db.Query(context.Background(), query, args...)
 	if err != nil {
 		return nil, 0, err
 	}

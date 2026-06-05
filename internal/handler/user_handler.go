@@ -89,8 +89,10 @@ func (h *UserHandler) GetMyAttendance(c *fiber.Ctx) error {
 
 	page, _ := strconv.Atoi(c.Query("page", "1"))
 	limit, _ := strconv.Atoi(c.Query("limit", "20"))
+	startDate := c.Query("start_date")
+	endDate := c.Query("end_date")
 
-	logs, total, err := h.userService.GetAttendanceHistory(claims.UserID, page, limit)
+	logs, total, err := h.userService.GetAttendanceHistory(claims.UserID, page, limit, startDate, endDate)
 	if err != nil {
 		return response.Error(c, fiber.StatusInternalServerError, "Failed to fetch attendance history", err.Error())
 	}
