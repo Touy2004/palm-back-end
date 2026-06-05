@@ -43,11 +43,11 @@ func (r *UserRepository) Create(user *model.User) error {
 
 func (r *UserRepository) FindByPhone(phone string) (*model.User, error) {
 	var user model.User
-	query := `SELECT id, employee_code, full_name, email, phone, password_hash, role, department, status, created_at, updated_at FROM users WHERE phone = $1`
+	query := `SELECT id, employee_code, full_name, email, phone, password_hash, role, department, status, EXISTS(SELECT 1 FROM palm_templates WHERE user_id = users.id AND status = 'active') as is_palm_registered, created_at, updated_at FROM users WHERE phone = $1`
 	
 	err := r.db.QueryRow(context.Background(), query, phone).Scan(
 		&user.ID, &user.EmployeeCode, &user.FullName, &user.Email, &user.Phone,
-		&user.PasswordHash, &user.Role, &user.Department, &user.Status,
+		&user.PasswordHash, &user.Role, &user.Department, &user.Status, &user.IsPalmRegistered,
 		&user.CreatedAt, &user.UpdatedAt,
 	)
 	if err != nil {
@@ -61,11 +61,11 @@ func (r *UserRepository) FindByPhone(phone string) (*model.User, error) {
 
 func (r *UserRepository) FindByID(id string) (*model.User, error) {
 	var user model.User
-	query := `SELECT id, employee_code, full_name, email, phone, password_hash, role, department, status, created_at, updated_at FROM users WHERE id = $1`
+	query := `SELECT id, employee_code, full_name, email, phone, password_hash, role, department, status, EXISTS(SELECT 1 FROM palm_templates WHERE user_id = users.id AND status = 'active') as is_palm_registered, created_at, updated_at FROM users WHERE id = $1`
 	
 	err := r.db.QueryRow(context.Background(), query, id).Scan(
 		&user.ID, &user.EmployeeCode, &user.FullName, &user.Email, &user.Phone,
-		&user.PasswordHash, &user.Role, &user.Department, &user.Status,
+		&user.PasswordHash, &user.Role, &user.Department, &user.Status, &user.IsPalmRegistered,
 		&user.CreatedAt, &user.UpdatedAt,
 	)
 	if err != nil {
@@ -79,7 +79,7 @@ func (r *UserRepository) FindByID(id string) (*model.User, error) {
 
 func (r *UserRepository) FindAll() ([]model.User, error) {
 	var users []model.User
-	query := `SELECT id, employee_code, full_name, email, phone, password_hash, role, department, status, created_at, updated_at FROM users`
+	query := `SELECT id, employee_code, full_name, email, phone, password_hash, role, department, status, EXISTS(SELECT 1 FROM palm_templates WHERE user_id = users.id AND status = 'active') as is_palm_registered, created_at, updated_at FROM users`
 	
 	rows, err := r.db.Query(context.Background(), query)
 	if err != nil {
@@ -91,7 +91,7 @@ func (r *UserRepository) FindAll() ([]model.User, error) {
 		var user model.User
 		if err := rows.Scan(
 			&user.ID, &user.EmployeeCode, &user.FullName, &user.Email, &user.Phone,
-			&user.PasswordHash, &user.Role, &user.Department, &user.Status,
+			&user.PasswordHash, &user.Role, &user.Department, &user.Status, &user.IsPalmRegistered,
 			&user.CreatedAt, &user.UpdatedAt,
 		); err != nil {
 			return nil, err
@@ -129,7 +129,7 @@ func (r *UserRepository) Search(searchQuery string) ([]model.User, error) {
 	q := "%" + searchQuery + "%"
 	
 	query := `
-		SELECT id, employee_code, full_name, email, phone, password_hash, role, department, status, created_at, updated_at 
+		SELECT id, employee_code, full_name, email, phone, password_hash, role, department, status, EXISTS(SELECT 1 FROM palm_templates WHERE user_id = users.id AND status = 'active') as is_palm_registered, created_at, updated_at 
 		FROM users 
 		WHERE employee_code ILIKE $1 OR full_name ILIKE $2 OR phone ILIKE $3 OR email ILIKE $4`
 	
@@ -143,7 +143,7 @@ func (r *UserRepository) Search(searchQuery string) ([]model.User, error) {
 		var user model.User
 		if err := rows.Scan(
 			&user.ID, &user.EmployeeCode, &user.FullName, &user.Email, &user.Phone,
-			&user.PasswordHash, &user.Role, &user.Department, &user.Status,
+			&user.PasswordHash, &user.Role, &user.Department, &user.Status, &user.IsPalmRegistered,
 			&user.CreatedAt, &user.UpdatedAt,
 		); err != nil {
 			return nil, err

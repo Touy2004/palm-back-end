@@ -15,10 +15,11 @@ type User struct {
 	Email        string    `gorm:"type:varchar(150);uniqueIndex;not null" json:"email"`
 	Department   string    `gorm:"type:varchar(100);not null" json:"department"`
 	PasswordHash string    `gorm:"type:text" json:"-"`
-	Role         string    `gorm:"type:varchar(30);default:'employee'" json:"role"`
-	Status       string    `gorm:"type:varchar(30);default:'active'" json:"status"`
-	CreatedAt    time.Time `gorm:"autoCreateTime" json:"created_at"`
-	UpdatedAt    time.Time `gorm:"autoUpdateTime" json:"updated_at"`
+	Role             string    `gorm:"type:varchar(30);default:'employee'" json:"role"`
+	Status           string    `gorm:"type:varchar(30);default:'active'" json:"status"`
+	IsPalmRegistered bool      `gorm:"-" json:"is_palm_registered"`
+	CreatedAt        time.Time `gorm:"autoCreateTime" json:"created_at"`
+	UpdatedAt        time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {

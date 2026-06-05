@@ -32,7 +32,8 @@ These endpoints are public and do not require any authentication headers. They a
       "user": {
         "id": "123e4567-e89b-12d3-a456-426614174000",
         "full_name": "Jane Doe",
-        "role": "employee"
+        "role": "employee",
+        "is_palm_registered": false
       },
       "access_token": "eyJhbGciOi...",
       "refresh_token": "eyJhbGciOi..."
@@ -60,7 +61,8 @@ These endpoints are public and do not require any authentication headers. They a
       "user": {
         "id": "123e4567-e89b-12d3-a456-426614174000",
         "full_name": "Jane Doe",
-        "role": "employee"
+        "role": "employee",
+        "is_palm_registered": false
       },
       "access_token": "eyJhbGciOi...",
       "refresh_token": "eyJhbGciOi..."
@@ -116,6 +118,7 @@ These endpoints are used by the mobile application for normal employees.
         "role": "employee",
         "department": "IT",
         "status": "active",
+        "is_palm_registered": true,
         "created_at": "2026-06-03T10:00:00Z",
         "updated_at": "2026-06-03T10:00:00Z"
       }
@@ -395,7 +398,8 @@ These endpoints power the Admin Dashboard.
         "full_name": "Jane Doe",
         "email": "jane@example.com",
         "role": "employee",
-        "status": "active"
+        "status": "active",
+        "is_palm_registered": true
       }
     ]
   }
@@ -417,7 +421,8 @@ These endpoints power the Admin Dashboard.
         "id": "user-uuid",
         "employee_code": "EMP-001",
         "full_name": "Jane Doe",
-        "status": "active"
+        "status": "active",
+        "is_palm_registered": true
     }
   }
   ```
