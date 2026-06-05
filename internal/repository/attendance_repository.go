@@ -33,7 +33,7 @@ func (r *AttendanceRepository) FindAll(page, limit int) ([]model.AttendanceLog, 
 	query := `
 		SELECT a.id, a.user_id, a.device_id, a.attendance_date, a.check_in_time, a.check_out_time, 
 		       a.check_in_score, a.check_out_score, a.check_in_liveness, a.check_out_liveness, a.status, a.created_at,
-		       d.device_name, d.device_code
+		       d.name, d.device_code
 		FROM attendance_logs a
 		LEFT JOIN devices d ON a.device_id = d.id
 		ORDER BY a.created_at DESC LIMIT $1 OFFSET $2`
@@ -73,7 +73,7 @@ func (r *AttendanceRepository) FindByUserID(userID string, page, limit int) ([]m
 	query := `
 		SELECT a.id, a.user_id, a.device_id, a.attendance_date, a.check_in_time, a.check_out_time, 
 		       a.check_in_score, a.check_out_score, a.check_in_liveness, a.check_out_liveness, a.status, a.created_at,
-		       d.device_name, d.device_code
+		       d.name, d.device_code
 		FROM attendance_logs a
 		LEFT JOIN devices d ON a.device_id = d.id
 		WHERE a.user_id = $1 
@@ -107,7 +107,7 @@ func (r *AttendanceRepository) FindTodayByUserID(userID string) (*model.Attendan
 	query := `
 		SELECT a.id, a.user_id, a.device_id, a.attendance_date, a.check_in_time, a.check_out_time, 
 		       a.check_in_score, a.check_out_score, a.check_in_liveness, a.check_out_liveness, a.status, a.created_at,
-		       d.device_name, d.device_code
+		       d.name, d.device_code
 		FROM attendance_logs a
 		LEFT JOIN devices d ON a.device_id = d.id
 		WHERE a.user_id = $1 AND a.attendance_date >= $2`
