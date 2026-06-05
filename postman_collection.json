@@ -129,7 +129,9 @@
 							"path": ["me", "attendance"],
 							"query": [
 								{ "key": "page", "value": "1" },
-								{ "key": "limit", "value": "30" }
+								{ "key": "limit", "value": "30" },
+								{ "key": "start_date", "value": "2026-06-01", "disabled": true },
+								{ "key": "end_date", "value": "2026-06-07", "disabled": true }
 							]
 						}
 					}
@@ -518,7 +520,9 @@
 							"path": ["admin", "attendance"],
 							"query": [
 								{ "key": "page", "value": "1" },
-								{ "key": "limit", "value": "50" }
+								{ "key": "limit", "value": "50" },
+								{ "key": "start_date", "value": "2026-06-01", "disabled": true },
+								{ "key": "end_date", "value": "2026-06-07", "disabled": true }
 							]
 						}
 					}
@@ -535,7 +539,9 @@
 							"path": ["admin", "attendance", "users", "user-uuid", "history"],
 							"query": [
 								{ "key": "page", "value": "1" },
-								{ "key": "limit", "value": "30" }
+								{ "key": "limit", "value": "30" },
+								{ "key": "start_date", "value": "2026-06-01", "disabled": true },
+								{ "key": "end_date", "value": "2026-06-07", "disabled": true }
 							]
 						}
 					}
