@@ -194,7 +194,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"session_id\": \"session-uuid\",\n  \"purpose\": \"enrollment\"\n}"
+							"raw": "{\n  \"session_token\": \"paste_the_session_token_here\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/pairing/approve",
