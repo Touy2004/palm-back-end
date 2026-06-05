@@ -22,6 +22,10 @@ type Middleware struct {
 func SetupRoutes(app *fiber.App, h *Handler, m *Middleware) {
 	api := app.Group("/api/v1")
 
+	api.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("hello")
+	})
+
 	// Public routes
 	auth := api.Group("/auth")
 	auth.Post("/register", h.Auth.Register)
