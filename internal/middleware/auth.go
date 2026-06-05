@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/Touy2004/palm-back-end/pkg/jwt"
+	"github.com/Touy2004/palm-back-end/pkg/response"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -19,23 +20,17 @@ func NewAuthMiddleware(jwt *jwt.JWT) *AuthMiddleware {
 func (m *AuthMiddleware) Authenticate(c *fiber.Ctx) error {
 	authHeader := c.Get("Authorization")
 	if authHeader == "" {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "unauthorized",
-		})
+		return response.Error(c, fiber.StatusUnauthorized, "Missing authorization header", "unauthorized")
 	}
 
 	tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
 	if tokenStr == authHeader {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "invalid token format",
-		})
+		return response.Error(c, fiber.StatusUnauthorized, "Invalid token format", "invalid token format")
 	}
 
 	claims, err := m.jwt.Parse(tokenStr)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "invalid or expired token",
-		})
+		return response.Error(c, fiber.StatusUnauthorized, "Invalid or expired token", err.Error())
 	}
 
 	c.Locals("user", claims)

@@ -1,7 +1,11 @@
 package middleware
 
 import (
+	"fmt"
+	"slices"
+
 	"github.com/Touy2004/palm-back-end/pkg/jwt"
+	"github.com/Touy2004/palm-back-end/pkg/response"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -16,21 +20,15 @@ func (m *RoleMiddleware) Require(roles ...string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		claims, ok := c.Locals("user").(*jwt.Claims)
 		if !ok {
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "unauthorized"})
+			return response.Error(c, fiber.StatusUnauthorized, "Unauthorized access", "unauthorized")
 		}
 
-		hasRole := false
-		for _, role := range roles {
-			if claims.Role == role {
-				hasRole = true
-				break
-			}
-		}
-
-		if hasRole {
+		if slices.Contains(roles, claims.Role) {
+			fmt.Println("Role: ", claims.Role)
 			return c.Next()
 		}
 
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "forbidden"})
+		fmt.Println("Forbidden: ", roles)
+		return response.Error(c, fiber.StatusForbidden, "Forbidden access", "forbidden")
 	}
 }

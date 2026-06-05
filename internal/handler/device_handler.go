@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/Touy2004/palm-back-end/internal/service"
+	"github.com/Touy2004/palm-back-end/pkg/response"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -28,14 +29,14 @@ func (h *DeviceHandler) Heartbeat(c *fiber.Ctx) error {
 		DeviceCode string `json:"device_code"`
 	}
 	if err := c.BodyParser(&input); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request"})
+		return response.Error(c, fiber.StatusBadRequest, "Invalid request", err.Error())
 	}
 
 	if err := h.deviceSvc.Heartbeat(input.DeviceCode); err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": err.Error()})
+		return response.Error(c, fiber.StatusUnauthorized, "Heartbeat failed", err.Error())
 	}
 
-	return c.JSON(fiber.Map{"success": true})
+	return response.Success(c, fiber.StatusOK, "Heartbeat successful", nil)
 }
 
 func (h *DeviceHandler) CreatePairingSession(c *fiber.Ctx) error {
@@ -44,16 +45,15 @@ func (h *DeviceHandler) CreatePairingSession(c *fiber.Ctx) error {
 		Purpose    string `json:"purpose"`
 	}
 	if err := c.BodyParser(&input); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request"})
+		return response.Error(c, fiber.StatusBadRequest, "Invalid request", err.Error())
 	}
 
 	session, err := h.deviceSvc.CreatePairingSession(input.DeviceCode, input.Purpose)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		return response.Error(c, fiber.StatusInternalServerError, "Failed to create pairing session", err.Error())
 	}
 
-	return c.JSON(fiber.Map{
-		"success":       true,
+	return response.Success(c, fiber.StatusOK, "Pairing session created successfully", fiber.Map{
 		"session_id":    session.ID,
 		"session_token": session.SessionToken,
 		"expires_at":    session.ExpiresAt,
@@ -64,11 +64,10 @@ func (h *DeviceHandler) GetSessionStatus(c *fiber.Ctx) error {
 	sessionID := c.Params("session_id")
 	session, err := h.deviceSvc.GetSessionStatus(sessionID)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
+		return response.Error(c, fiber.StatusNotFound, "Session not found", err.Error())
 	}
 
-	return c.JSON(fiber.Map{
-		"success": true,
+	return response.Success(c, fiber.StatusOK, "Session status retrieved", fiber.Map{
 		"status":  session.Status,
 	})
 }
@@ -89,7 +88,7 @@ func (h *DeviceHandler) EnrollPalm(c *fiber.Ctx) error {
 	}
 
 	if err := c.BodyParser(&payload); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid payload"})
+		return response.Error(c, fiber.StatusBadRequest, "Invalid payload", err.Error())
 	}
 
 	enrollInput := service.EnrollInput{
@@ -108,55 +107,49 @@ func (h *DeviceHandler) EnrollPalm(c *fiber.Ctx) error {
 
 	template, err := h.palmSvc.EnrollPalm(enrollInput)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		return response.Error(c, fiber.StatusBadRequest, "Palm enrollment failed", err.Error())
 	}
 
-	return c.JSON(fiber.Map{
-		"success":     true,
+	return response.Success(c, fiber.StatusOK, "Palm enrolled successfully", fiber.Map{
 		"template_id": template.ID,
-		"message":     "Palm enrolled successfully",
 	})
 }
 
 func (h *DeviceHandler) ProcessAttendance(c *fiber.Ctx) error {
 	var payload service.ProcessAttendanceInput
 	if err := c.BodyParser(&payload); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid payload"})
+		return response.Error(c, fiber.StatusBadRequest, "Invalid payload", err.Error())
 	}
 
 	result, err := h.attendanceSvc.ProcessPalmAttendance(payload)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": err.Error()})
+		return response.Error(c, fiber.StatusUnauthorized, "Failed to process attendance", err.Error())
 	}
 
-	return c.JSON(fiber.Map{
-		"success": true,
+	return response.Success(c, fiber.StatusOK, result.Message, fiber.Map{
 		"action":  result.Action,
 		"user": fiber.Map{
 			"id":        result.UserID,
 			"full_name": result.FullName,
 		},
-		"message": result.Message,
 	})
 }
 
 func (h *DeviceHandler) IdentifyPalm(c *fiber.Ctx) error {
 	var payload service.ProcessAttendanceInput
 	if err := c.BodyParser(&payload); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid payload"})
+		return response.Error(c, fiber.StatusBadRequest, "Invalid payload", err.Error())
 	}
 
 	result, err := h.attendanceSvc.IdentifyPalm(payload)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": err.Error()})
+		return response.Error(c, fiber.StatusUnauthorized, "Failed to identify palm", err.Error())
 	}
 
-	return c.JSON(fiber.Map{
-		"success": true,
+	return response.Success(c, fiber.StatusOK, result.Message, fiber.Map{
 		"user": fiber.Map{
 			"id":        result.UserID,
 			"full_name": result.FullName,
 		},
-		"message": result.Message,
 	})
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/Touy2004/palm-back-end/internal/model"
 	"github.com/Touy2004/palm-back-end/internal/service"
+	"github.com/Touy2004/palm-back-end/pkg/response"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -20,99 +21,99 @@ func NewAdminHandler(adminService *service.AdminService) *AdminHandler {
 func (h *AdminHandler) CreateUser(c *fiber.Ctx) error {
 	var input service.RegisterInput
 	if err := c.BodyParser(&input); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request body"})
+		return response.Error(c, fiber.StatusBadRequest, "Invalid request body", err.Error())
 	}
 
 	user, err := h.adminService.CreateUser(input)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		return response.Error(c, fiber.StatusBadRequest, "Failed to create user", err.Error())
 	}
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"success": true, "user": user})
+	return response.Success(c, fiber.StatusCreated, "User created successfully", user)
 }
 
 func (h *AdminHandler) GetUsers(c *fiber.Ctx) error {
 	users, err := h.adminService.GetUsers()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "failed to fetch users"})
+		return response.Error(c, fiber.StatusInternalServerError, "Failed to fetch users", err.Error())
 	}
-	return c.JSON(fiber.Map{"success": true, "users": users})
+	return response.Success(c, fiber.StatusOK, "Users retrieved successfully", users)
 }
 
 func (h *AdminHandler) GetUserByID(c *fiber.Ctx) error {
 	id := c.Params("id")
 	user, err := h.adminService.GetUserByID(id)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "user not found"})
+		return response.Error(c, fiber.StatusNotFound, "User not found", err.Error())
 	}
-	return c.JSON(fiber.Map{"success": true, "user": user})
+	return response.Success(c, fiber.StatusOK, "User retrieved successfully", user)
 }
 
 func (h *AdminHandler) UpdateUser(c *fiber.Ctx) error {
 	id := c.Params("id")
 	var input map[string]interface{}
 	if err := c.BodyParser(&input); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request body"})
+		return response.Error(c, fiber.StatusBadRequest, "Invalid request body", err.Error())
 	}
 
 	user, err := h.adminService.UpdateUser(id, input)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		return response.Error(c, fiber.StatusInternalServerError, "Failed to update user", err.Error())
 	}
-	return c.JSON(fiber.Map{"success": true, "user": user})
+	return response.Success(c, fiber.StatusOK, "User updated successfully", user)
 }
 
 func (h *AdminHandler) DeleteUser(c *fiber.Ctx) error {
 	id := c.Params("id")
 	err := h.adminService.DeleteUser(id)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		return response.Error(c, fiber.StatusInternalServerError, "Failed to delete user", err.Error())
 	}
-	return c.JSON(fiber.Map{"success": true, "message": "user deleted"})
+	return response.Success(c, fiber.StatusOK, "User deleted successfully", nil)
 }
 
 func (h *AdminHandler) SearchUsers(c *fiber.Ctx) error {
 	q := c.Query("q")
 	users, err := h.adminService.SearchUsers(q)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "failed to search users"})
+		return response.Error(c, fiber.StatusInternalServerError, "Failed to search users", err.Error())
 	}
-	return c.JSON(fiber.Map{"success": true, "data": users})
+	return response.Success(c, fiber.StatusOK, "Users retrieved successfully", users)
 }
 
 // Device Endpoints
 func (h *AdminHandler) GetDevices(c *fiber.Ctx) error {
 	devices, err := h.adminService.GetDevices()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "failed to fetch devices"})
+		return response.Error(c, fiber.StatusInternalServerError, "Failed to fetch devices", err.Error())
 	}
-	return c.JSON(fiber.Map{"success": true, "devices": devices})
+	return response.Success(c, fiber.StatusOK, "Devices retrieved successfully", devices)
 }
 
 func (h *AdminHandler) CreateDevice(c *fiber.Ctx) error {
 	var device model.Device
 	if err := c.BodyParser(&device); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request body"})
+		return response.Error(c, fiber.StatusBadRequest, "Invalid request body", err.Error())
 	}
 
 	err := h.adminService.CreateDevice(&device)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		return response.Error(c, fiber.StatusInternalServerError, "Failed to create device", err.Error())
 	}
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"success": true, "device": device})
+	return response.Success(c, fiber.StatusCreated, "Device created successfully", device)
 }
 
 func (h *AdminHandler) UpdateDevice(c *fiber.Ctx) error {
 	id := c.Params("id")
 	var input map[string]interface{}
 	if err := c.BodyParser(&input); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request body"})
+		return response.Error(c, fiber.StatusBadRequest, "Invalid request body", err.Error())
 	}
 
 	device, err := h.adminService.UpdateDevice(id, input)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		return response.Error(c, fiber.StatusInternalServerError, "Failed to update device", err.Error())
 	}
-	return c.JSON(fiber.Map{"success": true, "device": device})
+	return response.Success(c, fiber.StatusOK, "Device updated successfully", device)
 }
 
 // Attendance Endpoints
@@ -122,12 +123,10 @@ func (h *AdminHandler) GetAttendanceHistory(c *fiber.Ctx) error {
 
 	logs, total, err := h.adminService.GetAttendanceHistory(page, limit)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "failed to fetch attendance"})
+		return response.Error(c, fiber.StatusInternalServerError, "Failed to fetch attendance history", err.Error())
 	}
 
-	return c.JSON(fiber.Map{
-		"success": true,
-		"data":    logs,
+	return response.SuccessWithMeta(c, fiber.StatusOK, "Attendance history retrieved successfully", logs, fiber.Map{
 		"pagination": fiber.Map{
 			"page":  page,
 			"limit": limit,
@@ -143,12 +142,10 @@ func (h *AdminHandler) GetUserAttendanceHistory(c *fiber.Ctx) error {
 
 	logs, total, err := h.adminService.GetUserAttendanceHistory(userID, page, limit)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "failed to fetch user attendance"})
+		return response.Error(c, fiber.StatusInternalServerError, "Failed to fetch user attendance history", err.Error())
 	}
 
-	return c.JSON(fiber.Map{
-		"success": true,
-		"data":    logs,
+	return response.SuccessWithMeta(c, fiber.StatusOK, "User attendance history retrieved successfully", logs, fiber.Map{
 		"pagination": fiber.Map{
 			"page":  page,
 			"limit": limit,
