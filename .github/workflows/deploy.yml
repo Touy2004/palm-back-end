@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main # Triggers the workflow whenever you push to the 'main' branch
+    paths-ignore:
+      - '**.md'
+      - 'postman_collection.json'
 
 jobs:
   deploy:

@@ -7,6 +7,23 @@
 	},
 	"item": [
 		{
+			"name": "0. General",
+			"item": [
+				{
+					"name": "Health Check (Hello World)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/",
+							"host": ["{{base_url}}"],
+							"path": [""]
+						}
+					}
+				}
+			]
+		},
+		{
 			"name": "1. Authentication",
 			"item": [
 				{
