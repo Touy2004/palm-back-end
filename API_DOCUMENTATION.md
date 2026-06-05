@@ -10,6 +10,14 @@ This documentation covers **every** endpoint in the system, organized by applica
 
 These endpoints are public and do not require any authentication headers. They are used for onboarding new users and acquiring access tokens.
 
+### 1.0 Health Check (Hello World)
+* **Use for:** Testing if the API server is up and running.
+* **GET** `/`
+* **Response (200 OK):**
+  ```text
+  hello world
+  ```
+
 ### 1.1 Register a new account
 * **Use for:** Allowing a new employee to create an account in the system using their phone number.
 * **POST** `/auth/register`
@@ -338,7 +346,20 @@ These endpoints are consumed EXCLUSIVELY by the physical palm scanners.
 ### 4.5 Identify Palm (No Attendance)
 * **Use for:** Strictly searching the database to find which user matches the scanned palm embedding (without clocking them in or out).
 * **POST** `/devices/palm/identify`
-* **Body:** Requires `device_code`, `embedding`, and thermal/quality metrics.
+* **Body:**
+  ```json
+  {
+    "device_code": "DEV-001",
+    "model_version": "v1.0",
+    "embedding_dim": 128,
+    "embeddings": [[0.12, 0.44]],
+    "liveness_passed": true,
+    "quality_score": 0.98,
+    "thermal_min": 33.5,
+    "thermal_max": 36.2,
+    "thermal_avg": 35.1
+  }
+  ```
 * **Response (200 OK):**
   ```json
   {
@@ -357,7 +378,20 @@ These endpoints are consumed EXCLUSIVELY by the physical palm scanners.
 ### 4.6 Process Attendance (Check In/Out)
 * **Use for:** The main operational flow. The device scans a palm, identifies the user, and automatically clocks them IN or OUT based on their current status.
 * **POST** `/devices/attendance/palm`
-* **Body:** Same as 4.5.
+* **Body:**
+  ```json
+  {
+    "device_code": "DEV-001",
+    "model_version": "v1.0",
+    "embedding_dim": 128,
+    "embeddings": [[0.12, 0.44]],
+    "liveness_passed": true,
+    "quality_score": 0.98,
+    "thermal_min": 33.5,
+    "thermal_max": 36.2,
+    "thermal_avg": 35.1
+  }
+  ```
 * **Response (200 OK):**
   ```json
   {
