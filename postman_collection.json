@@ -396,6 +396,19 @@
 					}
 				},
 				{
+					"name": "Get User Palm Templates",
+					"request": {
+						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/users/user-uuid/palm-templates",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "users", "user-uuid", "palm-templates"]
+						}
+					}
+				},
+				{
 					"name": "Get Devices",
 					"request": {
 						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
