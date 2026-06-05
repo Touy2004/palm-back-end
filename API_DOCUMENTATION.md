@@ -8,8 +8,11 @@ This documentation covers **every** endpoint in the system, organized by applica
 
 ## 1. Authentication & Public Workflow
 
+These endpoints are public and do not require any authentication headers. They are used for onboarding new users and acquiring access tokens.
+
 ### 1.1 Register a new account
-**POST** `/auth/register`
+* **Use for:** Allowing a new employee to create an account in the system using their phone number.
+* **POST** `/auth/register`
 * **Body:**
   ```json
   {
@@ -22,19 +25,24 @@ This documentation covers **every** endpoint in the system, organized by applica
 * **Response (201 Created):**
   ```json
   {
-    "success": true,
-    "user": {
-      "id": "123e4567-e89b-12d3-a456-426614174000",
-      "full_name": "Jane Doe",
-      "role": "employee"
-    },
-    "access_token": "eyJhbGciOi...",
-    "refresh_token": "eyJhbGciOi..."
+    "code": 201,
+    "status": "Created",
+    "message": "User registered successfully",
+    "data": {
+      "user": {
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "full_name": "Jane Doe",
+        "role": "employee"
+      },
+      "access_token": "eyJhbGciOi...",
+      "refresh_token": "eyJhbGciOi..."
+    }
   }
   ```
 
 ### 1.2 Login
-**POST** `/auth/login`
+* **Use for:** Authenticating an existing user and issuing a new JWT access token and refresh token.
+* **POST** `/auth/login`
 * **Body:**
   ```json
   {
@@ -45,19 +53,24 @@ This documentation covers **every** endpoint in the system, organized by applica
 * **Response (200 OK):**
   ```json
   {
-    "success": true,
-    "user": {
-      "id": "123e4567-e89b-12d3-a456-426614174000",
-      "full_name": "Jane Doe",
-      "role": "employee"
-    },
-    "access_token": "eyJhbGciOi...",
-    "refresh_token": "eyJhbGciOi..."
+    "code": 200,
+    "status": "OK",
+    "message": "Login successful",
+    "data": {
+      "user": {
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "full_name": "Jane Doe",
+        "role": "employee"
+      },
+      "access_token": "eyJhbGciOi...",
+      "refresh_token": "eyJhbGciOi..."
+    }
   }
   ```
 
 ### 1.3 Refresh Token
-**POST** `/auth/refresh`
+* **Use for:** Issuing a new access token when the current one expires, without requiring the user to log in again.
+* **POST** `/auth/refresh`
 * **Body:**
   ```json
   {
@@ -67,9 +80,13 @@ This documentation covers **every** endpoint in the system, organized by applica
 * **Response (200 OK):**
   ```json
   {
-    "success": true,
-    "access_token": "new_eyJhbGciOi...",
-    "refresh_token": "new_eyJhbGciOi..."
+    "code": 200,
+    "status": "OK",
+    "message": "Token refreshed successfully",
+    "data": {
+      "access_token": "new_eyJhbGciOi...",
+      "refresh_token": "new_eyJhbGciOi..."
+    }
   }
   ```
 
@@ -77,30 +94,38 @@ This documentation covers **every** endpoint in the system, organized by applica
 
 ## 2. Mobile App (User) APIs
 
+These endpoints are used by the mobile application for normal employees.
 *Requires Header: `Authorization: Bearer <access_token>`*
 
 ### 2.1 Get My Profile
-**GET** `/me`
+* **Use for:** Retrieving the logged-in user's profile information to display on the mobile app dashboard.
+* **GET** `/me`
 * **Response (200 OK):**
   ```json
   {
-    "success": true,
-    "user": {
-      "id": "123e4567-e89b-12d3-a456-426614174000",
-      "employee_code": "EMP-001",
-      "full_name": "Jane Doe",
-      "email": "jane@example.com",
-      "phone": "0812345678",
-      "role": "employee",
-      "department": "IT",
-      "status": "active",
-      "created_at": "2026-06-03T10:00:00Z"
+    "code": 200,
+    "status": "OK",
+    "message": "Profile retrieved successfully",
+    "data": {
+      "user": {
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "employee_code": "EMP-001",
+        "full_name": "Jane Doe",
+        "email": "jane@example.com",
+        "phone": "0812345678",
+        "role": "employee",
+        "department": "IT",
+        "status": "active",
+        "created_at": "2026-06-03T10:00:00Z",
+        "updated_at": "2026-06-03T10:00:00Z"
+      }
     }
   }
   ```
 
 ### 2.2 Change Password
-**PATCH** `/me/password`
+* **Use for:** Allowing users to securely update their account password from the settings menu.
+* **PATCH** `/me/password`
 * **Body:** 
   ```json
   {
@@ -111,17 +136,22 @@ This documentation covers **every** endpoint in the system, organized by applica
 * **Response (200 OK):**
   ```json
   {
-    "success": true,
-    "message": "Password changed successfully"
+    "code": 200,
+    "status": "OK",
+    "message": "Password changed successfully",
+    "data": null
   }
   ```
 
 ### 2.3 View My Attendance
-**GET** `/me/attendance?page=1&limit=30`
+* **Use for:** Fetching a paginated history of the user's check-ins and check-outs for their personal records.
+* **GET** `/me/attendance?page=1&limit=30`
 * **Response (200 OK):**
   ```json
   {
-    "success": true,
+    "code": 200,
+    "status": "OK",
+    "message": "Attendance history retrieved successfully",
     "data": [
       {
          "id": "att-123",
@@ -131,33 +161,41 @@ This documentation covers **every** endpoint in the system, organized by applica
          "status": "present"
       }
     ],
-    "pagination": { "page": 1, "limit": 30, "total": 1 }
+    "meta": {
+      "pagination": { "page": 1, "limit": 30, "total": 1 }
+    }
   }
   ```
 
 ### 2.4 Manage Enrolled Palms
-**GET** `/me/palm-templates`
+* **Use for:** Viewing which hands (left/right) the user has successfully registered in the system, or revoking a template.
+* **GET** `/me/palm-templates`
 * **Response (200 OK):**
   ```json
   {
-    "success": true,
+    "code": 200,
+    "status": "OK",
+    "message": "Palm templates retrieved successfully",
     "data": [
       {
         "id": "tpl-123",
         "hand_side": "right",
         "status": "active",
-        "created_at": "2026-06-01T12:00:00Z"
+        "created_at": "2026-06-01T12:00:00Z",
+        "updated_at": "2026-06-01T12:00:00Z"
       }
     ]
   }
   ```
 
-**DELETE** `/me/palm-templates/:id`
+* **DELETE** `/me/palm-templates/:id`
 * **Response (200 OK):**
   ```json
   {
-    "success": true,
-    "message": "Palm template revoked"
+    "code": 200,
+    "status": "OK",
+    "message": "Palm template deleted successfully",
+    "data": null
   }
   ```
 
@@ -165,10 +203,12 @@ This documentation covers **every** endpoint in the system, organized by applica
 
 ## 3. Pairing Flow (Mobile App <-> Device)
 
+These endpoints facilitate the secure enrollment process where the mobile app "pairs" with the physical scanner.
 *Requires Header: `Authorization: Bearer <access_token>`*
 
 ### 3.1 Scan QR Code
-**POST** `/pairing/scan`
+* **Use for:** When the mobile app scans the QR code on the physical device's screen, it validates the session.
+* **POST** `/pairing/scan`
 * **Body:** 
   ```json
   {
@@ -178,28 +218,32 @@ This documentation covers **every** endpoint in the system, organized by applica
 * **Response (200 OK):**
   ```json
   {
-    "success": true,
-    "session_id": "session-uuid",
-    "device_id": "device-uuid",
-    "device_name": "Front Door Scanner",
-    "purpose": "enrollment"
+    "code": 200,
+    "status": "OK",
+    "message": "Pairing session scanned",
+    "data": {
+      "device": "device-uuid",
+      "purpose": "enrollment"
+    }
   }
   ```
 
 ### 3.2 Approve Pairing
-**POST** `/pairing/approve`
+* **Use for:** The user taps "Confirm" on their phone to securely link their mobile identity to the hardware session, authorizing it to read their palm.
+* **POST** `/pairing/approve`
 * **Body:** 
   ```json
   {
-    "session_id": "session-uuid",
-    "purpose": "enrollment"
+    "session_token": "a1b2c3d4e5f6..."
   }
   ```
 * **Response (200 OK):**
   ```json
   {
-    "success": true,
-    "message": "Pairing approved successfully"
+    "code": 200,
+    "status": "OK",
+    "message": "Enrollment approved. Please place your palm on the device.",
+    "data": null
   }
   ```
 
@@ -207,45 +251,59 @@ This documentation covers **every** endpoint in the system, organized by applica
 
 ## 4. Hardware Device APIs (Raspberry Pi)
 
+These endpoints are consumed EXCLUSIVELY by the physical palm scanners. 
 *Authenticates using `device_code` in the JSON body. No JWT required.*
 
 ### 4.1 Device Heartbeat
-**POST** `/devices/heartbeat`
+* **Use for:** Periodic ping from the device to the server to prove it is online and functioning properly.
+* **POST** `/devices/heartbeat`
 * **Body:** `{"device_code": "DEV-001"}`
 * **Response (200 OK):**
   ```json
   {
-    "success": true,
-    "message": "Heartbeat updated"
+    "code": 200,
+    "status": "OK",
+    "message": "Heartbeat successful",
+    "data": null
   }
   ```
 
 ### 4.2 Create Pairing Session (Generate QR)
-**POST** `/devices/pairing-sessions`
+* **Use for:** The device requests a secure QR code session to display on its screen so a user can scan it for enrollment.
+* **POST** `/devices/pairing-sessions`
 * **Body:** `{"device_code": "DEV-001", "purpose": "enrollment"}`
 * **Response (200 OK):**
   ```json
   {
-    "success": true,
-    "session_id": "session-uuid",
-    "session_token": "a1b2c3d4e5f6...",
-    "expires_at": "2026-06-04T10:05:00Z"
+    "code": 200,
+    "status": "OK",
+    "message": "Pairing session created successfully",
+    "data": {
+      "session_id": "session-uuid",
+      "session_token": "a1b2c3d4e5f6...",
+      "expires_at": "2026-06-04T10:05:00Z"
+    }
   }
   ```
 
 ### 4.3 Check Pairing Status
-**GET** `/devices/pairing-sessions/:session_id/status`
+* **Use for:** The device polls this endpoint while showing the QR code to check if the user has approved the session on their phone yet.
+* **GET** `/devices/pairing-sessions/:session_id/status`
 * **Response (200 OK):**
   ```json
   {
-    "success": true,
-    "status": "approved",
-    "user_id": "user-uuid"
+    "code": 200,
+    "status": "OK",
+    "message": "Session status retrieved",
+    "data": {
+      "status": "approved"
+    }
   }
   ```
 
 ### 4.4 Enroll Palm
-**POST** `/devices/palm/enroll`
+* **Use for:** The device uploads the extracted mathematical embedding data of the palm to permanently link it to the user.
+* **POST** `/devices/palm/enroll`
 * **Body:**
   ```json
   {
@@ -262,42 +320,54 @@ This documentation covers **every** endpoint in the system, organized by applica
     "thermal_avg": 35.1
   }
   ```
-* **Response (201 Created):**
+* **Response (200 OK):**
   ```json
   {
-    "success": true,
-    "message": "Palm enrolled successfully"
+    "code": 200,
+    "status": "OK",
+    "message": "Palm enrolled successfully",
+    "data": {
+      "template_id": "template-uuid"
+    }
   }
   ```
 
 ### 4.5 Identify Palm (No Attendance)
-**POST** `/devices/palm/identify`
+* **Use for:** Strictly searching the database to find which user matches the scanned palm embedding (without clocking them in or out).
+* **POST** `/devices/palm/identify`
 * **Body:** Requires `device_code`, `embedding`, and thermal/quality metrics.
 * **Response (200 OK):**
   ```json
   {
-    "success": true,
-    "user": {
-      "id": "user-uuid",
-      "full_name": "Jane Doe"
-    },
-    "score": 0.95
+    "code": 200,
+    "status": "OK",
+    "message": "Palm identified successfully",
+    "data": {
+      "user": {
+        "id": "user-uuid",
+        "full_name": "Jane Doe"
+      }
+    }
   }
   ```
 
 ### 4.6 Process Attendance (Check In/Out)
-**POST** `/devices/attendance/palm`
+* **Use for:** The main operational flow. The device scans a palm, identifies the user, and automatically clocks them IN or OUT based on their current status.
+* **POST** `/devices/attendance/palm`
 * **Body:** Same as 4.5.
 * **Response (200 OK):**
   ```json
   {
-    "success": true,
-    "action": "check_in",
-    "user": {
-      "id": "user-uuid",
-      "full_name": "Jane Doe"
-    },
-    "message": "Check-in successful"
+    "code": 200,
+    "status": "OK",
+    "message": "Check-in successful",
+    "data": {
+      "action": "check_in",
+      "user": {
+        "id": "user-uuid",
+        "full_name": "Jane Doe"
+      }
+    }
   }
   ```
 
@@ -305,15 +375,19 @@ This documentation covers **every** endpoint in the system, organized by applica
 
 ## 5. Web Admin APIs
 
+These endpoints power the Admin Dashboard.
 *Requires Header: `Authorization: Bearer <access_token>`*
 *Requires Role: `admin`*
 
 ### 5.1 User Management
-**GET** `/admin/users?page=1&limit=20`
+* **Use for:** Listing all employees in the system for the admin panel.
+* **GET** `/admin/users`
 * **Response (200 OK):**
   ```json
   {
-    "success": true,
+    "code": 200,
+    "status": "OK",
+    "message": "Users retrieved successfully",
     "data": [
       {
         "id": "user-uuid",
@@ -323,19 +397,22 @@ This documentation covers **every** endpoint in the system, organized by applica
         "role": "employee",
         "status": "active"
       }
-    ],
-    "pagination": { "page": 1, "limit": 20, "total": 100 }
+    ]
   }
   ```
 
-**GET** `/admin/users/search?q=John`
-* **Response (200 OK):** (Same array of users as above, without pagination).
+* **Use for:** Searching for specific users by name or code.
+* **GET** `/admin/users/search?q=John`
+* **Response (200 OK):** (Same array of users as above).
 
-**GET** `/admin/users/:id`
+* **Use for:** Viewing details for a specific user.
+* **GET** `/admin/users/:id`
 * **Response (200 OK):**
   ```json
   {
-    "success": true,
+    "code": 200,
+    "status": "OK",
+    "message": "User retrieved successfully",
     "data": {
         "id": "user-uuid",
         "employee_code": "EMP-001",
@@ -345,42 +422,56 @@ This documentation covers **every** endpoint in the system, organized by applica
   }
   ```
 
-**POST** `/admin/users`
+* **Use for:** Admin directly creating an employee account from the dashboard.
+* **POST** `/admin/users`
 * **Body:** `{"phone": "0811111111", "full_name": "John", "password": "pass", "role": "employee"}`
 * **Response (201 Created):**
   ```json
   {
-    "success": true,
+    "code": 201,
+    "status": "Created",
     "message": "User created successfully",
     "data": { "id": "user-uuid" }
   }
   ```
 
-**PATCH** `/admin/users/:id`
+* **Use for:** Modifying employee details or changing their department.
+* **PATCH** `/admin/users/:id`
 * **Body:** `{"full_name": "Jane", "department": "HR", "status": "active"}`
 * **Response (200 OK):**
   ```json
   {
-    "success": true,
-    "message": "User updated"
+    "code": 200,
+    "status": "OK",
+    "message": "User updated successfully",
+    "data": {
+      "id": "user-uuid",
+      "department": "HR"
+    }
   }
   ```
 
-**DELETE** `/admin/users/:id`
+* **Use for:** Completely removing an employee from the system.
+* **DELETE** `/admin/users/:id`
 * **Response (200 OK):**
   ```json
   {
-    "success": true,
-    "message": "User deleted"
+    "code": 200,
+    "status": "OK",
+    "message": "User deleted successfully",
+    "data": null
   }
   ```
 
 ### 5.2 Device Management
-**GET** `/admin/devices?page=1&limit=20`
+* **Use for:** Listing all registered physical palm scanners and checking their last seen status.
+* **GET** `/admin/devices`
 * **Response (200 OK):**
   ```json
   {
-    "success": true,
+    "code": 200,
+    "status": "OK",
+    "message": "Devices retrieved successfully",
     "data": [
       {
         "id": "device-uuid",
@@ -394,32 +485,46 @@ This documentation covers **every** endpoint in the system, organized by applica
   }
   ```
 
-**POST** `/admin/devices`
+* **Use for:** Registering a newly purchased hardware device into the system.
+* **POST** `/admin/devices`
 * **Body:** `{"device_code": "DEV-002", "name": "Entrance B", "location": "Lobby"}`
 * **Response (201 Created):**
   ```json
   {
-    "success": true,
-    "message": "Device registered"
+    "code": 201,
+    "status": "Created",
+    "message": "Device created successfully",
+    "data": {
+      "id": "device-uuid",
+      "device_code": "DEV-002"
+    }
   }
   ```
 
-**PATCH** `/admin/devices/:id`
+* **Use for:** Renaming a device or marking it as inactive for maintenance.
+* **PATCH** `/admin/devices/:id`
 * **Body:** `{"name": "New Name", "status": "inactive"}`
 * **Response (200 OK):**
   ```json
   {
-    "success": true,
-    "message": "Device updated"
+    "code": 200,
+    "status": "OK",
+    "message": "Device updated successfully",
+    "data": {
+      "id": "device-uuid"
+    }
   }
   ```
 
 ### 5.3 Global Attendance Monitoring
-**GET** `/admin/attendance?page=1&limit=50`
+* **Use for:** Displaying the global company-wide attendance log on the admin dashboard.
+* **GET** `/admin/attendance?page=1&limit=50`
 * **Response (200 OK):**
   ```json
   {
-    "success": true,
+    "code": 200,
+    "status": "OK",
+    "message": "Attendance history retrieved successfully",
     "data": [
       {
          "id": "att-123",
@@ -431,9 +536,12 @@ This documentation covers **every** endpoint in the system, organized by applica
          "status": "present"
       }
     ],
-    "pagination": { "page": 1, "limit": 50, "total": 1000 }
+    "meta": {
+      "pagination": { "page": 1, "limit": 50, "total": 1000 }
+    }
   }
   ```
 
-**GET** `/admin/attendance/users/:user_id/history?page=1&limit=30`
+* **Use for:** Investigating the attendance history of a specific employee.
+* **GET** `/admin/attendance/users/:user_id/history?page=1&limit=30`
 * **Response (200 OK):** (Same format as above, filtered for the specific user ID).
