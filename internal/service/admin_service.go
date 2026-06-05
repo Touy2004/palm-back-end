@@ -10,17 +10,20 @@ type AdminService struct {
 	userRepo       *repository.UserRepository
 	deviceRepo     *repository.DeviceRepository
 	attendanceRepo *repository.AttendanceRepository
+	palmRepo       *repository.PalmRepository
 }
 
 func NewAdminService(
 	userRepo *repository.UserRepository,
 	deviceRepo *repository.DeviceRepository,
 	attendanceRepo *repository.AttendanceRepository,
+	palmRepo *repository.PalmRepository,
 ) *AdminService {
 	return &AdminService{
 		userRepo:       userRepo,
 		deviceRepo:     deviceRepo,
 		attendanceRepo: attendanceRepo,
+		palmRepo:       palmRepo,
 	}
 }
 
@@ -138,4 +141,8 @@ func (s *AdminService) GetAttendanceHistory(page, limit int) ([]model.Attendance
 
 func (s *AdminService) GetUserAttendanceHistory(userID string, page, limit int) ([]model.AttendanceLog, int64, error) {
 	return s.attendanceRepo.FindByUserID(userID, page, limit)
+}
+
+func (s *AdminService) GetUserPalmTemplates(userID string) ([]model.PalmTemplate, error) {
+	return s.palmRepo.FindByUserID(userID)
 }

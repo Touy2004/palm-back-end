@@ -2,7 +2,7 @@
 
 This documentation covers **every** endpoint in the system, organized by application roles: Public/Auth, Mobile App (User), Hardware Device (Raspberry Pi), and Web Admin (Admin).
 
-**Base URL:** `http://localhost:8080/api/v1`
+**Base URL:** `https://api.phoudthasone.com/api/v1`
 
 ---
 
@@ -460,6 +460,26 @@ These endpoints power the Admin Dashboard.
     "status": "OK",
     "message": "User deleted successfully",
     "data": null
+  }
+  ```
+
+* **Use for:** Checking if an employee has already registered their palm in the system.
+* **GET** `/admin/users/:user_id/palm-templates`
+* **Response (200 OK):**
+  ```json
+  {
+    "code": 200,
+    "status": "OK",
+    "message": "User palm templates retrieved successfully",
+    "data": [
+      {
+        "id": "tpl-123",
+        "hand_side": "right",
+        "status": "active",
+        "created_at": "2026-06-01T12:00:00Z",
+        "updated_at": "2026-06-01T12:00:00Z"
+      }
+    ]
   }
   ```
 

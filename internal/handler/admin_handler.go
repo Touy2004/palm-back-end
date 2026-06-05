@@ -153,3 +153,14 @@ func (h *AdminHandler) GetUserAttendanceHistory(c *fiber.Ctx) error {
 		},
 	})
 }
+
+func (h *AdminHandler) GetUserPalmTemplates(c *fiber.Ctx) error {
+	userID := c.Params("user_id")
+
+	templates, err := h.adminService.GetUserPalmTemplates(userID)
+	if err != nil {
+		return response.Error(c, fiber.StatusInternalServerError, "Failed to fetch user palm templates", err.Error())
+	}
+
+	return response.Success(c, fiber.StatusOK, "User palm templates retrieved successfully", templates)
+}

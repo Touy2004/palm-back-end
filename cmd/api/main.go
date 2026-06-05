@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/Touy2004/palm-back-end/config"
@@ -49,7 +48,7 @@ func main() {
 
 	// Init services
 	authService := service.NewAuthService(userRepo, jwtPkg)
-	adminService := service.NewAdminService(userRepo, deviceRepo, attendanceRepo)
+	adminService := service.NewAdminService(userRepo, deviceRepo, attendanceRepo, palmRepo)
 	userService := service.NewUserService(userRepo, palmRepo, attendanceRepo)
 	deviceService := service.NewDeviceService(deviceRepo, pairingRepo)
 	pairingService := service.NewPairingService(pairingRepo)
@@ -75,9 +74,7 @@ func main() {
 
 	// Setup routes
 	handler.SetupRoutes(app, h, m)
-	for _, route := range app.GetRoutes() {
-		fmt.Printf("%s %s\n", route.Method, route.Path)
-	}
+
 	// Start server
 	log.Fatal(app.Listen(":" + cfg.AppPort))
 }
