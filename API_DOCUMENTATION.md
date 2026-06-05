@@ -416,7 +416,25 @@ These endpoints power the Admin Dashboard.
 *Requires Header: `Authorization: Bearer <access_token>`*
 *Requires Role: `admin`*
 
-### 5.1 User Management
+### 5.1 Dashboard Summary
+* **Use for:** Fetching high-level statistics for the admin dashboard (total users, devices, active templates, and today's check-ins).
+* **GET** `/admin/dashboard/summary`
+* **Response (200 OK):**
+  ```json
+  {
+    "code": 200,
+    "status": "OK",
+    "message": "Dashboard summary retrieved successfully",
+    "data": {
+      "total_users": 150,
+      "total_devices": 5,
+      "active_palm_templates": 120,
+      "check_ins_today": 85
+    }
+  }
+  ```
+
+### 5.2 User Management
 * **Use for:** Listing all employees in the system for the admin panel.
 * **GET** `/admin/users`
 * **Response (200 OK):**

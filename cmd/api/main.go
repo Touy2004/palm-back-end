@@ -39,6 +39,7 @@ func main() {
 	pairingRepo := repository.NewPairingRepository(db)
 	palmRepo := repository.NewPalmRepository(db)
 	attemptRepo := repository.NewAttemptRepository(db)
+	adminRepo := repository.NewAdminRepository(db)
 
 	// Init Crypto Service (using dummy 32-byte key for dev)
 	cryptoSvc, err := service.NewCryptoService("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=")
@@ -48,7 +49,7 @@ func main() {
 
 	// Init services
 	authService := service.NewAuthService(userRepo, jwtPkg)
-	adminService := service.NewAdminService(userRepo, deviceRepo, attendanceRepo, palmRepo)
+	adminService := service.NewAdminService(adminRepo, userRepo, deviceRepo, attendanceRepo, palmRepo)
 	userService := service.NewUserService(userRepo, palmRepo, attendanceRepo)
 	deviceService := service.NewDeviceService(deviceRepo, pairingRepo)
 	pairingService := service.NewPairingService(pairingRepo)

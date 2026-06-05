@@ -176,3 +176,11 @@ func (h *AdminHandler) DeleteUserPalmTemplate(c *fiber.Ctx) error {
 
 	return response.Success(c, fiber.StatusOK, "User palm template deleted successfully", nil)
 }
+
+func (h *AdminHandler) GetDashboardSummary(c *fiber.Ctx) error {
+	summary, err := h.adminService.GetDashboardSummary()
+	if err != nil {
+		return response.Error(c, fiber.StatusInternalServerError, "Failed to get dashboard summary", err.Error())
+	}
+	return response.Success(c, fiber.StatusOK, "Dashboard summary retrieved successfully", summary)
+}

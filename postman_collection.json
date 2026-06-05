@@ -316,6 +316,19 @@
 			"name": "5. Web Admin",
 			"item": [
 				{
+					"name": "Get Dashboard Summary",
+					"request": {
+						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/dashboard/summary",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "dashboard", "summary"]
+						}
+					}
+				},
+				{
 					"name": "Get Users",
 					"request": {
 						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },

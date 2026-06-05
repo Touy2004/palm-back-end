@@ -7,6 +7,7 @@ import (
 )
 
 type AdminService struct {
+	adminRepo      *repository.AdminRepository
 	userRepo       *repository.UserRepository
 	deviceRepo     *repository.DeviceRepository
 	attendanceRepo *repository.AttendanceRepository
@@ -14,12 +15,14 @@ type AdminService struct {
 }
 
 func NewAdminService(
+	adminRepo *repository.AdminRepository,
 	userRepo *repository.UserRepository,
 	deviceRepo *repository.DeviceRepository,
 	attendanceRepo *repository.AttendanceRepository,
 	palmRepo *repository.PalmRepository,
 ) *AdminService {
 	return &AdminService{
+		adminRepo:      adminRepo,
 		userRepo:       userRepo,
 		deviceRepo:     deviceRepo,
 		attendanceRepo: attendanceRepo,
@@ -141,6 +144,10 @@ func (s *AdminService) GetAttendanceHistory(page, limit int) ([]model.Attendance
 
 func (s *AdminService) GetUserAttendanceHistory(userID string, page, limit int) ([]model.AttendanceLog, int64, error) {
 	return s.attendanceRepo.FindByUserID(userID, page, limit)
+}
+
+func (s *AdminService) GetDashboardSummary() (*repository.DashboardSummary, error) {
+	return s.adminRepo.GetDashboardSummary()
 }
 
 func (s *AdminService) GetUserPalmTemplates(userID string) ([]model.PalmTemplate, error) {
