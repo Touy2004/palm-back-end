@@ -13,7 +13,7 @@ This happens when the hardware sensor detects a fake hand (e.g., a photograph or
 
 **cURL Command:**
 ```bash
-curl -X POST http://localhost:8080/api/v1/devices/attendance/palm \
+curl -X POST https://api.phoudthasone.com/api/v1/api/v1/devices/attendance/palm \
   -H "Content-Type: application/json" \
   -d '{
     "device_code": "DEV-001",
@@ -36,7 +36,7 @@ This happens when a real hand is scanned (liveness passed), but the embedding fe
 
 **cURL Command:**
 ```bash
-curl -X POST http://localhost:8080/api/v1/devices/attendance/palm \
+curl -X POST https://api.phoudthasone.com/api/v1/api/v1/devices/attendance/palm \
   -H "Content-Type: application/json" \
   -d '{
     "device_code": "DEV-001",
@@ -65,7 +65,7 @@ This happens when a valid palm is scanned and successfully recognized, but the e
 
 **cURL Command:** *(Replace embeddings with the actual enrolled embeddings)*
 ```bash
-curl -X POST http://localhost:8080/api/v1/devices/attendance/palm \
+curl -X POST https://api.phoudthasone.com/api/v1/api/v1/devices/attendance/palm \
   -H "Content-Type: application/json" \
   -d '{
     "device_code": "DEV-001",
@@ -88,7 +88,7 @@ While poor thermal quality won't automatically fail the authentication *if* the 
 
 **cURL Command:**
 ```bash
-curl -X POST http://localhost:8080/api/v1/devices/attendance/palm \
+curl -X POST https://api.phoudthasone.com/api/v1/api/v1/devices/attendance/palm \
   -H "Content-Type: application/json" \
   -d '{
     "device_code": "DEV-001",
