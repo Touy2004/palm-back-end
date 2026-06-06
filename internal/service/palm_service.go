@@ -6,8 +6,6 @@ import (
 	"errors"
 	"math"
 	"time"
-
-	"github.com/google/uuid"
 	"github.com/Touy2004/palm-back-end/internal/model"
 	"github.com/Touy2004/palm-back-end/internal/repository"
 )
@@ -16,20 +14,17 @@ type PalmService struct {
 	palmRepo     *repository.PalmRepository
 	pairingRepo  *repository.PairingRepository
 	cryptoSvc    *CryptoService
-	attemptRepo  *repository.AttemptRepository
 }
 
 func NewPalmService(
 	palmRepo *repository.PalmRepository,
 	pairingRepo *repository.PairingRepository,
 	cryptoSvc *CryptoService,
-	attemptRepo *repository.AttemptRepository,
 ) *PalmService {
 	return &PalmService{
 		palmRepo:    palmRepo,
 		pairingRepo: pairingRepo,
 		cryptoSvc:   cryptoSvc,
-		attemptRepo: attemptRepo,
 	}
 }
 
@@ -147,7 +142,6 @@ func (s *PalmService) EnrollPalm(input EnrollInput) (*model.PalmTemplate, error)
 	}
 
 	if !input.LivenessPassed {
-		_ = s.logAttempt(input, *session.UserID, session.DeviceID, "failed", "Liveness check failed")
 		return nil, errors.New("liveness check failed")
 	}
 
@@ -187,24 +181,5 @@ func (s *PalmService) EnrollPalm(input EnrollInput) (*model.PalmTemplate, error)
 	session.CompletedAt = &now
 	_ = s.pairingRepo.Update(session)
 
-	// 6. Log success attempt
-	_ = s.logAttempt(input, *session.UserID, session.DeviceID, "success", "")
-
 	return template, nil
-}
-
-func (s *PalmService) logAttempt(input EnrollInput, userID uuid.UUID, deviceID uuid.UUID, result string, reason string) error {
-	attempt := &model.PalmAuthAttempt{
-		UserID:         &userID,
-		DeviceID:       &deviceID,
-		Action:         "enroll",
-		LivenessPassed: input.LivenessPassed,
-		QualityScore:   &input.QualityScore,
-		ThermalMin:     &input.ThermalMin,
-		ThermalMax:     &input.ThermalMax,
-		ThermalAvg:     &input.ThermalAvg,
-		Result:         result,
-		FailureReason:  reason,
-	}
-	return s.attemptRepo.Create(attempt)
 }

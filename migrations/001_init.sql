@@ -79,21 +79,3 @@ CREATE TABLE attendance_logs (
     UNIQUE(user_id, attendance_date)
 );
 
--- 9.6 Palm Authentication Attempts (Audit Log)
-CREATE TABLE palm_auth_attempts (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
-    device_id UUID REFERENCES devices(id) ON DELETE SET NULL,
-    template_id UUID REFERENCES palm_templates(id) ON DELETE SET NULL,
-    action VARCHAR(50) NOT NULL,
-    score NUMERIC(6, 5),
-    threshold NUMERIC(5, 4),
-    liveness_passed BOOLEAN DEFAULT false,
-    quality_score NUMERIC(6, 5),
-    thermal_min NUMERIC(6, 2),
-    thermal_max NUMERIC(6, 2),
-    thermal_avg NUMERIC(6, 2),
-    result VARCHAR(30) NOT NULL,
-    failure_reason TEXT,
-    created_at TIMESTAMP DEFAULT NOW()
-);

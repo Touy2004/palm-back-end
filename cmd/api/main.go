@@ -38,7 +38,6 @@ func main() {
 	attendanceRepo := repository.NewAttendanceRepository(db)
 	pairingRepo := repository.NewPairingRepository(db)
 	palmRepo := repository.NewPalmRepository(db)
-	attemptRepo := repository.NewAttemptRepository(db)
 	adminRepo := repository.NewAdminRepository(db)
 
 	// Init Crypto Service (using dummy 32-byte key for dev)
@@ -53,8 +52,8 @@ func main() {
 	userService := service.NewUserService(userRepo, palmRepo, attendanceRepo)
 	deviceService := service.NewDeviceService(deviceRepo, pairingRepo)
 	pairingService := service.NewPairingService(pairingRepo)
-	palmService := service.NewPalmService(palmRepo, pairingRepo, cryptoSvc, attemptRepo)
-	attendanceService := service.NewAttendanceService(attendanceRepo, palmRepo, deviceRepo, userRepo, attemptRepo, cryptoSvc)
+	palmService := service.NewPalmService(palmRepo, pairingRepo, cryptoSvc)
+	attendanceService := service.NewAttendanceService(attendanceRepo, palmRepo, deviceRepo, userRepo, cryptoSvc)
 
 	// Init handlers
 	h := &handler.Handler{
