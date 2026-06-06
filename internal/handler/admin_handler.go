@@ -188,3 +188,14 @@ func (h *AdminHandler) GetDashboardSummary(c *fiber.Ctx) error {
 	}
 	return response.Success(c, fiber.StatusOK, "Dashboard summary retrieved successfully", summary)
 }
+
+func (h *AdminHandler) GetReports(c *fiber.Ctx) error {
+	month := c.Query("month")           // e.g. "2026-06"
+	department := c.Query("department") // e.g. "All departments" or "Engineering"
+
+	reports, err := h.adminService.GetReports(month, department)
+	if err != nil {
+		return response.Error(c, fiber.StatusInternalServerError, "Failed to get reports", err.Error())
+	}
+	return response.Success(c, fiber.StatusOK, "Reports retrieved successfully", reports)
+}

@@ -227,3 +227,64 @@ func (r *AttendanceRepository) Update(log *model.AttendanceLog) error {
 	}
 	return nil
 }
+
+func (r *AttendanceRepository) FindAllByDateRange(startDate, endDate string) ([]model.AttendanceLog, error) {
+	query := `
+		SELECT a.id, a.user_id, a.device_id, a.attendance_date, a.check_in_time, a.check_out_time, 
+		       a.check_in_score, a.check_out_score, a.check_in_liveness, a.check_out_liveness, a.status, a.created_at,
+		       d.name, d.device_code
+		FROM attendance_logs a
+		LEFT JOIN devices d ON a.device_id = d.id
+		WHERE a.attendance_date >= $1 AND a.attendance_date <= $2
+	`
+	
+	rows, err := r.db.Query(context.Background(), query, startDate, endDate)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var logs []model.AttendanceLog
+	for rows.Next() {
+		var log model.AttendanceLog
+		var deviceID *uuid.UUID
+		var checkInTime, checkOutTime *time.Time
+		var checkInScore, checkOutScore *float64
+		var deviceName, deviceCode *string
+
+		err := rows.Scan(
+			&log.ID, &log.UserID, &deviceID, &log.AttendanceDate, &checkInTime, &checkOutTime,
+			&checkInScore, &checkOutScore, &log.CheckInLiveness, &log.CheckOutLiveness, &log.Status, &log.CreatedAt,
+			&deviceName, &deviceCode,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		if deviceID != nil {
+			log.DeviceID = deviceID
+		}
+		if checkInTime != nil {
+			log.CheckInTime = checkInTime
+		}
+		if checkOutTime != nil {
+			log.CheckOutTime = checkOutTime
+		}
+		if checkInScore != nil {
+			log.CheckInScore = checkInScore
+		}
+		if checkOutScore != nil {
+			log.CheckOutScore = checkOutScore
+		}
+		if deviceName != nil {
+			log.DeviceName = deviceName
+		}
+		if deviceCode != nil {
+			log.DeviceCode = deviceCode
+		}
+
+		logs = append(logs, log)
+	}
+
+	return logs, nil
+}

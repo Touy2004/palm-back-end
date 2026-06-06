@@ -1,6 +1,9 @@
 package service
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/Touy2004/palm-back-end/internal/model"
 	"github.com/Touy2004/palm-back-end/internal/repository"
 	"github.com/Touy2004/palm-back-end/pkg/hash"
@@ -156,4 +159,117 @@ func (s *AdminService) GetUserPalmTemplates(userID string) ([]model.PalmTemplate
 
 func (s *AdminService) DeleteUserPalmTemplate(userID, templateID string) error {
 	return s.palmRepo.Delete(templateID, userID)
+}
+
+func calculateWorkDays(start, end time.Time) int {
+	days := 0
+	current := start
+	for !current.After(end) {
+		if current.Weekday() != time.Saturday && current.Weekday() != time.Sunday {
+			days++
+		}
+		current = current.AddDate(0, 0, 1)
+	}
+	return days
+}
+
+func (s *AdminService) GetReports(month, department string) ([]model.ReportRow, error) {
+	// 1. Parse month (e.g., "2026-06")
+	layout := "2006-01"
+	startMonth, err := time.Parse(layout, month)
+	if err != nil {
+		startMonth = time.Now()
+	}
+
+	// Calculate start and end dates
+	startDate := time.Date(startMonth.Year(), startMonth.Month(), 1, 0, 0, 0, 0, time.Local)
+	endDate := startDate.AddDate(0, 1, -1) // Last day of month
+
+	// For workdays calculation, cap the end date to today if we're querying the current month
+	workEnd := endDate
+	now := time.Now()
+	if now.Before(endDate) {
+		workEnd = now
+	}
+	
+	totalWorkDays := calculateWorkDays(startDate, workEnd)
+
+	// Format for DB query
+	startDateStr := startDate.Format("2006-01-02")
+	endDateStr := endDate.Format("2006-01-02")
+
+	// 2. Fetch Users
+	users, err := s.userRepo.FindAll()
+	if err != nil {
+		return nil, err
+	}
+
+	// 3. Fetch Logs
+	logs, err := s.attendanceRepo.FindAllByDateRange(startDateStr, endDateStr)
+	if err != nil {
+		return nil, err
+	}
+
+	// Map logs by user
+	logsByUser := make(map[string][]model.AttendanceLog)
+	for _, l := range logs {
+		logsByUser[l.UserID.String()] = append(logsByUser[l.UserID.String()], l)
+	}
+
+	// 4. Aggregate
+	var reports []model.ReportRow
+	for _, u := range users {
+		if u.Status != "active" {
+			continue
+		}
+		if department != "" && department != "All departments" && u.Department != department {
+			continue
+		}
+
+		userLogs := logsByUser[u.ID.String()]
+		var present, late, incomplete int
+		var totalDurationMinutes float64
+
+		for _, l := range userLogs {
+			if l.Status == "present" {
+				present++
+			} else if l.Status == "late" {
+				late++
+			} else if l.Status == "incomplete" {
+				incomplete++
+			}
+
+			// Calculate duration if check_in and check_out exist
+			if l.CheckInTime != nil && l.CheckOutTime != nil {
+				duration := l.CheckOutTime.Sub(*l.CheckInTime)
+				totalDurationMinutes += duration.Minutes()
+			}
+		}
+
+		absent := totalWorkDays - (present + late + incomplete)
+		if absent < 0 {
+			absent = 0
+		}
+
+		completedDays := present + late
+		avgHoursStr := "—"
+		if completedDays > 0 {
+			avgMins := totalDurationMinutes / float64(completedDays)
+			h := int(avgMins) / 60
+			m := int(avgMins) % 60
+			avgHoursStr = fmt.Sprintf("%dh %dm", h, m)
+		}
+
+		reports = append(reports, model.ReportRow{
+			ID:         u.ID.String(),
+			UserID:     u.ID.String(),
+			Present:    present,
+			Late:       late,
+			Incomplete: incomplete,
+			Absent:     absent,
+			AvgHours:   avgHoursStr,
+		})
+	}
+
+	return reports, nil
 }

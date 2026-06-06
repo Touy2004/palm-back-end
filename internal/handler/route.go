@@ -69,6 +69,9 @@ func SetupRoutes(app *fiber.App, h *Handler, m *Middleware) {
 	admin.Get("/attendance", h.Admin.GetAttendanceHistory)
 	admin.Get("/attendance/users/:user_id/history", h.Admin.GetUserAttendanceHistory)
 
+	// Admin Reports
+	admin.Get("/reports", h.Admin.GetReports)
+
 	// Device endpoints (Hardware APIs)
 	devices := api.Group("/devices")
 	devices.Post("/heartbeat", h.Device.Heartbeat)
