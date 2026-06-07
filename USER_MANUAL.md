@@ -208,3 +208,47 @@ flowchart TD
 * **Users & Attendance (1-to-Many):** One user has many attendance logs (one per day).
 * **Devices & Sessions (1-to-Many):** A device generates unique pairing sessions (QR codes) for users to scan.
 * **Devices & Attendance (1-to-Many):** A device processes many attendance check-ins.
+
+---
+
+## 4. Process Hierarchy Chart
+
+The Process Hierarchy Chart (or Functional Decomposition Diagram) breaks down the entire system into its core functional modules and their sub-processes.
+
+```mermaid
+flowchart TD
+    %% Main System
+    System[Palm Recognition Attendance System]:::root
+    
+    %% Level 1 Modules
+    System --> UM[1. User Management]:::module
+    System --> DM[2. Device Management]:::module
+    System --> PE[3. Palm Enrollment]:::module
+    System --> AP[4. Attendance Processing]:::module
+    System --> RA[5. Reporting & Analytics]:::module
+    
+    %% Level 2 Processes
+    UM --> UM1[1.1 Add Employee]:::process
+    UM --> UM2[1.2 Edit Profile]:::process
+    UM --> UM3[1.3 Manage Status]:::process
+    
+    DM --> DM1[2.1 Register Device]:::process
+    DM --> DM2[2.2 Monitor Status]:::process
+    
+    PE --> PE1[3.1 Generate QR Code]:::process
+    PE --> PE2[3.2 Mobile Approval]:::process
+    PE --> PE3[3.3 Capture Palm]:::process
+    
+    AP --> AP1[4.1 Scan Palm]:::process
+    AP --> AP2[4.2 Verify Identity]:::process
+    AP --> AP3[4.3 Log Attendance]:::process
+    
+    RA --> RA1[5.1 Live Dashboard]:::process
+    RA --> RA2[5.2 Generate Reports]:::process
+    RA --> RA3[5.3 Personal History]:::process
+
+    %% Styling
+    classDef root fill:#1e293b,stroke:#000,stroke-width:2px,color:#fff,font-weight:bold
+    classDef module fill:#3b82f6,stroke:#1e40af,stroke-width:1px,color:#fff,font-weight:bold
+    classDef process fill:#f8fafc,stroke:#94a3b8,stroke-width:1px,color:#334155
+```
