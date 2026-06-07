@@ -110,6 +110,83 @@ erDiagram
     DEVICES |o--o{ ATTENDANCE_LOGS : "scanned by"
 ```
 
+### Alternative: Chen's E-R Notation (Example Style)
+
+If you prefer the classical entity-relationship mapping (like in academic papers), here is the same core structure modeled in Chen's E-R notation style:
+
+```mermaid
+flowchart TD
+    %% Styling
+    classDef entity fill:#fff,stroke:#000,stroke-width:1px;
+    classDef attribute fill:#fff,stroke:#000,stroke-width:1px,rx:20,ry:20;
+    classDef relationship fill:#fff,stroke:#000,stroke-width:1px,shape:diamond;
+    classDef primaryKey fill:#fff,stroke:#000,stroke-width:1px,rx:20,ry:20,text-decoration:underline;
+
+    %% Entities
+    User[User]:::entity
+    PalmTemplate[Palm_Template]:::entity
+    AttendanceLog[Attendance_Log]:::entity
+    Device[Device]:::entity
+
+    %% Relationships
+    Has{Has}:::relationship
+    Logs{Logs}:::relationship
+    ScannedBy{Scanned_By}:::relationship
+
+    %% Connections for relationships
+    User ---|1| Has ---|N| PalmTemplate
+    User ---|1| Logs ---|N| AttendanceLog
+    Device ---|1| ScannedBy ---|N| AttendanceLog
+
+    %% Attributes for User
+    U_ID([user_id]):::primaryKey
+    U_EmpCode([employee_code]):::attribute
+    U_Name([full_name]):::attribute
+    U_Phone([phone]):::attribute
+    U_Role([role]):::attribute
+    U_Pass([password_hash]):::attribute
+
+    User --- U_ID
+    User --- U_EmpCode
+    User --- U_Name
+    User --- U_Phone
+    User --- U_Role
+    User --- U_Pass
+
+    %% Attributes for PalmTemplate
+    PT_ID([template_id]):::primaryKey
+    PT_Hand([hand_side]):::attribute
+    PT_Encrypted([template_encrypted blob]):::attribute
+    PT_Status([status]):::attribute
+
+    PalmTemplate --- PT_ID
+    PalmTemplate --- PT_Hand
+    PalmTemplate --- PT_Encrypted
+    PalmTemplate --- PT_Status
+
+    %% Attributes for AttendanceLog
+    AL_ID([log_id]):::primaryKey
+    AL_Date([attendance_date]):::attribute
+    AL_InTime([check_in_time]):::attribute
+    AL_Status([status]):::attribute
+    AL_Score([confidence_score float]):::attribute
+
+    AttendanceLog --- AL_ID
+    AttendanceLog --- AL_Date
+    AttendanceLog --- AL_InTime
+    AttendanceLog --- AL_Status
+    AttendanceLog --- AL_Score
+
+    %% Attributes for Device
+    D_ID([device_id]):::primaryKey
+    D_Code([device_code]):::attribute
+    D_Name([name]):::attribute
+
+    Device --- D_ID
+    Device --- D_Code
+    Device --- D_Name
+```
+
 ### Understanding the Relationships:
 * **Users & Palm Templates (1-to-Many):** One user can have multiple palm templates (e.g., left hand, right hand).
 * **Users & Attendance (1-to-Many):** One user has many attendance logs (one per day).
