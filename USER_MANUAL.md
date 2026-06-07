@@ -127,16 +127,21 @@ flowchart TD
     PalmTemplate[Palm_Template]:::entity
     AttendanceLog[Attendance_Log]:::entity
     Device[Device]:::entity
+    DevicePairingSession[Device_Pairing_Session]:::entity
 
     %% Relationships
     Has{Has}:::relationship
     Logs{Logs}:::relationship
     ScannedBy{Scanned_By}:::relationship
+    Creates{Creates}:::relationship
+    Approves{Approves}:::relationship
 
     %% Connections for relationships
     User ---|1| Has ---|N| PalmTemplate
     User ---|1| Logs ---|N| AttendanceLog
     Device ---|1| ScannedBy ---|N| AttendanceLog
+    Device ---|1| Creates ---|N| DevicePairingSession
+    User ---|1| Approves ---|N| DevicePairingSession
 
     %% Attributes for User
     U_ID([user_id]):::primaryKey
@@ -185,6 +190,17 @@ flowchart TD
     Device --- D_ID
     Device --- D_Code
     Device --- D_Name
+
+    %% Attributes for DevicePairingSession
+    DPS_ID([session_id]):::primaryKey
+    DPS_Token([session_token]):::attribute
+    DPS_Purpose([purpose]):::attribute
+    DPS_Status([status]):::attribute
+
+    DevicePairingSession --- DPS_ID
+    DevicePairingSession --- DPS_Token
+    DevicePairingSession --- DPS_Purpose
+    DevicePairingSession --- DPS_Status
 ```
 
 ### Understanding the Relationships:
