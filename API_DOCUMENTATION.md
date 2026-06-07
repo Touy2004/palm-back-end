@@ -645,3 +645,27 @@ These endpoints power the Admin Dashboard.
   * `start_date` (optional): Filter records from this date (YYYY-MM-DD).
   * `end_date` (optional): Filter records up to this date (YYYY-MM-DD).
 * **Response (200 OK):** (Same format as above, filtered for the specific user ID).
+
+### 5.7 Get Attendance Reports Summary
+* **Use for:** Retrieving an aggregated summary of attendance for all employees, used for the monthly reports dashboard.
+* **GET** `/admin/reports?month=2026-06&department=Engineering`
+  * `month` (optional): The month to generate the report for (YYYY-MM format). Defaults to current month.
+  * `department` (optional): Filter results by department name. Defaults to all departments.
+* **Response (200 OK):**
+```json
+{
+  "status": "success",
+  "message": "Reports retrieved successfully",
+  "data": [
+    {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "user_id": "123e4567-e89b-12d3-a456-426614174000",
+      "present": 20,
+      "late": 2,
+      "incomplete": 0,
+      "absent": 1,
+      "avgHours": "8h 15m"
+    }
+  ]
+}
+```

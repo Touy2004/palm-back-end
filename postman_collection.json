@@ -545,6 +545,23 @@
 							]
 						}
 					}
+				},
+				{
+					"name": "Get Reports",
+					"request": {
+						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/reports?month=2026-06&department=Engineering",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "reports"],
+							"query": [
+								{ "key": "month", "value": "2026-06" },
+								{ "key": "department", "value": "Engineering", "disabled": true }
+							]
+						}
+					}
 				}
 			]
 		}
