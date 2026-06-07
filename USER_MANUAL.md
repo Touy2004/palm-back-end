@@ -341,3 +341,113 @@ flowchart TD
     classDef process fill:#eff6ff,stroke:#2563eb,stroke-width:2px,shape:circle
     classDef datastore fill:#fcfdfd,stroke:#0f172a,stroke-width:2px,shape:cylinder
 ```
+
+### 5.3 DFD Level 2 (Process Decomposition)
+Below are the decomposed Data Flow Diagrams for each of the main processes (1.0 to 4.0), showing the specific sub-processes involved.
+
+#### Process 1: Manage Setup
+```mermaid
+flowchart LR
+    Admin[Admin]:::entity
+    
+    P1_1((1.1<br/>Create/Edit User)):::process
+    P1_2((1.2<br/>Register Device)):::process
+    
+    D1[(D1: Users DB)]:::datastore
+    D2[(D2: Devices DB)]:::datastore
+    
+    Admin -- "User Data" --> P1_1
+    Admin -- "Device Data" --> P1_2
+    
+    P1_1 -- "Write Profile" --> D1
+    P1_2 -- "Write Device details" --> D2
+
+    classDef entity fill:#f1f5f9,stroke:#334155,stroke-width:2px,shape:rect
+    classDef process fill:#eff6ff,stroke:#2563eb,stroke-width:2px,shape:circle
+    classDef datastore fill:#fcfdfd,stroke:#0f172a,stroke-width:2px,shape:cylinder
+```
+
+#### Process 2: Enroll Palm
+```mermaid
+flowchart TD
+    Device[Hardware Scanner]:::entity
+    Employee[Employee]:::entity
+    
+    P2_1((2.1<br/>Generate QR Session)):::process
+    P2_2((2.2<br/>Approve Session)):::process
+    P2_3((2.3<br/>Capture & Encrypt Palm)):::process
+    
+    D1[(D1: Users DB)]:::datastore
+    D3[(D3: Templates DB)]:::datastore
+    
+    Device -- "Init Session" --> P2_1
+    P2_1 -- "Show QR" --> Device
+    
+    Employee -- "Scan & Approve via App" --> P2_2
+    P2_2 -- "Validate User" --> D1
+    P2_2 -- "Session Approved" --> P2_3
+    
+    Device -- "Send Palm Data" --> P2_3
+    P2_3 -- "Save Secure Vector" --> D3
+
+    classDef entity fill:#f1f5f9,stroke:#334155,stroke-width:2px,shape:rect
+    classDef process fill:#eff6ff,stroke:#2563eb,stroke-width:2px,shape:circle
+    classDef datastore fill:#fcfdfd,stroke:#0f172a,stroke-width:2px,shape:cylinder
+```
+
+#### Process 3: Process Attendance
+```mermaid
+flowchart TD
+    Device[Hardware Scanner]:::entity
+    
+    P3_1((3.1<br/>Read Palm Vector)):::process
+    P3_2((3.2<br/>Match Identity)):::process
+    P3_3((3.3<br/>Record Attendance Log)):::process
+    
+    D3[(D3: Templates DB)]:::datastore
+    D4[(D4: Attendance DB)]:::datastore
+    
+    Device -- "Scanned Palm Data" --> P3_1
+    P3_1 -- "Forward Vector" --> P3_2
+    
+    P3_2 -- "Fetch Templates" --> D3
+    P3_2 -- "Matched User ID" --> P3_3
+    
+    P3_3 -- "Log check-in/out" --> D4
+    P3_3 -- "Success/Fail Result" --> Device
+
+    classDef entity fill:#f1f5f9,stroke:#334155,stroke-width:2px,shape:rect
+    classDef process fill:#eff6ff,stroke:#2563eb,stroke-width:2px,shape:circle
+    classDef datastore fill:#fcfdfd,stroke:#0f172a,stroke-width:2px,shape:cylinder
+```
+
+#### Process 4: Generate Reports
+```mermaid
+flowchart LR
+    Admin[Admin]:::entity
+    Employee[Employee]:::entity
+    
+    P4_1((4.1<br/>Query Daily History)):::process
+    P4_2((4.2<br/>Compute Monthly Summary)):::process
+    P4_3((4.3<br/>Export Formatted Data)):::process
+    
+    D1[(D1: Users DB)]:::datastore
+    D4[(D4: Attendance DB)]:::datastore
+    
+    Employee -- "Request History" --> P4_1
+    Admin -- "Request Summary" --> P4_2
+    
+    D4 -- "Raw Logs" --> P4_1
+    D4 -- "Raw Logs" --> P4_2
+    D1 -- "User Depts/Roles" --> P4_2
+    
+    P4_1 -- "Process Data" --> P4_3
+    P4_2 -- "Aggregate Data" --> P4_3
+    
+    P4_3 -- "Dashboard & PDF/Excel" --> Admin
+    P4_3 -- "List View" --> Employee
+
+    classDef entity fill:#f1f5f9,stroke:#334155,stroke-width:2px,shape:rect
+    classDef process fill:#eff6ff,stroke:#2563eb,stroke-width:2px,shape:circle
+    classDef datastore fill:#fcfdfd,stroke:#0f172a,stroke-width:2px,shape:cylinder
+```
