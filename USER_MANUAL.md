@@ -451,3 +451,95 @@ flowchart LR
     classDef process fill:#eff6ff,stroke:#2563eb,stroke-width:2px,shape:circle
     classDef datastore fill:#fcfdfd,stroke:#0f172a,stroke-width:2px,shape:cylinder
 ```
+
+---
+
+## 6. Data Dictionary
+
+The following tables define the structure, data types, and constraints for each table in the database.
+
+### 6.1 `users`
+Stores all employee and administrator profiles.
+
+| Column Name | Data Type | Constraints | Description |
+|---|---|---|---|
+| `id` | UUID | Primary Key | Unique identifier for the user |
+| `employee_code` | VARCHAR(50) | Unique, Not Null | Public ID/Code for the employee |
+| `full_name` | VARCHAR(100) | Not Null | User's full name |
+| `email` | VARCHAR(100) | Unique | User's email address |
+| `phone` | VARCHAR(20) | Unique | User's phone number |
+| `password_hash` | VARCHAR(255) | Not Null | Bcrypt hashed password |
+| `role` | VARCHAR(20) | Default 'EMPLOYEE' | 'ADMIN' or 'EMPLOYEE' |
+| `department` | VARCHAR(50) | | Department the user belongs to |
+| `status` | VARCHAR(20) | Default 'active' | User account status (active/inactive) |
+| `created_at` | TIMESTAMP | Default NOW() | Profile creation time |
+| `updated_at` | TIMESTAMP | Default NOW() | Profile last update time |
+
+### 6.2 `devices`
+Stores physical hardware scanners registered to the system.
+
+| Column Name | Data Type | Constraints | Description |
+|---|---|---|---|
+| `id` | UUID | Primary Key | Unique identifier for the device |
+| `device_code` | VARCHAR(50) | Unique, Not Null | Serial number or hardware ID |
+| `name` | VARCHAR(100) | Not Null | Human-readable name (e.g. "Lobby Scanner") |
+| `location` | VARCHAR(100) | | Physical location of the device |
+| `status` | VARCHAR(20) | Default 'active' | Device operational status |
+| `last_seen_at` | TIMESTAMP | | Last time the device pinged the server |
+| `created_at` | TIMESTAMP | Default NOW() | Registration time |
+
+### 6.3 `device_pairing_sessions`
+Temporary sessions created when a scanner generates a QR code for palm enrollment.
+
+| Column Name | Data Type | Constraints | Description |
+|---|---|---|---|
+| `id` | UUID | Primary Key | Session identifier |
+| `device_id` | UUID | Foreign Key | The scanner generating the session |
+| `session_token` | TEXT | Unique, Not Null | The token embedded in the QR code |
+| `user_id` | UUID | Foreign Key | The user who approved the session |
+| `purpose` | VARCHAR(50) | Not Null | Usually 'enrollment' |
+| `status` | VARCHAR(30) | Default 'pending' | pending, approved, completed |
+| `expires_at` | TIMESTAMP | Not Null | When the QR code expires |
+| `scanned_at` | TIMESTAMP | | When the user scanned the QR |
+| `approved_at` | TIMESTAMP | | When the user clicked "Approve" |
+| `completed_at` | TIMESTAMP | | When the palm vector was saved |
+| `created_at` | TIMESTAMP | Default NOW() | Session creation time |
+
+### 6.4 `palm_templates`
+Securely stores the encrypted biometric vectors.
+
+| Column Name | Data Type | Constraints | Description |
+|---|---|---|---|
+| `id` | UUID | Primary Key | Template identifier |
+| `user_id` | UUID | Foreign Key, Not Null | The owner of the template |
+| `hand_side` | VARCHAR(10) | Not Null | 'left' or 'right' |
+| `template_encrypted` | BYTEA | Not Null | AES-256 encrypted vector data |
+| `template_nonce` | BYTEA | Not Null | Nonce used for decryption |
+| `embedding_dim` | INT | Default 128 | Vector dimensions |
+| `model_version` | VARCHAR(100) | Not Null | AI model used for extraction |
+| `threshold` | NUMERIC(5,4) | Default 0.8200 | Match threshold for this template |
+| `status` | VARCHAR(30) | Default 'active' | Template status |
+| `registered_device_id`| UUID | Foreign Key | Device used to capture template |
+| `created_at` | TIMESTAMP | Default NOW() | Enrollment time |
+| `updated_at` | TIMESTAMP | Default NOW() | Last update time |
+| `revoked_at` | TIMESTAMP | | If the template was revoked |
+
+### 6.5 `attendance_logs`
+Records daily check-ins and check-outs for all users.
+
+| Column Name | Data Type | Constraints | Description |
+|---|---|---|---|
+| `id` | UUID | Primary Key | Log identifier |
+| `user_id` | UUID | Foreign Key, Not Null | Employee who checked in |
+| `device_id` | UUID | Foreign Key | Scanner used for attendance |
+| `attendance_date` | DATE | Not Null | The calendar date of the log |
+| `check_in_time` | TIMESTAMP | | Exact time of first scan |
+| `check_out_time` | TIMESTAMP | | Exact time of latest scan |
+| `check_in_score` | NUMERIC(6,5) | | Biometric confidence score (0-1) |
+| `check_out_score`| NUMERIC(6,5) | | Biometric confidence score (0-1) |
+| `check_in_liveness`| BOOLEAN | Default false | Passed hardware anti-spoofing |
+| `check_out_liveness`| BOOLEAN | Default false | Passed hardware anti-spoofing |
+| `status` | VARCHAR(20) | Default 'present' | present, late, incomplete, absent |
+| `created_at` | TIMESTAMP | Default NOW() | Time the log was created |
+
+*(Note: `user_id` + `attendance_date` is a UNIQUE compound key to prevent duplicate daily records).*
