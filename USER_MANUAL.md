@@ -110,9 +110,9 @@ erDiagram
     DEVICES |o--o{ ATTENDANCE_LOGS : "scanned by"
 ```
 
-### Alternative: Chen's E-R Notation (Example Style)
+### 3.1 Chen's E-R Notation
 
-If you prefer the classical entity-relationship mapping (like in academic papers), here is the same core structure modeled in Chen's E-R notation style:
+Here is the database structure of the Palm Recognition Attendance System modeled in Chen's E-R notation style:
 
 ```mermaid
 flowchart TD
