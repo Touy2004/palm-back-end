@@ -543,3 +543,114 @@ Records daily check-ins and check-outs for all users.
 | `created_at` | TIMESTAMP | Default NOW() | Time the log was created |
 
 *(Note: `user_id` + `attendance_date` is a UNIQUE compound key to prevent duplicate daily records).*
+
+---
+
+## 7. Step-by-Step Flowcharts
+
+These flowcharts break down the exact step-by-step logic and decision paths for the system as a whole, and for each specific role (Admin, Employee, and Hardware Device).
+
+### 7.1 System Overview Flowchart
+This shows the high-level life cycle from system setup to daily usage.
+
+```mermaid
+flowchart TD
+    Start([Start]) --> Setup[Admin Registers Devices & Employees]
+    Setup --> App[Employee Logs into Mobile App]
+    App --> Enroll[Palm Enrollment Phase]
+    Enroll --> QR[Hardware shows QR Code]
+    QR --> Scan[Employee Scans QR & Approves]
+    Scan --> Capture[Hardware Captures Palm Vector]
+    Capture --> Daily[Daily Attendance Phase]
+    Daily --> ScanPalm[Employee Places Hand on Scanner]
+    ScanPalm --> Verify{Match Found?}
+    Verify -- Yes --> Log[Log Attendance as Present/Late]
+    Verify -- No --> Reject[Show Access Denied]
+    Log --> Dashboard[Admin Views Live Dashboard & Reports]
+    Reject --> Daily
+    Dashboard --> End([End])
+```
+
+### 7.2 Admin Flowchart
+The step-by-step flow for an Administrator using the Web Dashboard.
+
+```mermaid
+flowchart TD
+    Start([Admin Login]) --> Dashboard[View Live Dashboard]
+    Dashboard --> Choice{Choose Action}
+    
+    Choice -- Manage Users --> UserMenu[User Management]
+    UserMenu --> AddUser[Add/Edit Employee Details]
+    AddUser --> SaveUser[(Save to DB)]
+    SaveUser --> Choice
+    
+    Choice -- Manage Devices --> DeviceMenu[Device Management]
+    DeviceMenu --> AddDevice[Register New Scanner]
+    AddDevice --> SaveDevice[(Save to DB)]
+    SaveDevice --> Choice
+    
+    Choice -- View Reports --> ReportsMenu[Monthly Reports]
+    ReportsMenu --> Filter[Select Month & Department]
+    Filter --> View[View Aggregated Data]
+    View --> Export[Export PDF / Excel]
+    Export --> Choice
+    
+    Choice -- Logout --> End([End Session])
+```
+
+### 7.3 Employee Flowchart
+The step-by-step flow for an Employee using the Mobile App.
+
+```mermaid
+flowchart TD
+    Start([Open App]) --> Login[Login with Employee Credentials]
+    Login --> Home[View Home Dashboard]
+    Home --> Choice{Choose Action}
+    
+    Choice -- View History --> History[Check Personal Logs]
+    History --> List[View Daily Check-in/out Times]
+    List --> Choice
+    
+    Choice -- Enroll Palm --> ScannerQR[Walk to Hardware Scanner]
+    ScannerQR --> Cam[Open App Camera]
+    Cam --> Scan[Scan Scanner's QR Code]
+    Scan --> Valid{Valid QR?}
+    Valid -- No --> Cam
+    Valid -- Yes --> Approve[Click 'Approve Pairing']
+    Approve --> Wait[Place Hand on Scanner]
+    Wait --> Success[Receive Success Notification]
+    Success --> Choice
+    
+    Choice -- Logout --> End([End Session])
+```
+
+### 7.4 Hardware Device (Raspberry Pi) Flowchart
+The step-by-step operational loop of the physical scanning device.
+
+```mermaid
+flowchart TD
+    Boot([Power On & Boot OS]) --> Network[Connect to Network & API]
+    Network --> Idle((IDLE STATE))
+    
+    Idle --> Detect{Detect Event}
+    
+    Detect -- Admin Button Pressed --> GenQR[Generate Secure Session Token]
+    GenQR --> ShowQR[Display QR Code on Screen]
+    ShowQR --> WaitApprove{Wait for App Approval}
+    WaitApprove -- Timeout --> TimeoutErr[Show Timeout Error] --> Idle
+    WaitApprove -- Approved --> ScanEnroll[Prompt: 'Place Hand to Enroll']
+    ScanEnroll --> CapEnroll[Capture & Encrypt Palm Vector]
+    CapEnroll --> SendEnroll[Send Vector to API]
+    SendEnroll --> Success1[Show 'Enrollment Success'] --> Idle
+    
+    Detect -- Proximity Sensor / Hand Detected --> ScanAuth[Prompt: 'Scanning...']
+    ScanAuth --> CapAuth[Capture Palm Vector]
+    CapAuth --> SendAuth[Send Vector to API for Verification]
+    SendAuth --> ApiRes{API Response}
+    
+    ApiRes -- Match Found --> ShowOK[Show Name & 'Check-in Successful']
+    ShowOK --> GreenLED[Flash Green LED / Beep] --> Idle
+    
+    ApiRes -- No Match --> ShowErr[Show 'User Not Found / Try Again']
+    ShowErr --> RedLED[Flash Red LED / Error Beep] --> Idle
+```
