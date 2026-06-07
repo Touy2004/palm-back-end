@@ -252,3 +252,92 @@ flowchart TD
     classDef module fill:#3b82f6,stroke:#1e40af,stroke-width:1px,color:#fff,font-weight:bold
     classDef process fill:#f8fafc,stroke:#94a3b8,stroke-width:1px,color:#334155
 ```
+
+---
+
+## 5. Data Flow Diagrams (DFD)
+
+Data Flow Diagrams map out how information flows through the system, from external entities (users/devices) into processes and data stores.
+
+### 5.1 DFD Level 0 (Context Diagram)
+The Context Diagram provides a bird's-eye view of the entire system as a single process, showing its interactions with external entities.
+
+```mermaid
+flowchart LR
+    %% External Entities
+    Admin[Admin]:::entity
+    Employee[Employee]:::entity
+    Device[Hardware Scanner]:::entity
+
+    %% Central System
+    System((0.0<br/>Palm Recognition<br/>Attendance System)):::process
+
+    %% Flows - Admin
+    Admin -- "User & Device Data" --> System
+    System -- "Reports & Dashboards" --> Admin
+
+    %% Flows - Employee
+    Employee -- "Login & Pairing Approval" --> System
+    System -- "Attendance History & Status" --> Employee
+
+    %% Flows - Device
+    Device -- "Scanned Palm Vectors" --> System
+    System -- "Pairing Sessions & Auth Results" --> Device
+
+    %% Styling
+    classDef entity fill:#f1f5f9,stroke:#334155,stroke-width:2px,shape:rect
+    classDef process fill:#eff6ff,stroke:#2563eb,stroke-width:2px,shape:circle
+```
+
+### 5.2 DFD Level 1 (Main Processes)
+Level 1 breaks down the main system into its primary sub-processes and shows how they interact with the database stores.
+
+```mermaid
+flowchart TD
+    %% External Entities
+    Admin[Admin]:::entity
+    Employee[Employee]:::entity
+    Device[Hardware Scanner]:::entity
+
+    %% Processes
+    P1((1.0<br/>Manage Setup)):::process
+    P2((2.0<br/>Enroll Palm)):::process
+    P3((3.0<br/>Process Attendance)):::process
+    P4((4.0<br/>Generate Reports)):::process
+
+    %% Data Stores
+    D1[(D1: Users DB)]:::datastore
+    D2[(D2: Devices DB)]:::datastore
+    D3[(D3: Templates DB)]:::datastore
+    D4[(D4: Attendance DB)]:::datastore
+
+    %% Admin Setup Flows
+    Admin -- "User/Device Info" --> P1
+    P1 -- "Save Data" --> D1
+    P1 -- "Save Data" --> D2
+
+    %% Palm Enrollment Flows
+    Device -- "Request Session" --> P2
+    Employee -- "Approve Session" --> P2
+    P2 -- "Verify User" --> D1
+    P2 -- "Save Template" --> D3
+    Device -- "Send Palm Data" --> P2
+
+    %% Attendance Processing Flows
+    Device -- "Send Scan Data" --> P3
+    P3 -- "Fetch Template" --> D3
+    P3 -- "Save Check-in" --> D4
+    P3 -- "Return Result" --> Device
+
+    %% Reporting Flows
+    Admin -- "Request Reports" --> P4
+    Employee -- "View My Logs" --> P4
+    D4 -- "Fetch Logs" --> P4
+    P4 -- "Report Data" --> Admin
+    P4 -- "History Data" --> Employee
+
+    %% Styling
+    classDef entity fill:#f1f5f9,stroke:#334155,stroke-width:2px,shape:rect
+    classDef process fill:#eff6ff,stroke:#2563eb,stroke-width:2px,shape:circle
+    classDef datastore fill:#fcfdfd,stroke:#0f172a,stroke-width:2px,shape:cylinder
+```
