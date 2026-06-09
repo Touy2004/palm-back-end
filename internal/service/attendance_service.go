@@ -108,7 +108,10 @@ func (s *AttendanceService) ProcessPalmAttendance(input ProcessAttendanceInput) 
 	message := ""
 	now := time.Now().UTC()
 
-	loc, _ := time.LoadLocation("Asia/Bangkok")
+	loc, err := time.LoadLocation("Asia/Bangkok")
+	if err != nil {
+		loc = time.FixedZone("ICT", 7*3600)
+	}
 	localTime := now.In(loc)
 
 	if err != nil { // No record today, so Check In

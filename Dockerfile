@@ -24,7 +24,7 @@ FROM alpine:latest
 WORKDIR /root/
 
 # Install runtime dependencies
-RUN apk --no-cache add ca-certificates
+RUN apk --no-cache add ca-certificates tzdata
 
 # Copy binary from builder
 COPY --from=builder /app/api .

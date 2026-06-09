@@ -294,7 +294,10 @@ func (r *AttendanceRepository) FindAllByDateRange(startDate, endDate string) ([]
 }
 
 func applyDynamicStatus(logs []model.AttendanceLog) {
-	loc, _ := time.LoadLocation("Asia/Bangkok")
+	loc, err := time.LoadLocation("Asia/Bangkok")
+	if err != nil {
+		loc = time.FixedZone("ICT", 7*3600)
+	}
 	nowLocal := time.Now().UTC().In(loc)
 	nowYear, nowMonth, nowDay := nowLocal.Date()
 
