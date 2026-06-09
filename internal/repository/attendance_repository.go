@@ -88,6 +88,8 @@ func (r *AttendanceRepository) FindAll(page, limit int, startDate, endDate strin
 		}
 		logs = append(logs, log)
 	}
+
+	applyDynamicStatus(logs)
 	return logs, total, rows.Err()
 }
 
@@ -159,6 +161,8 @@ func (r *AttendanceRepository) FindByUserID(userID string, page, limit int, star
 		}
 		logs = append(logs, log)
 	}
+
+	applyDynamicStatus(logs)
 	return logs, total, rows.Err()
 }
 
@@ -287,4 +291,21 @@ func (r *AttendanceRepository) FindAllByDateRange(startDate, endDate string) ([]
 	}
 
 	return logs, nil
+}
+
+func applyDynamicStatus(logs []model.AttendanceLog) {
+	loc, _ := time.LoadLocation("Asia/Bangkok")
+	nowLocal := time.Now().UTC().In(loc)
+	nowYear, nowMonth, nowDay := nowLocal.Date()
+
+	for i := range logs {
+		if logs[i].CheckOutTime == nil {
+			logLocal := logs[i].AttendanceDate.In(loc)
+			logYear, logMonth, logDay := logLocal.Date()
+
+			if logYear != nowYear || logMonth != nowMonth || logDay != nowDay {
+				logs[i].Status = "incomplete"
+			}
+		}
+	}
 }

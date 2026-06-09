@@ -108,9 +108,17 @@ func (s *AttendanceService) ProcessPalmAttendance(input ProcessAttendanceInput) 
 	message := ""
 	now := time.Now().UTC()
 
+	loc, _ := time.LoadLocation("Asia/Bangkok")
+	localTime := now.In(loc)
+
 	if err != nil { // No record today, so Check In
 		action = "check_in"
 		message = "Check-in success"
+
+		status := "present"
+		if localTime.Hour() > 8 || (localTime.Hour() == 8 && localTime.Minute() > 15) {
+			status = "late"
+		}
 
 		newLog := &model.AttendanceLog{
 			UserID:          user.ID,
@@ -119,7 +127,7 @@ func (s *AttendanceService) ProcessPalmAttendance(input ProcessAttendanceInput) 
 			CheckInTime:     &now,
 			CheckInScore:    &bestScore,
 			CheckInLiveness: &input.LivenessPassed,
-			Status:          "present", // Basic logic, could check if late
+			Status:          status,
 		}
 		_ = s.attendanceRepo.Create(newLog)
 	} else if todayLog.CheckOutTime == nil { // Already checked in, so Check Out
@@ -131,8 +139,7 @@ func (s *AttendanceService) ProcessPalmAttendance(input ProcessAttendanceInput) 
 		todayLog.CheckOutLiveness = &input.LivenessPassed
 		_ = s.attendanceRepo.Update(todayLog)
 	} else { // Already checked out
-		action = "check_out" // Or "already_completed"
-		message = "Already completed today"
+		return nil, errors.New("already completed today")
 	}
 
 	return &AttendanceResult{
