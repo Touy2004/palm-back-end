@@ -196,7 +196,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"session_token\": \"paste_the_session_token_here\"\n}"
+							"raw": "{\n  \"session_token\": \"paste_the_session_token_here\",\n  \"hand_side\": \"right\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/pairing/approve",

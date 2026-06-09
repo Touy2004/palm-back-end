@@ -29,7 +29,7 @@ Instead of showing raw code and JSON structures, this document tells the story o
 *These routes handle the secure "handshake" between an employee's phone and a physical scanner when they are registering their palm for the first time.*
 
 * **`POST /pairing/scan`**: When the employee points their phone camera at the scanner's QR code, the app sends the QR data to this route. The server checks if the QR code is valid and tells the app which scanner it belongs to (e.g., "Main Entrance Scanner").
-* **`POST /pairing/approve`**: The employee clicks "Approve" on their phone. This route tells the server: "I am at this scanner, and I authorize it to scan my palm and link it to my account."
+* **`POST /pairing/approve`**: The employee clicks "Approve" on their phone and selects which hand they want to enroll (Left or Right). This route tells the server: "I am at this scanner, and I authorize it to scan my selected palm and link it to my account."
 
 ---
 

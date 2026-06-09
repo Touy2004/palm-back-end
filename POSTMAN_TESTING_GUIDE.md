@@ -95,7 +95,8 @@ The employee clicks "Approve" on their phone to link their account to the scanne
 * **Body (Raw JSON):**
 ```json
 {
-  "session_token": "<paste_the_session_token_here>"
+  "session_token": "<paste_the_session_token_here>",
+  "hand_side": "right"
 }
 ```
 * **Action:** Send request. 
