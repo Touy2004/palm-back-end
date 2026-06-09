@@ -24,7 +24,7 @@ func NewPairingService(pairingRepo *repository.PairingRepository, palmRepo *repo
 func (s *PairingService) ScanSession(token string) (*model.DevicePairingSession, error) {
 	session, err := s.pairingRepo.FindByToken(token)
 	if err != nil {
-		return nil, errors.New("invalid or expired session token")
+		return nil, errors.New("invalid or expired session token: " + err.Error())
 	}
 
 	if session.Status != "pending" {
