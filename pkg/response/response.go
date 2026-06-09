@@ -1,6 +1,7 @@
 package response
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
@@ -29,10 +30,14 @@ func SuccessWithMeta(c *fiber.Ctx, code int, message string, data any, meta any)
 
 // Error formats a standard error API response.
 func Error(c *fiber.Ctx, code int, message string, err any) error {
+	if err != nil {
+		// Log the actual technical error to the backend terminal for debugging
+		log.Printf("[API ERROR] %s: %v\n", message, err)
+	}
+
 	return c.Status(code).JSON(fiber.Map{
 		"code":    code,
 		"status":  http.StatusText(code),
 		"message": message,
-		"error":   err,
 	})
 }

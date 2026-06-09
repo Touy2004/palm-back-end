@@ -29,11 +29,11 @@ func (h *DeviceHandler) Heartbeat(c *fiber.Ctx) error {
 		DeviceCode string `json:"device_code"`
 	}
 	if err := c.BodyParser(&input); err != nil {
-		return response.Error(c, fiber.StatusBadRequest, "Invalid request", err.Error())
+		return response.Error(c, fiber.StatusBadRequest, "Please provide a valid device code.", err.Error())
 	}
 
 	if err := h.deviceSvc.Heartbeat(input.DeviceCode); err != nil {
-		return response.Error(c, fiber.StatusUnauthorized, "Heartbeat failed", err.Error())
+		return response.Error(c, fiber.StatusUnauthorized, "The device is unauthorized to perform this action.", err.Error())
 	}
 
 	return response.Success(c, fiber.StatusOK, "Heartbeat successful", nil)
@@ -45,12 +45,12 @@ func (h *DeviceHandler) CreatePairingSession(c *fiber.Ctx) error {
 		Purpose    string `json:"purpose"`
 	}
 	if err := c.BodyParser(&input); err != nil {
-		return response.Error(c, fiber.StatusBadRequest, "Invalid request", err.Error())
+		return response.Error(c, fiber.StatusBadRequest, "Please provide valid pairing data.", err.Error())
 	}
 
 	session, err := h.deviceSvc.CreatePairingSession(input.DeviceCode, input.Purpose)
 	if err != nil {
-		return response.Error(c, fiber.StatusInternalServerError, "Failed to create pairing session", err.Error())
+		return response.Error(c, fiber.StatusInternalServerError, "Failed to initiate pairing. Please check the device code.", err.Error())
 	}
 
 	return response.Success(c, fiber.StatusOK, "Pairing session created successfully", fiber.Map{
@@ -64,7 +64,7 @@ func (h *DeviceHandler) GetSessionStatus(c *fiber.Ctx) error {
 	sessionID := c.Params("session_id")
 	session, err := h.deviceSvc.GetSessionStatus(sessionID)
 	if err != nil {
-		return response.Error(c, fiber.StatusNotFound, "Session not found", err.Error())
+		return response.Error(c, fiber.StatusNotFound, "The pairing session could not be found or has expired.", err.Error())
 	}
 
 	return response.Success(c, fiber.StatusOK, "Session status retrieved", fiber.Map{
@@ -87,7 +87,7 @@ func (h *DeviceHandler) EnrollPalm(c *fiber.Ctx) error {
 	}
 
 	if err := c.BodyParser(&payload); err != nil {
-		return response.Error(c, fiber.StatusBadRequest, "Invalid payload", err.Error())
+		return response.Error(c, fiber.StatusBadRequest, "Please provide a valid scan payload.", err.Error())
 	}
 
 	enrollInput := service.EnrollInput{
@@ -105,7 +105,7 @@ func (h *DeviceHandler) EnrollPalm(c *fiber.Ctx) error {
 
 	template, err := h.palmSvc.EnrollPalm(enrollInput)
 	if err != nil {
-		return response.Error(c, fiber.StatusBadRequest, "Palm enrollment failed", err.Error())
+		return response.Error(c, fiber.StatusBadRequest, "Palm enrollment failed. Please ensure your hand is placed flat and try again.", err.Error())
 	}
 
 	return response.Success(c, fiber.StatusOK, "Palm enrolled successfully", fiber.Map{
@@ -127,11 +127,11 @@ func (h *DeviceHandler) ProcessAttendance(c *fiber.Ctx) error {
 	}
 
 	if err := c.BodyParser(&payload); err != nil {
-		return response.Error(c, fiber.StatusBadRequest, "Invalid payload", err.Error())
+		return response.Error(c, fiber.StatusBadRequest, "Please provide a valid attendance scan payload.", err.Error())
 	}
 
 	if len(payload.Embeddings) == 0 {
-		return response.Error(c, fiber.StatusBadRequest, "Invalid payload", "embeddings cannot be empty")
+		return response.Error(c, fiber.StatusBadRequest, "No palm was detected. Please try placing your hand again.", "embeddings cannot be empty")
 	}
 
 	input := service.ProcessAttendanceInput{
@@ -148,7 +148,7 @@ func (h *DeviceHandler) ProcessAttendance(c *fiber.Ctx) error {
 
 	result, err := h.attendanceSvc.ProcessPalmAttendance(input)
 	if err != nil {
-		return response.Error(c, fiber.StatusUnauthorized, "Failed to process attendance", err.Error())
+		return response.Error(c, fiber.StatusUnauthorized, "We couldn't identify your palm. Please try placing your hand again.", err.Error())
 	}
 
 	return response.Success(c, fiber.StatusOK, result.Message, fiber.Map{
@@ -174,11 +174,11 @@ func (h *DeviceHandler) IdentifyPalm(c *fiber.Ctx) error {
 	}
 
 	if err := c.BodyParser(&payload); err != nil {
-		return response.Error(c, fiber.StatusBadRequest, "Invalid payload", err.Error())
+		return response.Error(c, fiber.StatusBadRequest, "Please provide a valid identification payload.", err.Error())
 	}
 
 	if len(payload.Embeddings) == 0 {
-		return response.Error(c, fiber.StatusBadRequest, "Invalid payload", "embeddings cannot be empty")
+		return response.Error(c, fiber.StatusBadRequest, "No palm was detected. Please try placing your hand again.", "embeddings cannot be empty")
 	}
 
 	input := service.ProcessAttendanceInput{
@@ -195,7 +195,7 @@ func (h *DeviceHandler) IdentifyPalm(c *fiber.Ctx) error {
 
 	result, err := h.attendanceSvc.IdentifyPalm(input)
 	if err != nil {
-		return response.Error(c, fiber.StatusUnauthorized, "Failed to identify palm", err.Error())
+		return response.Error(c, fiber.StatusUnauthorized, "We couldn't identify your palm. Please try placing your hand again.", err.Error())
 	}
 
 	return response.Success(c, fiber.StatusOK, result.Message, fiber.Map{

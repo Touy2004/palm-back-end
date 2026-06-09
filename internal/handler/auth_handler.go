@@ -19,12 +19,12 @@ func NewAuthHandler(authService *service.AuthService) *AuthHandler {
 func (h *AuthHandler) Register(c *fiber.Ctx) error {
 	var input service.RegisterInput
 	if err := c.BodyParser(&input); err != nil {
-		return response.Error(c, fiber.StatusBadRequest, "Invalid request body", err.Error())
+		return response.Error(c, fiber.StatusBadRequest, "Please fill out all required fields correctly.", err.Error())
 	}
 
 	user, err := h.authService.Register(input)
 	if err != nil {
-		return response.Error(c, fiber.StatusBadRequest, "Failed to register user", err.Error())
+		return response.Error(c, fiber.StatusBadRequest, "We couldn't register your account. Please check your details and try again.", err.Error())
 	}
 
 	return response.Success(c, fiber.StatusCreated, "User registered successfully", fiber.Map{
@@ -44,12 +44,12 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 func (h *AuthHandler) Login(c *fiber.Ctx) error {
 	var input service.LoginInput
 	if err := c.BodyParser(&input); err != nil {
-		return response.Error(c, fiber.StatusBadRequest, "Invalid request body", err.Error())
+		return response.Error(c, fiber.StatusBadRequest, "Please fill out all required fields correctly.", err.Error())
 	}
 
 	user, accessToken, refreshToken, err := h.authService.Login(input)
 	if err != nil {
-		return response.Error(c, fiber.StatusUnauthorized, "Login failed", err.Error())
+		return response.Error(c, fiber.StatusUnauthorized, "Your phone number or password is incorrect.", err.Error())
 	}
 
 	return response.Success(c, fiber.StatusOK, "Login successful", fiber.Map{
@@ -64,12 +64,12 @@ func (h *AuthHandler) Refresh(c *fiber.Ctx) error {
 		RefreshToken string `json:"refresh_token"`
 	}
 	if err := c.BodyParser(&input); err != nil {
-		return response.Error(c, fiber.StatusBadRequest, "Invalid request body", err.Error())
+		return response.Error(c, fiber.StatusBadRequest, "Please provide your refresh token.", err.Error())
 	}
 
 	accessToken, newRefreshToken, err := h.authService.RefreshToken(input.RefreshToken)
 	if err != nil {
-		return response.Error(c, fiber.StatusUnauthorized, "Token refresh failed", err.Error())
+		return response.Error(c, fiber.StatusUnauthorized, "Your session has expired. Please log in again.", err.Error())
 	}
 
 	return response.Success(c, fiber.StatusOK, "Token refreshed successfully", fiber.Map{
@@ -82,7 +82,7 @@ func (h *AuthHandler) GetProfile(c *fiber.Ctx) error {
 
 	user, err := h.authService.GetProfile(claims.UserID)
 	if err != nil {
-		return response.Error(c, fiber.StatusNotFound, "User not found", err.Error())
+		return response.Error(c, fiber.StatusNotFound, "We couldn't find your user profile.", err.Error())
 	}
 
 	return response.Success(c, fiber.StatusOK, "Profile retrieved successfully", fiber.Map{
@@ -103,7 +103,7 @@ func (h *AuthHandler) GetProfile(c *fiber.Ctx) error {
 func (h *AuthHandler) GetUsers(c *fiber.Ctx) error {
 	users, err := h.authService.GetUsers()
 	if err != nil {
-		return response.Error(c, fiber.StatusInternalServerError, "Could not fetch users", err.Error())
+		return response.Error(c, fiber.StatusInternalServerError, "We encountered an issue fetching the users.", err.Error())
 	}
 
 	return response.Success(c, fiber.StatusOK, "Users retrieved successfully", users)

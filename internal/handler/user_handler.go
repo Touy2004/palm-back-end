@@ -28,12 +28,12 @@ func (h *UserHandler) ScanPairingQR(c *fiber.Ctx) error {
 		SessionToken string `json:"session_token"`
 	}
 	if err := c.BodyParser(&input); err != nil {
-		return response.Error(c, fiber.StatusBadRequest, "Invalid request body", err.Error())
+		return response.Error(c, fiber.StatusBadRequest, "Please make sure your QR code scan is valid.", err.Error())
 	}
 
 	session, err := h.pairingService.ScanSession(input.SessionToken)
 	if err != nil {
-		return response.Error(c, fiber.StatusBadRequest, "Failed to scan session", err.Error())
+		return response.Error(c, fiber.StatusBadRequest, "This QR code is invalid or has already expired.", err.Error())
 	}
 
 	return response.Success(c, fiber.StatusOK, "Pairing session scanned", fiber.Map{
@@ -48,18 +48,18 @@ func (h *UserHandler) ApprovePairingQR(c *fiber.Ctx) error {
 		HandSide     string `json:"hand_side"`
 	}
 	if err := c.BodyParser(&input); err != nil {
-		return response.Error(c, fiber.StatusBadRequest, "Invalid request body", err.Error())
+		return response.Error(c, fiber.StatusBadRequest, "Please provide valid approval data.", err.Error())
 	}
 
 	if input.HandSide == "" {
-		return response.Error(c, fiber.StatusBadRequest, "hand_side is required", nil)
+		return response.Error(c, fiber.StatusBadRequest, "Please select whether you want to use your left or right hand.", nil)
 	}
 
 	claims := c.Locals("user").(*jwtpkg.Claims)
 
 	err := h.pairingService.ApproveSession(input.SessionToken, claims.UserID, input.HandSide)
 	if err != nil {
-		return response.Error(c, fiber.StatusBadRequest, "Failed to approve session", err.Error())
+		return response.Error(c, fiber.StatusBadRequest, "We couldn't approve the scanner. Please try scanning the QR code again.", err.Error())
 	}
 
 	return response.Success(c, fiber.StatusOK, "Enrollment approved. Please place your palm on the device.", nil)
@@ -71,7 +71,7 @@ func (h *UserHandler) GetPalmTemplates(c *fiber.Ctx) error {
 
 	templates, err := h.userService.GetPalmTemplates(claims.UserID)
 	if err != nil {
-		return response.Error(c, fiber.StatusInternalServerError, "Failed to fetch palm templates", err.Error())
+		return response.Error(c, fiber.StatusInternalServerError, "We encountered an issue fetching your palm templates.", err.Error())
 	}
 
 	if templates == nil {
@@ -87,7 +87,7 @@ func (h *UserHandler) DeletePalmTemplate(c *fiber.Ctx) error {
 
 	err := h.userService.DeletePalmTemplate(id, claims.UserID)
 	if err != nil {
-		return response.Error(c, fiber.StatusInternalServerError, "Failed to delete palm template", err.Error())
+		return response.Error(c, fiber.StatusInternalServerError, "We couldn't delete your palm template.", err.Error())
 	}
 
 	return response.Success(c, fiber.StatusOK, "Palm template deleted successfully", nil)
@@ -104,7 +104,7 @@ func (h *UserHandler) GetMyAttendance(c *fiber.Ctx) error {
 
 	logs, total, err := h.userService.GetAttendanceHistory(claims.UserID, page, limit, startDate, endDate)
 	if err != nil {
-		return response.Error(c, fiber.StatusInternalServerError, "Failed to fetch attendance history", err.Error())
+		return response.Error(c, fiber.StatusInternalServerError, "We encountered an issue fetching your attendance history.", err.Error())
 	}
 
 	if logs == nil {
@@ -127,17 +127,17 @@ func (h *UserHandler) ChangePassword(c *fiber.Ctx) error {
 	}
 
 	if err := c.BodyParser(&input); err != nil {
-		return response.Error(c, fiber.StatusBadRequest, "Invalid request body", err.Error())
+		return response.Error(c, fiber.StatusBadRequest, "Please provide your old and new password correctly.", err.Error())
 	}
 
 	if len(input.NewPassword) < 6 {
-		return response.Error(c, fiber.StatusBadRequest, "Invalid password", "new password must be at least 6 characters")
+		return response.Error(c, fiber.StatusBadRequest, "Your new password must be at least 6 characters long.", "new password must be at least 6 characters")
 	}
 
 	claims := c.Locals("user").(*jwtpkg.Claims)
 
 	if err := h.userService.ChangePassword(claims.UserID, input.OldPassword, input.NewPassword); err != nil {
-		return response.Error(c, fiber.StatusBadRequest, "Failed to change password", err.Error())
+		return response.Error(c, fiber.StatusBadRequest, "Your old password is incorrect, or we couldn't change it.", err.Error())
 	}
 
 	return response.Success(c, fiber.StatusOK, "Password changed successfully", nil)
