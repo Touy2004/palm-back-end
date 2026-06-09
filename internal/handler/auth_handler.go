@@ -92,9 +92,10 @@ func (h *AuthHandler) GetProfile(c *fiber.Ctx) error {
 			"full_name":     user.FullName,
 			"email":         user.Email,
 			"department":    user.Department,
-			"phone":         user.Phone,
-			"role":          user.Role,
-			"status":        user.Status,
+			"phone":              user.Phone,
+			"role":               user.Role,
+			"status":             user.Status,
+			"is_palm_registered": user.IsPalmRegistered,
 		},
 	})
 }
