@@ -59,12 +59,20 @@ func (r *PairingRepository) FindByID(id string) (*model.DevicePairingSession, er
 
 func (r *PairingRepository) FindByToken(token string) (*model.DevicePairingSession, error) {
 	var session model.DevicePairingSession
-	query := `SELECT id, device_id, session_token, user_id, hand_side, purpose, status, expires_at, scanned_at, approved_at, completed_at, created_at FROM device_pairing_sessions WHERE session_token = $1`
+	session.Device = &model.Device{}
+	query := `
+		SELECT s.id, s.device_id, s.session_token, s.user_id, s.hand_side, s.purpose, s.status, s.expires_at, s.scanned_at, s.approved_at, s.completed_at, s.created_at,
+		       d.id, d.device_code, COALESCE(d.device_name, ''), COALESCE(d.location_name, '')
+		FROM device_pairing_sessions s
+		LEFT JOIN devices d ON s.device_id = d.id
+		WHERE s.session_token = $1
+	`
 	
 	err := r.db.QueryRow(context.Background(), query, token).Scan(
 		&session.ID, &session.DeviceID, &session.SessionToken, &session.UserID, &session.HandSide,
 		&session.Purpose, &session.Status, &session.ExpiresAt, &session.ScannedAt,
 		&session.ApprovedAt, &session.CompletedAt, &session.CreatedAt,
+		&session.Device.ID, &session.Device.DeviceCode, &session.Device.DeviceName, &session.Device.LocationName,
 	)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
