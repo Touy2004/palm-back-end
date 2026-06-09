@@ -194,12 +194,18 @@ These endpoints are used by the mobile application for normal employees.
     "data": [
       {
         "id": "tpl-123",
+        "user_id": "user-uuid",
         "hand_side": "right",
+        "embedding_dim": 128,
+        "model_version": "v1.0",
+        "threshold": 0.82,
         "status": "active",
-        "registered_device_name": "Main Entrance Scanner",
-        "registered_device_code": "DEV-001",
+        "registered_device_id": "device-uuid",
         "created_at": "2026-06-01T12:00:00Z",
-        "updated_at": "2026-06-01T12:00:00Z"
+        "updated_at": "2026-06-01T12:00:00Z",
+        "revoked_at": null,
+        "registered_device_name": "Main Entrance Scanner",
+        "registered_device_code": "DEV-001"
       }
     ]
   }
