@@ -45,14 +45,19 @@ func (h *UserHandler) ScanPairingQR(c *fiber.Ctx) error {
 func (h *UserHandler) ApprovePairingQR(c *fiber.Ctx) error {
 	var input struct {
 		SessionToken string `json:"session_token"`
+		HandSide     string `json:"hand_side"`
 	}
 	if err := c.BodyParser(&input); err != nil {
 		return response.Error(c, fiber.StatusBadRequest, "Invalid request body", err.Error())
 	}
 
+	if input.HandSide == "" {
+		return response.Error(c, fiber.StatusBadRequest, "hand_side is required", nil)
+	}
+
 	claims := c.Locals("user").(*jwtpkg.Claims)
 
-	err := h.pairingService.ApproveSession(input.SessionToken, claims.UserID)
+	err := h.pairingService.ApproveSession(input.SessionToken, claims.UserID, input.HandSide)
 	if err != nil {
 		return response.Error(c, fiber.StatusBadRequest, "Failed to approve session", err.Error())
 	}

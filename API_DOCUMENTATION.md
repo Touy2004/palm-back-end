@@ -196,12 +196,15 @@ These endpoints are used by the mobile application for normal employees.
         "id": "tpl-123",
         "hand_side": "right",
         "status": "active",
+        "registered_device_name": "Main Entrance Scanner",
+        "registered_device_code": "DEV-001",
         "created_at": "2026-06-01T12:00:00Z",
         "updated_at": "2026-06-01T12:00:00Z"
       }
     ]
   }
   ```
+  *(Note: If the user has no enrolled palm templates, `data` will return an empty array `[]` instead of `null`.)*
 
 * **DELETE** `/me/palm-templates/:id`
 * **Response (200 OK):**
@@ -249,9 +252,11 @@ These endpoints facilitate the secure enrollment process where the mobile app "p
 * **Body:** 
   ```json
   {
-    "session_token": "a1b2c3d4e5f6..."
+    "session_token": "abc123xyz...",
+    "hand_side": "right"
   }
   ```
+  *(Note: `hand_side` must be exactly `"left"` or `"right"`. The system enforces a maximum of 1 active template per hand side per user.)*
 * **Response (200 OK):**
   ```json
   {

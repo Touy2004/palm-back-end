@@ -158,10 +158,16 @@ func (s *PalmService) EnrollPalm(input EnrollInput) (*model.PalmTemplate, error)
 		return nil, errors.New("failed to encrypt template")
 	}
 
+	// Use HandSide from session if available, otherwise fallback to input
+	handSide := input.HandSide
+	if session.HandSide != nil && *session.HandSide != "" {
+		handSide = *session.HandSide
+	}
+
 	// 4. Save template
 	template := &model.PalmTemplate{
 		UserID:             *session.UserID,
-		HandSide:           input.HandSide,
+		HandSide:           handSide,
 		TemplateEncrypted:  enc,
 		TemplateNonce:      nonce,
 		EmbeddingDim:       input.EmbeddingDim,

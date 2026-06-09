@@ -12,6 +12,7 @@ type DevicePairingSession struct {
 	DeviceID     uuid.UUID  `gorm:"type:uuid;not null" json:"device_id"`
 	SessionToken string     `gorm:"type:text;unique;not null" json:"session_token"`
 	UserID       *uuid.UUID `gorm:"type:uuid" json:"user_id"`
+	HandSide     *string    `gorm:"type:varchar(10)" json:"hand_side"`
 	Purpose      string     `gorm:"type:varchar(50);not null" json:"purpose"`
 	Status       string     `gorm:"type:varchar(30);default:'pending'" json:"status"`
 	ExpiresAt    time.Time  `gorm:"not null" json:"expires_at"`

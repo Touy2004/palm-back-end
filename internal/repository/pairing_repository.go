@@ -28,12 +28,12 @@ func (r *PairingRepository) Create(session *model.DevicePairingSession) error {
 	}
 
 	query := `
-		INSERT INTO device_pairing_sessions (id, device_id, session_token, user_id, purpose, status, expires_at, scanned_at, approved_at, completed_at, created_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+		INSERT INTO device_pairing_sessions (id, device_id, session_token, user_id, hand_side, purpose, status, expires_at, scanned_at, approved_at, completed_at, created_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 		RETURNING id, created_at`
 	
 	return r.db.QueryRow(context.Background(), query,
-		session.ID, session.DeviceID, session.SessionToken, session.UserID,
+		session.ID, session.DeviceID, session.SessionToken, session.UserID, session.HandSide,
 		session.Purpose, session.Status, session.ExpiresAt, session.ScannedAt,
 		session.ApprovedAt, session.CompletedAt, session.CreatedAt,
 	).Scan(&session.ID, &session.CreatedAt)
@@ -41,10 +41,10 @@ func (r *PairingRepository) Create(session *model.DevicePairingSession) error {
 
 func (r *PairingRepository) FindByID(id string) (*model.DevicePairingSession, error) {
 	var session model.DevicePairingSession
-	query := `SELECT id, device_id, session_token, user_id, purpose, status, expires_at, scanned_at, approved_at, completed_at, created_at FROM device_pairing_sessions WHERE id = $1`
+	query := `SELECT id, device_id, session_token, user_id, hand_side, purpose, status, expires_at, scanned_at, approved_at, completed_at, created_at FROM device_pairing_sessions WHERE id = $1`
 	
 	err := r.db.QueryRow(context.Background(), query, id).Scan(
-		&session.ID, &session.DeviceID, &session.SessionToken, &session.UserID,
+		&session.ID, &session.DeviceID, &session.SessionToken, &session.UserID, &session.HandSide,
 		&session.Purpose, &session.Status, &session.ExpiresAt, &session.ScannedAt,
 		&session.ApprovedAt, &session.CompletedAt, &session.CreatedAt,
 	)
@@ -59,10 +59,10 @@ func (r *PairingRepository) FindByID(id string) (*model.DevicePairingSession, er
 
 func (r *PairingRepository) FindByToken(token string) (*model.DevicePairingSession, error) {
 	var session model.DevicePairingSession
-	query := `SELECT id, device_id, session_token, user_id, purpose, status, expires_at, scanned_at, approved_at, completed_at, created_at FROM device_pairing_sessions WHERE session_token = $1`
+	query := `SELECT id, device_id, session_token, user_id, hand_side, purpose, status, expires_at, scanned_at, approved_at, completed_at, created_at FROM device_pairing_sessions WHERE session_token = $1`
 	
 	err := r.db.QueryRow(context.Background(), query, token).Scan(
-		&session.ID, &session.DeviceID, &session.SessionToken, &session.UserID,
+		&session.ID, &session.DeviceID, &session.SessionToken, &session.UserID, &session.HandSide,
 		&session.Purpose, &session.Status, &session.ExpiresAt, &session.ScannedAt,
 		&session.ApprovedAt, &session.CompletedAt, &session.CreatedAt,
 	)
@@ -78,11 +78,11 @@ func (r *PairingRepository) FindByToken(token string) (*model.DevicePairingSessi
 func (r *PairingRepository) Update(session *model.DevicePairingSession) error {
 	query := `
 		UPDATE device_pairing_sessions 
-		SET device_id = $1, session_token = $2, user_id = $3, purpose = $4, status = $5, expires_at = $6, scanned_at = $7, approved_at = $8, completed_at = $9
-		WHERE id = $10`
+		SET device_id = $1, session_token = $2, user_id = $3, hand_side = $4, purpose = $5, status = $6, expires_at = $7, scanned_at = $8, approved_at = $9, completed_at = $10
+		WHERE id = $11`
 	
 	commandTag, err := r.db.Exec(context.Background(), query,
-		session.DeviceID, session.SessionToken, session.UserID, session.Purpose,
+		session.DeviceID, session.SessionToken, session.UserID, session.HandSide, session.Purpose,
 		session.Status, session.ExpiresAt, session.ScannedAt, session.ApprovedAt, session.CompletedAt, session.ID,
 	)
 	if err != nil {

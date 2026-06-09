@@ -51,7 +51,7 @@ func main() {
 	adminService := service.NewAdminService(adminRepo, userRepo, deviceRepo, attendanceRepo, palmRepo)
 	userService := service.NewUserService(userRepo, palmRepo, attendanceRepo)
 	deviceService := service.NewDeviceService(deviceRepo, pairingRepo)
-	pairingService := service.NewPairingService(pairingRepo)
+	pairingService := service.NewPairingService(pairingRepo, palmRepo)
 	palmService := service.NewPalmService(palmRepo, pairingRepo, cryptoSvc)
 	attendanceService := service.NewAttendanceService(attendanceRepo, palmRepo, deviceRepo, userRepo, cryptoSvc)
 
