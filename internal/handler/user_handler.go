@@ -69,6 +69,10 @@ func (h *UserHandler) GetPalmTemplates(c *fiber.Ctx) error {
 		return response.Error(c, fiber.StatusInternalServerError, "Failed to fetch palm templates", err.Error())
 	}
 
+	if templates == nil {
+		templates = make([]model.PalmTemplate, 0)
+	}
+
 	return response.Success(c, fiber.StatusOK, "Palm templates retrieved successfully", templates)
 }
 
