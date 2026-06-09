@@ -115,7 +115,6 @@ The scanner reads the user's palm and sends the data to the server using the app
 {
   "device_code": "DEV-001",
   "session_token": "<paste_the_approved_session_token_here>",
-  "hand_side": "right",
   "model_version": "v1.0",
   "embedding_dim": 2,
   "embeddings": [[0.15, 0.88]],
