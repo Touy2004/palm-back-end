@@ -32,7 +32,7 @@ func (s *DeviceService) Heartbeat(deviceCode string) error {
 		return errors.New("device is not active")
 	}
 
-	now := time.Now()
+	now := time.Now().UTC()
 	device.LastSeenAt = &now
 	return s.deviceRepo.Update(device)
 }
@@ -59,7 +59,7 @@ func (s *DeviceService) CreatePairingSession(deviceCode, purpose string) (*model
 		SessionToken: token,
 		Purpose:      purpose,
 		Status:       "pending",
-		ExpiresAt:    time.Now().Add(5 * time.Minute), // Expires in 5 minutes
+		ExpiresAt:    time.Now().UTC().Add(5 * time.Minute), // Expires in 5 minutes
 	}
 
 	if err := s.pairingRepo.Create(session); err != nil {
@@ -75,7 +75,7 @@ func (s *DeviceService) GetSessionStatus(sessionID string) (*model.DevicePairing
 		return nil, errors.New("session not found")
 	}
 
-	if session.Status == "pending" && time.Now().After(session.ExpiresAt) {
+	if session.Status == "pending" && time.Now().UTC().After(session.ExpiresAt) {
 		session.Status = "expired"
 		_ = s.pairingRepo.Update(session)
 	}

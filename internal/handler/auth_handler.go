@@ -87,11 +87,11 @@ func (h *AuthHandler) GetProfile(c *fiber.Ctx) error {
 
 	return response.Success(c, fiber.StatusOK, "Profile retrieved successfully", fiber.Map{
 		"user": fiber.Map{
-			"id":            user.ID,
-			"employee_code": user.EmployeeCode,
-			"full_name":     user.FullName,
-			"email":         user.Email,
-			"department":    user.Department,
+			"id":                 user.ID,
+			"employee_code":      user.EmployeeCode,
+			"full_name":          user.FullName,
+			"email":              user.Email,
+			"department":         user.Department,
 			"phone":              user.Phone,
 			"role":               user.Role,
 			"status":             user.Status,

@@ -4,9 +4,9 @@ import (
 	"errors"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/Touy2004/palm-back-end/internal/model"
 	"github.com/Touy2004/palm-back-end/internal/repository"
+	"github.com/google/uuid"
 )
 
 type PairingService struct {
@@ -31,13 +31,13 @@ func (s *PairingService) ScanSession(token string) (*model.DevicePairingSession,
 		return nil, errors.New("session is no longer valid")
 	}
 
-	if time.Now().After(session.ExpiresAt) {
+	if time.Now().UTC().After(session.ExpiresAt) {
 		session.Status = "expired"
 		_ = s.pairingRepo.Update(session)
 		return nil, errors.New("session has expired")
 	}
 
-	now := time.Now()
+	now := time.Now().UTC()
 	session.Status = "scanned"
 	session.ScannedAt = &now
 
@@ -62,7 +62,7 @@ func (s *PairingService) ApproveSession(token, userID, handSide string) error {
 		return errors.New("session must be scanned before approval")
 	}
 
-	if time.Now().After(session.ExpiresAt) {
+	if time.Now().UTC().After(session.ExpiresAt) {
 		session.Status = "expired"
 		_ = s.pairingRepo.Update(session)
 		return errors.New("session has expired")
@@ -83,7 +83,7 @@ func (s *PairingService) ApproveSession(token, userID, handSide string) error {
 		}
 	}
 
-	now := time.Now()
+	now := time.Now().UTC()
 	session.Status = "approved"
 	session.UserID = &userUUID
 	session.HandSide = &handSide

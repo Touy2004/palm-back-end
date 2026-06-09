@@ -22,7 +22,7 @@ func (r *PalmRepository) Create(template *model.PalmTemplate) error {
 		template.ID = uuid.New()
 	}
 	if template.CreatedAt.IsZero() {
-		now := time.Now()
+		now := time.Now().UTC()
 		template.CreatedAt = now
 		template.UpdatedAt = now
 	}
@@ -31,7 +31,7 @@ func (r *PalmRepository) Create(template *model.PalmTemplate) error {
 		INSERT INTO palm_templates (id, user_id, hand_side, template_encrypted, template_nonce, embedding_dim, model_version, threshold, status, registered_device_id, created_at, updated_at, revoked_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
 		RETURNING id, created_at, updated_at`
-	
+
 	return r.db.QueryRow(context.Background(), query,
 		template.ID, template.UserID, template.HandSide, template.TemplateEncrypted,
 		template.TemplateNonce, template.EmbeddingDim, template.ModelVersion,
@@ -49,7 +49,7 @@ func (r *PalmRepository) FindByUserID(userID string) ([]model.PalmTemplate, erro
 		LEFT JOIN devices d ON p.registered_device_id = d.id
 		WHERE p.user_id = $1 AND p.status = 'active'
 	`
-	
+
 	rows, err := r.db.Query(context.Background(), query, userID)
 	if err != nil {
 		return nil, err
@@ -74,7 +74,7 @@ func (r *PalmRepository) FindByUserID(userID string) ([]model.PalmTemplate, erro
 func (r *PalmRepository) FindAllActive() ([]model.PalmTemplate, error) {
 	var templates []model.PalmTemplate
 	query := `SELECT id, user_id, hand_side, template_encrypted, template_nonce, embedding_dim, model_version, threshold, status, registered_device_id, created_at, updated_at, revoked_at FROM palm_templates WHERE status = 'active'`
-	
+
 	rows, err := r.db.Query(context.Background(), query)
 	if err != nil {
 		return nil, err

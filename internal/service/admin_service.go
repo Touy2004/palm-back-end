@@ -178,7 +178,7 @@ func (s *AdminService) GetReports(month, department string) ([]model.ReportRow, 
 	layout := "2006-01"
 	startMonth, err := time.Parse(layout, month)
 	if err != nil {
-		startMonth = time.Now()
+		startMonth = time.Now().UTC()
 	}
 
 	// Calculate start and end dates
@@ -187,11 +187,11 @@ func (s *AdminService) GetReports(month, department string) ([]model.ReportRow, 
 
 	// For workdays calculation, cap the end date to today if we're querying the current month
 	workEnd := endDate
-	now := time.Now()
+	now := time.Now().UTC()
 	if now.Before(endDate) {
 		workEnd = now
 	}
-	
+
 	totalWorkDays := calculateWorkDays(startDate, workEnd)
 
 	// Format for DB query

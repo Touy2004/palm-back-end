@@ -4,16 +4,16 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
-	"math"
-	"time"
 	"github.com/Touy2004/palm-back-end/internal/model"
 	"github.com/Touy2004/palm-back-end/internal/repository"
+	"math"
+	"time"
 )
 
 type PalmService struct {
-	palmRepo     *repository.PalmRepository
-	pairingRepo  *repository.PairingRepository
-	cryptoSvc    *CryptoService
+	palmRepo    *repository.PalmRepository
+	pairingRepo *repository.PairingRepository
+	cryptoSvc   *CryptoService
 }
 
 func NewPalmService(
@@ -181,7 +181,7 @@ func (s *PalmService) EnrollPalm(input EnrollInput) (*model.PalmTemplate, error)
 	}
 
 	// 5. Complete session
-	now := time.Now()
+	now := time.Now().UTC()
 	session.Status = "completed"
 	session.CompletedAt = &now
 	_ = s.pairingRepo.Update(session)

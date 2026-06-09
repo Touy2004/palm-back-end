@@ -106,7 +106,7 @@ func (s *AttendanceService) ProcessPalmAttendance(input ProcessAttendanceInput) 
 
 	action := ""
 	message := ""
-	now := time.Now()
+	now := time.Now().UTC()
 
 	if err != nil { // No record today, so Check In
 		action = "check_in"
@@ -134,7 +134,6 @@ func (s *AttendanceService) ProcessPalmAttendance(input ProcessAttendanceInput) 
 		action = "check_out" // Or "already_completed"
 		message = "Already completed today"
 	}
-
 
 	return &AttendanceResult{
 		Action:   action,
@@ -193,14 +192,12 @@ func (s *AttendanceService) IdentifyPalm(input ProcessAttendanceInput) (*Attenda
 		return nil, errors.New("user inactive")
 	}
 
-
 	return &AttendanceResult{
 		Action:   "identify",
 		UserID:   user.ID,
 		FullName: user.FullName,
 		Score:    bestScore,
-		Time:     time.Now(),
+		Time:     time.Now().UTC(),
 		Message:  "User identified",
 	}, nil
 }
-

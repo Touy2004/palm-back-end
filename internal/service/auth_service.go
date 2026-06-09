@@ -21,7 +21,7 @@ func NewAuthService(userRepo *repository.UserRepository, jwt *jwt.JWT) *AuthServ
 	return &AuthService{userRepo: userRepo, jwt: jwt}
 }
 
-type RegisterInput struct { 
+type RegisterInput struct {
 	FullName     string `json:"full_name"`
 	EmployeeCode string `json:"employee_code"`
 	Email        string `json:"email"`

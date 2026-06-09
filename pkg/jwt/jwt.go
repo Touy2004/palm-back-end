@@ -31,8 +31,8 @@ func (j *JWT) GenerateToken(userID string, role string) (string, error) {
 		UserID: userID,
 		Role:   role,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(j.expiry)),
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			ExpiresAt: jwt.NewNumericDate(time.Now().UTC().Add(j.expiry)),
+			IssuedAt:  jwt.NewNumericDate(time.Now().UTC()),
 		},
 	}
 
@@ -45,8 +45,8 @@ func (j *JWT) GenerateRefreshToken(userID, role string) (string, error) {
 		UserID: userID,
 		Role:   role,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(j.expiry * 24 * 7)), // Refresh token lasts 7 times longer
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			ExpiresAt: jwt.NewNumericDate(time.Now().UTC().Add(j.expiry * 24 * 7)), // Refresh token lasts 7 times longer
+			IssuedAt:  jwt.NewNumericDate(time.Now().UTC()),
 		},
 	}
 

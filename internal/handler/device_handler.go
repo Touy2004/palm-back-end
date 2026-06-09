@@ -68,7 +68,7 @@ func (h *DeviceHandler) GetSessionStatus(c *fiber.Ctx) error {
 	}
 
 	return response.Success(c, fiber.StatusOK, "Session status retrieved", fiber.Map{
-		"status":  session.Status,
+		"status": session.Status,
 	})
 }
 

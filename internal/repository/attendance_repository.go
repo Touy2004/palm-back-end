@@ -164,7 +164,7 @@ func (r *AttendanceRepository) FindByUserID(userID string, page, limit int, star
 
 func (r *AttendanceRepository) FindTodayByUserID(userID string) (*model.AttendanceLog, error) {
 	var log model.AttendanceLog
-	today := time.Now().Truncate(24 * time.Hour)
+	today := time.Now().UTC().Truncate(24 * time.Hour)
 
 	query := `
 		SELECT a.id, a.user_id, a.device_id, a.attendance_date, a.check_in_time, a.check_out_time, 
@@ -194,7 +194,7 @@ func (r *AttendanceRepository) Create(log *model.AttendanceLog) error {
 		log.ID = uuid.New()
 	}
 	if log.CreatedAt.IsZero() {
-		log.CreatedAt = time.Now()
+		log.CreatedAt = time.Now().UTC()
 	}
 
 	query := `

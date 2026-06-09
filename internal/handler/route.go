@@ -47,7 +47,7 @@ func SetupRoutes(app *fiber.App, h *Handler, m *Middleware) {
 
 	// Admin only routes
 	admin := api.Group("/admin", m.Auth.Authenticate, m.Role.Require(constant.ROLE_ADMIN))
-	
+
 	admin.Get("/dashboard/summary", h.Admin.GetDashboardSummary)
 
 	// Admin Users (Search must be before :id to prevent collision in some routers)

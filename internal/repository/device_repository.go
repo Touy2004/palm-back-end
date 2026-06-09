@@ -24,14 +24,14 @@ func (r *DeviceRepository) Create(device *model.Device) error {
 		device.ID = uuid.New()
 	}
 	if device.CreatedAt.IsZero() {
-		device.CreatedAt = time.Now()
+		device.CreatedAt = time.Now().UTC()
 	}
 
 	query := `
 		INSERT INTO devices (id, device_code, name, location, status, last_seen_at, created_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING id, created_at`
-	
+
 	return r.db.QueryRow(context.Background(), query,
 		device.ID, device.DeviceCode, device.DeviceName, device.LocationName,
 		device.Status, device.LastSeenAt, device.CreatedAt,
@@ -41,7 +41,7 @@ func (r *DeviceRepository) Create(device *model.Device) error {
 func (r *DeviceRepository) FindAll() ([]model.Device, error) {
 	var devices []model.Device
 	query := `SELECT id, device_code, name, location, status, last_seen_at, created_at FROM devices`
-	
+
 	rows, err := r.db.Query(context.Background(), query)
 	if err != nil {
 		return nil, err
@@ -64,7 +64,7 @@ func (r *DeviceRepository) FindAll() ([]model.Device, error) {
 func (r *DeviceRepository) FindByID(id string) (*model.Device, error) {
 	var device model.Device
 	query := `SELECT id, device_code, name, location, status, last_seen_at, created_at FROM devices WHERE id = $1`
-	
+
 	err := r.db.QueryRow(context.Background(), query, id).Scan(
 		&device.ID, &device.DeviceCode, &device.DeviceName, &device.LocationName,
 		&device.Status, &device.LastSeenAt, &device.CreatedAt,
@@ -81,7 +81,7 @@ func (r *DeviceRepository) FindByID(id string) (*model.Device, error) {
 func (r *DeviceRepository) FindByCode(code string) (*model.Device, error) {
 	var device model.Device
 	query := `SELECT id, device_code, name, location, status, last_seen_at, created_at FROM devices WHERE device_code = $1`
-	
+
 	err := r.db.QueryRow(context.Background(), query, code).Scan(
 		&device.ID, &device.DeviceCode, &device.DeviceName, &device.LocationName,
 		&device.Status, &device.LastSeenAt, &device.CreatedAt,
@@ -100,7 +100,7 @@ func (r *DeviceRepository) Update(device *model.Device) error {
 		UPDATE devices 
 		SET device_code = $1, name = $2, location = $3, status = $4, last_seen_at = $5
 		WHERE id = $6`
-	
+
 	commandTag, err := r.db.Exec(context.Background(), query,
 		device.DeviceCode, device.DeviceName, device.LocationName, device.Status, device.LastSeenAt, device.ID,
 	)

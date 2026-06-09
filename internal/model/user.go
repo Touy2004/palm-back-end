@@ -8,13 +8,13 @@ import (
 )
 
 type User struct {
-	ID           uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
-	EmployeeCode string    `gorm:"type:varchar(50);unique" json:"employee_code"`
-	FullName     string    `gorm:"type:varchar(150);not null" json:"full_name"`
-	Phone        string    `gorm:"type:varchar(30);uniqueIndex;not null" json:"phone"`
-	Email        string    `gorm:"type:varchar(150);uniqueIndex;not null" json:"email"`
-	Department   string    `gorm:"type:varchar(100);not null" json:"department"`
-	PasswordHash string    `gorm:"type:text" json:"-"`
+	ID               uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
+	EmployeeCode     string    `gorm:"type:varchar(50);unique" json:"employee_code"`
+	FullName         string    `gorm:"type:varchar(150);not null" json:"full_name"`
+	Phone            string    `gorm:"type:varchar(30);uniqueIndex;not null" json:"phone"`
+	Email            string    `gorm:"type:varchar(150);uniqueIndex;not null" json:"email"`
+	Department       string    `gorm:"type:varchar(100);not null" json:"department"`
+	PasswordHash     string    `gorm:"type:text" json:"-"`
 	Role             string    `gorm:"type:varchar(30);default:'employee'" json:"role"`
 	Status           string    `gorm:"type:varchar(30);default:'active'" json:"status"`
 	IsPalmRegistered bool      `gorm:"-" json:"is_palm_registered"`
