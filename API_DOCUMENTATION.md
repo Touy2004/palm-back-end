@@ -6,6 +6,22 @@ This documentation covers **every** endpoint in the system, organized by applica
 
 ---
 
+## Standard Error Format
+Whenever an API request fails (e.g., 400 Bad Request, 401 Unauthorized, 404 Not Found), the backend will always return a predictable JSON structure. 
+
+**Important:** The `message` field is designed to be highly user-friendly and can be directly displayed to the end-user in a UI pop-up or SnackBar. Technical database errors (like `err.Error()`) are intentionally hidden from this JSON response and are instead logged securely in the backend terminal.
+
+**Example Error Response:**
+```json
+{
+  "code": 400,
+  "status": "Bad Request",
+  "message": "Your phone number or password is incorrect."
+}
+```
+
+---
+
 ## 1. Authentication & Public Workflow
 
 These endpoints are public and do not require any authentication headers. They are used for onboarding new users and acquiring access tokens.
