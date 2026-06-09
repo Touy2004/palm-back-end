@@ -240,7 +240,15 @@ These endpoints facilitate the secure enrollment process where the mobile app "p
     "status": "OK",
     "message": "Pairing session scanned",
     "data": {
-      "device": "device-uuid",
+      "device": {
+        "id": "device-uuid",
+        "device_code": "DEV-001",
+        "device_name": "Main Entrance Scanner",
+        "location_name": "Front Door",
+        "status": "active",
+        "created_at": "2026-06-01T12:00:00Z",
+        "updated_at": "2026-06-01T12:00:00Z"
+      },
       "purpose": "enrollment"
     }
   }
