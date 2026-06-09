@@ -329,7 +329,6 @@ These endpoints are consumed EXCLUSIVELY by the physical palm scanners.
   {
     "device_code": "DEV-001",
     "session_token": "a1b2c3d4e5f6...",
-    "hand_side": "right",
     "model_version": "v1.0",
     "embedding_dim": 128,
     "embeddings": [[0.12, 0.44]],

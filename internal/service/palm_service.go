@@ -115,7 +115,6 @@ func BytesToFloat32Slice(b []byte) ([]float32, error) {
 type EnrollInput struct {
 	SessionToken   string
 	DeviceCode     string
-	HandSide       string
 	ModelVersion   string
 	EmbeddingDim   int
 	Embeddings     [][]float32
@@ -158,8 +157,8 @@ func (s *PalmService) EnrollPalm(input EnrollInput) (*model.PalmTemplate, error)
 		return nil, errors.New("failed to encrypt template")
 	}
 
-	// Use HandSide from session if available, otherwise fallback to input
-	handSide := input.HandSide
+	// Use HandSide from session if available, otherwise default to "unknown"
+	handSide := "unknown"
 	if session.HandSide != nil && *session.HandSide != "" {
 		handSide = *session.HandSide
 	}

@@ -76,7 +76,6 @@ func (h *DeviceHandler) EnrollPalm(c *fiber.Ctx) error {
 	var payload struct {
 		DeviceCode     string      `json:"device_code"`
 		SessionToken   string      `json:"session_token"`
-		HandSide       string      `json:"hand_side"`
 		ModelVersion   string      `json:"model_version"`
 		EmbeddingDim   int         `json:"embedding_dim"`
 		Embeddings     [][]float32 `json:"embeddings"`
@@ -94,7 +93,6 @@ func (h *DeviceHandler) EnrollPalm(c *fiber.Ctx) error {
 	enrollInput := service.EnrollInput{
 		SessionToken:   payload.SessionToken,
 		DeviceCode:     payload.DeviceCode, // Passed just in case, but session has it
-		HandSide:       payload.HandSide,
 		ModelVersion:   payload.ModelVersion,
 		EmbeddingDim:   payload.EmbeddingDim,
 		Embeddings:     payload.Embeddings,
