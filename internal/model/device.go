@@ -10,8 +10,8 @@ import (
 type Device struct {
 	ID           uuid.UUID  `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
 	DeviceCode   string     `gorm:"type:varchar(100);unique;not null" json:"device_code"`
-	DeviceName   string     `gorm:"type:varchar(150)" json:"device_name"`
-	LocationName string     `gorm:"type:varchar(150)" json:"location_name"`
+	DeviceName   string     `gorm:"column:name;type:varchar(150)" json:"device_name"`
+	LocationName string     `gorm:"column:location;type:varchar(150)" json:"location_name"`
 	Status       string     `gorm:"type:varchar(30);default:'active'" json:"status"`
 	LastSeenAt   *time.Time `json:"last_seen_at"`
 	CreatedAt    time.Time  `gorm:"autoCreateTime" json:"created_at"`

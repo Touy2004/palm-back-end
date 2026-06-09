@@ -62,7 +62,7 @@ func (r *PairingRepository) FindByToken(token string) (*model.DevicePairingSessi
 	session.Device = &model.Device{}
 	query := `
 		SELECT s.id, s.device_id, s.session_token, s.user_id, s.hand_side, s.purpose, s.status, s.expires_at, s.scanned_at, s.approved_at, s.completed_at, s.created_at,
-		       COALESCE(d.id, s.device_id), COALESCE(d.device_code, ''), COALESCE(d.device_name, ''), COALESCE(d.location_name, '')
+		       COALESCE(d.id, s.device_id), COALESCE(d.device_code, ''), COALESCE(d.name, ''), COALESCE(d.location, '')
 		FROM device_pairing_sessions s
 		LEFT JOIN devices d ON s.device_id = d.id
 		WHERE s.session_token = $1
