@@ -21,6 +21,8 @@ type PalmTemplate struct {
 	CreatedAt          time.Time  `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt          time.Time  `gorm:"autoUpdateTime" json:"updated_at"`
 	RevokedAt          *time.Time `json:"revoked_at"`
+	RegisteredDeviceName *string `json:"registered_device_name,omitempty" gorm:"-"`
+	RegisteredDeviceCode *string `json:"registered_device_code,omitempty" gorm:"-"`
 
 	User             *User   `gorm:"foreignKey:UserID" json:"user,omitempty"`
 	RegisteredDevice *Device `gorm:"foreignKey:RegisteredDeviceID" json:"registered_device,omitempty"`

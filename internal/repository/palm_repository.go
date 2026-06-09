@@ -42,7 +42,13 @@ func (r *PalmRepository) Create(template *model.PalmTemplate) error {
 
 func (r *PalmRepository) FindByUserID(userID string) ([]model.PalmTemplate, error) {
 	var templates []model.PalmTemplate
-	query := `SELECT id, user_id, hand_side, template_encrypted, template_nonce, embedding_dim, model_version, threshold, status, registered_device_id, created_at, updated_at, revoked_at FROM palm_templates WHERE user_id = $1 AND status = 'active'`
+	query := `
+		SELECT p.id, p.user_id, p.hand_side, p.template_encrypted, p.template_nonce, p.embedding_dim, p.model_version, p.threshold, p.status, p.registered_device_id, p.created_at, p.updated_at, p.revoked_at,
+		       d.name, d.device_code
+		FROM palm_templates p
+		LEFT JOIN devices d ON p.registered_device_id = d.id
+		WHERE p.user_id = $1 AND p.status = 'active'
+	`
 	
 	rows, err := r.db.Query(context.Background(), query, userID)
 	if err != nil {
@@ -56,6 +62,7 @@ func (r *PalmRepository) FindByUserID(userID string) ([]model.PalmTemplate, erro
 			&t.ID, &t.UserID, &t.HandSide, &t.TemplateEncrypted, &t.TemplateNonce,
 			&t.EmbeddingDim, &t.ModelVersion, &t.Threshold, &t.Status, &t.RegisteredDeviceID,
 			&t.CreatedAt, &t.UpdatedAt, &t.RevokedAt,
+			&t.RegisteredDeviceName, &t.RegisteredDeviceCode,
 		); err != nil {
 			return nil, err
 		}
