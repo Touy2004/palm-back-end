@@ -3,6 +3,7 @@ package handler
 import (
 	"strconv"
 
+	"github.com/Touy2004/palm-back-end/internal/model"
 	"github.com/Touy2004/palm-back-end/internal/service"
 	jwtpkg "github.com/Touy2004/palm-back-end/pkg/jwt"
 	"github.com/Touy2004/palm-back-end/pkg/response"
@@ -95,6 +96,10 @@ func (h *UserHandler) GetMyAttendance(c *fiber.Ctx) error {
 	logs, total, err := h.userService.GetAttendanceHistory(claims.UserID, page, limit, startDate, endDate)
 	if err != nil {
 		return response.Error(c, fiber.StatusInternalServerError, "Failed to fetch attendance history", err.Error())
+	}
+
+	if logs == nil {
+		logs = make(model.AttendanceLogs, 0)
 	}
 
 	return response.SuccessWithMeta(c, fiber.StatusOK, "Attendance history retrieved successfully", logs, fiber.Map{

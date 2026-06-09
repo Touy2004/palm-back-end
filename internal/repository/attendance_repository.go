@@ -23,7 +23,7 @@ func NewAttendanceRepository(db *pgxpool.Pool) *AttendanceRepository {
 func (r *AttendanceRepository) FindAll(page, limit int, startDate, endDate string) ([]model.AttendanceLog, int64, error) {
 	var logs []model.AttendanceLog
 	var total int64
-	
+
 	countQuery := `SELECT count(*) FROM attendance_logs WHERE 1=1`
 	var countArgs []interface{}
 	argIdx := 1
@@ -52,7 +52,7 @@ func (r *AttendanceRepository) FindAll(page, limit int, startDate, endDate strin
 		FROM attendance_logs a
 		LEFT JOIN devices d ON a.device_id = d.id
 		WHERE 1=1`
-	
+
 	var args []interface{}
 	argIdx = 1
 
@@ -69,7 +69,7 @@ func (r *AttendanceRepository) FindAll(page, limit int, startDate, endDate strin
 
 	query += fmt.Sprintf(" ORDER BY a.attendance_date DESC, a.created_at DESC LIMIT $%d OFFSET $%d", argIdx, argIdx+1)
 	args = append(args, limit, offset)
-	
+
 	rows, err := r.db.Query(context.Background(), query, args...)
 	if err != nil {
 		return nil, 0, err
@@ -91,10 +91,10 @@ func (r *AttendanceRepository) FindAll(page, limit int, startDate, endDate strin
 	return logs, total, rows.Err()
 }
 
-func (r *AttendanceRepository) FindByUserID(userID string, page, limit int, startDate, endDate string) ([]model.AttendanceLog, int64, error) {
-	var logs []model.AttendanceLog
+func (r *AttendanceRepository) FindByUserID(userID string, page, limit int, startDate, endDate string) (model.AttendanceLogs, int64, error) {
+	var logs model.AttendanceLogs
 	var total int64
-	
+
 	countQuery := `SELECT count(*) FROM attendance_logs WHERE user_id = $1`
 	countArgs := []interface{}{userID}
 	argIdx := 2
@@ -123,7 +123,7 @@ func (r *AttendanceRepository) FindByUserID(userID string, page, limit int, star
 		FROM attendance_logs a
 		LEFT JOIN devices d ON a.device_id = d.id
 		WHERE a.user_id = $1`
-	
+
 	args := []interface{}{userID}
 	argIdx = 2
 
@@ -137,10 +137,10 @@ func (r *AttendanceRepository) FindByUserID(userID string, page, limit int, star
 		args = append(args, endDate)
 		argIdx++
 	}
-	
+
 	query += fmt.Sprintf(" ORDER BY a.attendance_date DESC, a.created_at DESC LIMIT $%d OFFSET $%d", argIdx, argIdx+1)
 	args = append(args, limit, offset)
-	
+
 	rows, err := r.db.Query(context.Background(), query, args...)
 	if err != nil {
 		return nil, 0, err
@@ -165,7 +165,7 @@ func (r *AttendanceRepository) FindByUserID(userID string, page, limit int, star
 func (r *AttendanceRepository) FindTodayByUserID(userID string) (*model.AttendanceLog, error) {
 	var log model.AttendanceLog
 	today := time.Now().Truncate(24 * time.Hour)
-	
+
 	query := `
 		SELECT a.id, a.user_id, a.device_id, a.attendance_date, a.check_in_time, a.check_out_time, 
 		       a.check_in_score, a.check_out_score, a.check_in_liveness, a.check_out_liveness, a.status, a.created_at,
@@ -173,7 +173,7 @@ func (r *AttendanceRepository) FindTodayByUserID(userID string) (*model.Attendan
 		FROM attendance_logs a
 		LEFT JOIN devices d ON a.device_id = d.id
 		WHERE a.user_id = $1 AND a.attendance_date >= $2`
-	
+
 	err := r.db.QueryRow(context.Background(), query, userID, today).Scan(
 		&log.ID, &log.UserID, &log.DeviceID, &log.AttendanceDate,
 		&log.CheckInTime, &log.CheckOutTime, &log.CheckInScore, &log.CheckOutScore,
@@ -201,7 +201,7 @@ func (r *AttendanceRepository) Create(log *model.AttendanceLog) error {
 		INSERT INTO attendance_logs (id, user_id, device_id, attendance_date, check_in_time, check_out_time, check_in_score, check_out_score, check_in_liveness, check_out_liveness, status, created_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 		RETURNING id, created_at`
-	
+
 	return r.db.QueryRow(context.Background(), query,
 		log.ID, log.UserID, log.DeviceID, log.AttendanceDate,
 		log.CheckInTime, log.CheckOutTime, log.CheckInScore, log.CheckOutScore,
@@ -214,7 +214,7 @@ func (r *AttendanceRepository) Update(log *model.AttendanceLog) error {
 		UPDATE attendance_logs 
 		SET device_id = $1, check_in_time = $2, check_out_time = $3, check_in_score = $4, check_out_score = $5, check_in_liveness = $6, check_out_liveness = $7, status = $8
 		WHERE id = $9`
-	
+
 	commandTag, err := r.db.Exec(context.Background(), query,
 		log.DeviceID, log.CheckInTime, log.CheckOutTime, log.CheckInScore, log.CheckOutScore,
 		log.CheckInLiveness, log.CheckOutLiveness, log.Status, log.ID,
@@ -237,7 +237,7 @@ func (r *AttendanceRepository) FindAllByDateRange(startDate, endDate string) ([]
 		LEFT JOIN devices d ON a.device_id = d.id
 		WHERE a.attendance_date >= $1 AND a.attendance_date <= $2
 	`
-	
+
 	rows, err := r.db.Query(context.Background(), query, startDate, endDate)
 	if err != nil {
 		return nil, err

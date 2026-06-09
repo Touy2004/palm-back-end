@@ -29,6 +29,8 @@ type AttendanceLog struct {
 	Device *Device `gorm:"foreignKey:DeviceID" json:"device,omitempty"`
 }
 
+type AttendanceLogs []AttendanceLog
+
 func (a *AttendanceLog) BeforeCreate(tx *gorm.DB) (err error) {
 	if a.ID == uuid.Nil {
 		a.ID = uuid.New()

@@ -7,7 +7,7 @@ import (
 )
 
 // Success formats a standard successful API response.
-func Success(c *fiber.Ctx, code int, message string, data interface{}) error {
+func Success(c *fiber.Ctx, code int, message string, data any) error {
 	return c.Status(code).JSON(fiber.Map{
 		"code":    code,
 		"status":  http.StatusText(code),
@@ -17,7 +17,7 @@ func Success(c *fiber.Ctx, code int, message string, data interface{}) error {
 }
 
 // SuccessWithMeta formats a standard successful API response with additional meta info (like pagination).
-func SuccessWithMeta(c *fiber.Ctx, code int, message string, data interface{}, meta interface{}) error {
+func SuccessWithMeta(c *fiber.Ctx, code int, message string, data any, meta any) error {
 	return c.Status(code).JSON(fiber.Map{
 		"code":    code,
 		"status":  http.StatusText(code),
@@ -28,7 +28,7 @@ func SuccessWithMeta(c *fiber.Ctx, code int, message string, data interface{}, m
 }
 
 // Error formats a standard error API response.
-func Error(c *fiber.Ctx, code int, message string, err interface{}) error {
+func Error(c *fiber.Ctx, code int, message string, err any) error {
 	return c.Status(code).JSON(fiber.Map{
 		"code":    code,
 		"status":  http.StatusText(code),
