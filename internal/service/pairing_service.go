@@ -27,7 +27,7 @@ func (s *PairingService) ScanSession(token string) (*model.DevicePairingSession,
 		return nil, errors.New("invalid or expired session token: " + err.Error())
 	}
 
-	if session.Status != "pending" {
+	if session.Status != "pending" && session.Status != "scanned" {
 		return nil, errors.New("session is no longer valid")
 	}
 
@@ -37,12 +37,14 @@ func (s *PairingService) ScanSession(token string) (*model.DevicePairingSession,
 		return nil, errors.New("session has expired")
 	}
 
-	now := time.Now().UTC()
-	session.Status = "scanned"
-	session.ScannedAt = &now
+	if session.Status == "pending" {
+		now := time.Now().UTC()
+		session.Status = "scanned"
+		session.ScannedAt = &now
 
-	if err := s.pairingRepo.Update(session); err != nil {
-		return nil, err
+		if err := s.pairingRepo.Update(session); err != nil {
+			return nil, err
+		}
 	}
 
 	return session, nil
