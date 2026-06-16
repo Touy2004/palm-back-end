@@ -58,6 +58,10 @@ func (s *CryptoService) Decrypt(cipherText []byte, nonce []byte) ([]byte, error)
 		return nil, err
 	}
 
+	if len(nonce) != gcm.NonceSize() {
+		return nil, fmt.Errorf("incorrect nonce length: expected %d, got %d", gcm.NonceSize(), len(nonce))
+	}
+
 	plain, err := gcm.Open(nil, nonce, cipherText, nil)
 	if err != nil {
 		return nil, err
