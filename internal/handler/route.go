@@ -36,7 +36,6 @@ func SetupRoutes(app *fiber.App, h *Handler, m *Middleware) {
 	user := api.Group("/me", m.Auth.Authenticate)
 	user.Get("/", h.Auth.GetProfile)
 	user.Get("/palm-templates", h.User.GetPalmTemplates)
-	user.Delete("/palm-templates/:id", h.User.DeletePalmTemplate)
 	user.Get("/attendance", h.User.GetMyAttendance)
 	user.Patch("/password", h.User.ChangePassword)
 

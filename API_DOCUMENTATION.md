@@ -228,16 +228,7 @@ These endpoints are used by the mobile application for normal employees.
   ```
   *(Note: If the user has no enrolled palm templates, `data` will return an empty array `[]` instead of `null`.)*
 
-* **DELETE** `/me/palm-templates/:id`
-* **Response (200 OK):**
-  ```json
-  {
-    "code": 200,
-    "status": "OK",
-    "message": "Palm template deleted successfully",
-    "data": null
-  }
-  ```
+
 
 ---
 

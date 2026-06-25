@@ -1,586 +1,1072 @@
 {
-	"info": {
-		"_postman_id": "c1f7b8d0-e9a3-4a12-8e12-b9c1d2e3f4a5",
-		"name": "Palm Recognition API",
-		"description": "API collection for the Palm Recognition Attendance System",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "0. General",
-			"item": [
-				{
-					"name": "Health Check (Hello World)",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/",
-							"host": ["{{base_url}}"],
-							"path": [""]
-						}
-					}
-				}
-			]
-		},
-		{
-			"name": "1. Authentication",
-			"item": [
-				{
-					"name": "Register",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"phone\": \"0812345678\",\n  \"password\": \"securepassword\",\n  \"full_name\": \"Jane Doe\",\n  \"email\": \"jane@example.com\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/auth/register",
-							"host": ["{{base_url}}"],
-							"path": ["auth", "register"]
-						}
-					}
-				},
-				{
-					"name": "Login",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"phone\": \"0812345678\",\n  \"password\": \"securepassword\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/auth/login",
-							"host": ["{{base_url}}"],
-							"path": ["auth", "login"]
-						}
-					}
-				},
-				{
-					"name": "Refresh Token",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"refresh_token\": \"{{refresh_token}}\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/auth/refresh",
-							"host": ["{{base_url}}"],
-							"path": ["auth", "refresh"]
-						}
-					}
-				}
-			]
-		},
-		{
-			"name": "2. Mobile App (User)",
-			"item": [
-				{
-					"name": "Get My Profile",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/me",
-							"host": ["{{base_url}}"],
-							"path": ["me"]
-						}
-					}
-				},
-				{
-					"name": "Change Password",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "PATCH",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"old_password\": \"currentpassword\",\n  \"new_password\": \"newpassword123\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/me/password",
-							"host": ["{{base_url}}"],
-							"path": ["me", "password"]
-						}
-					}
-				},
-				{
-					"name": "View My Attendance",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/me/attendance?page=1&limit=30",
-							"host": ["{{base_url}}"],
-							"path": ["me", "attendance"],
-							"query": [
-								{ "key": "page", "value": "1" },
-								{ "key": "limit", "value": "30" },
-								{ "key": "start_date", "value": "2026-06-01", "disabled": true },
-								{ "key": "end_date", "value": "2026-06-07", "disabled": true }
-							]
-						}
-					}
-				},
-				{
-					"name": "Get Enrolled Palms",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/me/palm-templates",
-							"host": ["{{base_url}}"],
-							"path": ["me", "palm-templates"]
-						}
-					}
-				},
-				{
-					"name": "Delete Enrolled Palm",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/me/palm-templates/template-uuid",
-							"host": ["{{base_url}}"],
-							"path": ["me", "palm-templates", "template-uuid"]
-						}
-					}
-				}
-			]
-		},
-		{
-			"name": "3. Pairing Flow",
-			"item": [
-				{
-					"name": "Scan QR Code",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"session_token\": \"a1b2c3d4e5f6\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/pairing/scan",
-							"host": ["{{base_url}}"],
-							"path": ["pairing", "scan"]
-						}
-					}
-				},
-				{
-					"name": "Approve Pairing",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"session_token\": \"paste_the_session_token_here\",\n  \"hand_side\": \"right\",\n  \"employee_code\": \"EMP001\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/admin/pairing/approve",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "pairing", "approve"]
-						}
-					}
-				}
-			]
-		},
-		{
-			"name": "4. Hardware Device",
-			"item": [
-				{
-					"name": "Device Heartbeat",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"device_code\": \"DEV-001\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/devices/heartbeat",
-							"host": ["{{base_url}}"],
-							"path": ["devices", "heartbeat"]
-						}
-					}
-				},
-				{
-					"name": "Create Pairing Session (QR)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"device_code\": \"DEV-001\",\n  \"purpose\": \"enrollment\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/devices/pairing-sessions",
-							"host": ["{{base_url}}"],
-							"path": ["devices", "pairing-sessions"]
-						}
-					}
-				},
-				{
-					"name": "Check Pairing Status",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/devices/pairing-sessions/session-uuid/status",
-							"host": ["{{base_url}}"],
-							"path": ["devices", "pairing-sessions", "session-uuid", "status"]
-						}
-					}
-				},
-				{
-					"name": "Enroll Palm",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"device_code\": \"DEV-001\",\n  \"session_token\": \"a1b2c3d4e5f6\",\n  \"model_version\": \"v1.0\",\n  \"embedding_dim\": 128,\n  \"embeddings\": [[0.12, 0.44]],\n  \"liveness_passed\": true,\n  \"quality_score\": 0.98,\n  \"thermal_min\": 33.5,\n  \"thermal_max\": 36.2,\n  \"thermal_avg\": 35.1\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/devices/palm/enroll",
-							"host": ["{{base_url}}"],
-							"path": ["devices", "palm", "enroll"]
-						}
-					}
-				},
-				{
-					"name": "Identify Palm (No Attendance)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"device_code\": \"DEV-001\",\n  \"model_version\": \"v1.0\",\n  \"embedding_dim\": 128,\n  \"embeddings\": [[0.12, 0.44]],\n  \"liveness_passed\": true,\n  \"quality_score\": 0.98,\n  \"thermal_min\": 33.5,\n  \"thermal_max\": 36.2,\n  \"thermal_avg\": 35.1\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/devices/palm/identify",
-							"host": ["{{base_url}}"],
-							"path": ["devices", "palm", "identify"]
-						}
-					}
-				},
-				{
-					"name": "Process Attendance",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"device_code\": \"DEV-001\",\n  \"model_version\": \"v1.0\",\n  \"embedding_dim\": 128,\n  \"embeddings\": [[0.12, 0.44]],\n  \"liveness_passed\": true,\n  \"quality_score\": 0.98,\n  \"thermal_min\": 33.5,\n  \"thermal_max\": 36.2,\n  \"thermal_avg\": 35.1\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/devices/attendance/palm",
-							"host": ["{{base_url}}"],
-							"path": ["devices", "attendance", "palm"]
-						}
-					}
-				}
-			]
-		},
-		{
-			"name": "5. Web Admin",
-			"item": [
-				{
-					"name": "Get Dashboard Summary",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/admin/dashboard/summary",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "dashboard", "summary"]
-						}
-					}
-				},
-				{
-					"name": "Get Users",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/admin/users?page=1&limit=20",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "users"],
-							"query": [
-								{ "key": "page", "value": "1" },
-								{ "key": "limit", "value": "20" }
-							]
-						}
-					}
-				},
-				{
-					"name": "Search Users",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/admin/users/search?q=John",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "users", "search"],
-							"query": [
-								{ "key": "q", "value": "John" }
-							]
-						}
-					}
-				},
-				{
-					"name": "Get User By ID",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/admin/users/user-uuid",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "users", "user-uuid"]
-						}
-					}
-				},
-				{
-					"name": "Create User",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"phone\": \"0811111111\",\n  \"full_name\": \"John\",\n  \"password\": \"pass\",\n  \"role\": \"employee\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/admin/users",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "users"]
-						}
-					}
-				},
-				{
-					"name": "Update User",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "PATCH",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"full_name\": \"Jane\",\n  \"department\": \"HR\",\n  \"status\": \"active\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/admin/users/user-uuid",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "users", "user-uuid"]
-						}
-					}
-				},
-				{
-					"name": "Delete User",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/admin/users/user-uuid",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "users", "user-uuid"]
-						}
-					}
-				},
-				{
-					"name": "Get User Palm Templates",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/admin/users/user-uuid/palm-templates",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "users", "user-uuid", "palm-templates"]
-						}
-					}
-				},
-				{
-					"name": "Delete User Palm Template",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/admin/users/user-uuid/palm-templates/template-uuid",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "users", "user-uuid", "palm-templates", "template-uuid"]
-						}
-					}
-				},
-				{
-					"name": "Get Devices",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/admin/devices?page=1&limit=20",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "devices"],
-							"query": [
-								{ "key": "page", "value": "1" },
-								{ "key": "limit", "value": "20" }
-							]
-						}
-					}
-				},
-				{
-					"name": "Create Device",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"device_code\": \"DEV-002\",\n  \"name\": \"Entrance B\",\n  \"location\": \"Lobby\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/admin/devices",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "devices"]
-						}
-					}
-				},
-				{
-					"name": "Update Device",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "PATCH",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"New Name\",\n  \"status\": \"inactive\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/admin/devices/device-uuid",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "devices", "device-uuid"]
-						}
-					}
-				},
-				{
-					"name": "Get Global Attendance",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/admin/attendance?page=1&limit=50",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "attendance"],
-							"query": [
-								{ "key": "page", "value": "1" },
-								{ "key": "limit", "value": "50" },
-								{ "key": "start_date", "value": "2026-06-01", "disabled": true },
-								{ "key": "end_date", "value": "2026-06-07", "disabled": true }
-							]
-						}
-					}
-				},
-				{
-					"name": "Get User Attendance History",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/admin/attendance/users/user-uuid/history?page=1&limit=30",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "attendance", "users", "user-uuid", "history"],
-							"query": [
-								{ "key": "page", "value": "1" },
-								{ "key": "limit", "value": "30" },
-								{ "key": "start_date", "value": "2026-06-01", "disabled": true },
-								{ "key": "end_date", "value": "2026-06-07", "disabled": true }
-							]
-						}
-					}
-				},
-				{
-					"name": "Get Reports",
-					"request": {
-						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/admin/reports?month=2026-06&department=Engineering",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "reports"],
-							"query": [
-								{ "key": "month", "value": "2026-06" },
-								{ "key": "department", "value": "Engineering", "disabled": true }
-							]
-						}
-					}
-				}
-			]
-		}
-	],
-	"variable": [
-		{
-			"key": "base_url",
-			"value": "http://localhost:8080/api/v1",
-			"type": "string"
-		},
-		{
-			"key": "access_token",
-			"value": "your_jwt_access_token_here",
-			"type": "string"
-		},
-		{
-			"key": "refresh_token",
-			"value": "your_jwt_refresh_token_here",
-			"type": "string"
-		}
-	]
+  "info": {
+    "_postman_id": "c1f7b8d0-e9a3-4a12-8e12-b9c1d2e3f4a5",
+    "name": "Palm Recognition API",
+    "description": "API collection for the Palm Recognition Attendance System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0. General",
+      "item": [
+        {
+          "name": "Health Check (Hello World)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"0812345678\",\n  \"password\": \"securepassword\",\n  \"full_name\": \"Jane Doe\",\n  \"email\": \"jane@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"0812345678\",\n  \"password\": \"securepassword\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/refresh",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "refresh"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Mobile App (User)",
+      "item": [
+        {
+          "name": "Get My Profile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"old_password\": \"currentpassword\",\n  \"new_password\": \"newpassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/me/password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me",
+                "password"
+              ]
+            }
+          }
+        },
+        {
+          "name": "View My Attendance",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/me/attendance?page=1&limit=30",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me",
+                "attendance"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "30"
+                },
+                {
+                  "key": "start_date",
+                  "value": "2026-06-01",
+                  "disabled": true
+                },
+                {
+                  "key": "end_date",
+                  "value": "2026-06-07",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Enrolled Palms",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/me/palm-templates",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me",
+                "palm-templates"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Enrolled Palm",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/me/palm-templates/template-uuid",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me",
+                "palm-templates",
+                "template-uuid"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Pairing Flow",
+      "item": [
+        {
+          "name": "Scan QR Code",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"session_token\": \"a1b2c3d4e5f6\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pairing/scan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pairing",
+                "scan"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Approve Pairing",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"session_token\": \"paste_the_session_token_here\",\n  \"hand_side\": \"right\",\n  \"employee_code\": \"EMP001\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/pairing/approve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "pairing",
+                "approve"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Hardware Device",
+      "item": [
+        {
+          "name": "Device Heartbeat",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"device_code\": \"DEV-001\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/devices/heartbeat",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "devices",
+                "heartbeat"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Pairing Session (QR)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"device_code\": \"DEV-001\",\n  \"purpose\": \"enrollment\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/devices/pairing-sessions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "devices",
+                "pairing-sessions"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Check Pairing Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/devices/pairing-sessions/session-uuid/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "devices",
+                "pairing-sessions",
+                "session-uuid",
+                "status"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Enroll Palm",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"device_code\": \"DEV-001\",\n  \"session_token\": \"a1b2c3d4e5f6\",\n  \"model_version\": \"v1.0\",\n  \"embedding_dim\": 128,\n  \"embeddings\": [[0.12, 0.44]],\n  \"liveness_passed\": true,\n  \"quality_score\": 0.98,\n  \"thermal_min\": 33.5,\n  \"thermal_max\": 36.2,\n  \"thermal_avg\": 35.1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/devices/palm/enroll",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "devices",
+                "palm",
+                "enroll"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Identify Palm (No Attendance)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"device_code\": \"DEV-001\",\n  \"model_version\": \"v1.0\",\n  \"embedding_dim\": 128,\n  \"embeddings\": [[0.12, 0.44]],\n  \"liveness_passed\": true,\n  \"quality_score\": 0.98,\n  \"thermal_min\": 33.5,\n  \"thermal_max\": 36.2,\n  \"thermal_avg\": 35.1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/devices/palm/identify",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "devices",
+                "palm",
+                "identify"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Process Attendance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"device_code\": \"DEV-001\",\n  \"model_version\": \"v1.0\",\n  \"embedding_dim\": 128,\n  \"embeddings\": [[0.12, 0.44]],\n  \"liveness_passed\": true,\n  \"quality_score\": 0.98,\n  \"thermal_min\": 33.5,\n  \"thermal_max\": 36.2,\n  \"thermal_avg\": 35.1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/devices/attendance/palm",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "devices",
+                "attendance",
+                "palm"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Web Admin",
+      "item": [
+        {
+          "name": "Get Dashboard Summary",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "dashboard",
+                "summary"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Users",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/users?page=1&limit=20",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Users",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/users/search?q=John",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "users",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "John"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get User By ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/users/user-uuid",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "users",
+                "user-uuid"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"0811111111\",\n  \"full_name\": \"John\",\n  \"password\": \"pass\",\n  \"role\": \"employee\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "users"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Jane\",\n  \"department\": \"HR\",\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/users/user-uuid",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "users",
+                "user-uuid"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/users/user-uuid",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "users",
+                "user-uuid"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get User Palm Templates",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/users/user-uuid/palm-templates",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "users",
+                "user-uuid",
+                "palm-templates"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete User Palm Template",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/users/user-uuid/palm-templates/template-uuid",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "users",
+                "user-uuid",
+                "palm-templates",
+                "template-uuid"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Devices",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/devices?page=1&limit=20",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "devices"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Device",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"device_code\": \"DEV-002\",\n  \"name\": \"Entrance B\",\n  \"location\": \"Lobby\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/devices",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "devices"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Device",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Name\",\n  \"status\": \"inactive\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/devices/device-uuid",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "devices",
+                "device-uuid"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Global Attendance",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/attendance?page=1&limit=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "attendance"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                },
+                {
+                  "key": "start_date",
+                  "value": "2026-06-01",
+                  "disabled": true
+                },
+                {
+                  "key": "end_date",
+                  "value": "2026-06-07",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get User Attendance History",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/attendance/users/user-uuid/history?page=1&limit=30",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "attendance",
+                "users",
+                "user-uuid",
+                "history"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "30"
+                },
+                {
+                  "key": "start_date",
+                  "value": "2026-06-01",
+                  "disabled": true
+                },
+                {
+                  "key": "end_date",
+                  "value": "2026-06-07",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Reports",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/reports?month=2026-06&department=Engineering",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "reports"
+              ],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2026-06"
+                },
+                {
+                  "key": "department",
+                  "value": "Engineering",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "your_jwt_access_token_here",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "your_jwt_refresh_token_here",
+      "type": "string"
+    }
+  ]
 }

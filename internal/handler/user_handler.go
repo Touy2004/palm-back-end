@@ -60,17 +60,7 @@ func (h *UserHandler) GetPalmTemplates(c *fiber.Ctx) error {
 	return response.Success(c, fiber.StatusOK, "Palm templates retrieved successfully", templates)
 }
 
-func (h *UserHandler) DeletePalmTemplate(c *fiber.Ctx) error {
-	id := c.Params("id")
-	claims := c.Locals("user").(*jwtpkg.Claims)
 
-	err := h.userService.DeletePalmTemplate(id, claims.UserID)
-	if err != nil {
-		return response.Error(c, fiber.StatusInternalServerError, "We couldn't delete your palm template.", err.Error())
-	}
-
-	return response.Success(c, fiber.StatusOK, "Palm template deleted successfully", nil)
-}
 
 // Attendance
 func (h *UserHandler) GetMyAttendance(c *fiber.Ctx) error {

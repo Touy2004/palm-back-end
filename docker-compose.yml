@@ -3,7 +3,11 @@ services:
     image: postgres:16
     container_name: palm_db
     restart: always
-    network_mode: "host"
+    # --- PRODUCTION (Linux) ---
+    # network_mode: "host"
+    # --- LOCAL MAC ---
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -23,12 +27,19 @@ services:
       dockerfile: Dockerfile
     container_name: palm_api
     restart: always
-    network_mode: "host"
+    # --- PRODUCTION (Linux) ---
+    # network_mode: "host"
+    # --- LOCAL MAC ---
+    ports:
+      - "8080:8080"
     environment:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
-      - DB_HOST=localhost
+      # --- PRODUCTION (Linux) ---
+      # - DB_HOST=localhost
+      # --- LOCAL MAC ---
+      - DB_HOST=db
       - DB_PORT=5432
       - APP_PORT=${APP_PORT:-8080}
       - JWT_SECRET=${JWT_SECRET}

@@ -1,6 +1,6 @@
 -- Users
-INSERT INTO users (id, phone, email, password_hash, full_name, role, department, employee_code, created_at, updated_at) VALUES ('0fd83fe8-4c11-4bf0-9a75-a3658b6e9e46', '200000000', 'ky@gmail.com', '$2a$10$mrIMkA9Bt9EyCynRZ.ITQedfkudsrbFhtE9OZBNtdp.7.8Y/HhLJi', 'Anouphat Chindahak', 'EMPLOYEE', 'Engineering', 'EMP000', NOW(), NOW()) ON CONFLICT (employee_code) DO NOTHING;
-INSERT INTO users (id, phone, email, password_hash, full_name, role, department, employee_code, created_at, updated_at) VALUES ('d8a39a04-51e6-42bb-ae08-412bb4df9b15', '2052998502', 'touy@gmail.com', '$2a$10$OjGuPorG50rZtRm4WKzvruof3moBfGSnmx/PwAoRgjtb6KEARfQo6', 'Phoudthasone Chanthavongsa', 'ADMIN', 'HR', 'EMP001', NOW(), NOW()) ON CONFLICT (employee_code) DO NOTHING;
+INSERT INTO users (id, phone, email, password_hash, full_name, role, department, employee_code, created_at, updated_at) VALUES ('0fd83fe8-4c11-4bf0-9a75-a3658b6e9e46', '2000000000', 'ky@gmail.com', '$2a$10$mrIMkA9Bt9EyCynRZ.ITQedfkudsrbFhtE9OZBNtdp.7.8Y/HhLJi', 'Anouphat Chindahak', 'EMPLOYEE', 'Engineering', 'EMP000', NOW(), NOW()) ON CONFLICT (employee_code) DO NOTHING;
+INSERT INTO users (id, phone, email, password_hash, full_name, role, department, employee_code, created_at, updated_at) VALUES ('d8a39a04-51e6-42bb-ae08-412bb4df9b15', '2052998592', 'touy@gmail.com', '$2a$10$OjGuPorG50rZtRm4WKzvruof3moBfGSnmx/PwAoRgjtb6KEARfQo6', 'Phoudthasone Chanthavongsa', 'ADMIN', 'HR', 'EMP001', NOW(), NOW()) ON CONFLICT (employee_code) DO NOTHING;
 
 -- Device
 INSERT INTO devices (id, device_code, name, location, status, created_at) VALUES ('43ad0972-447a-4c73-9673-fcc7a70ccff1', 'DEV-001', 'Main Scanner', 'Entrance', 'active', NOW()) ON CONFLICT (device_code) DO NOTHING;

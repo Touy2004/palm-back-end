@@ -30,9 +30,7 @@ func (s *UserService) GetPalmTemplates(userID string) ([]model.PalmTemplate, err
 	return s.palmRepo.FindByUserID(userID)
 }
 
-func (s *UserService) DeletePalmTemplate(id, userID string) error {
-	return s.palmRepo.Delete(id, userID)
-}
+
 
 func (s *UserService) GetAttendanceHistory(userID string, page, limit int, startDate, endDate string) ([]model.AttendanceLog, int64, error) {
 	return s.attendanceRepo.FindByUserID(userID, page, limit, startDate, endDate)

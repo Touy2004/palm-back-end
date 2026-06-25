@@ -29,6 +29,8 @@ An employee cannot check in until their palm is securely linked to their account
 3. **Approve:** An Administrator scans the QR code using the admin app/dashboard and enters the employee's ID code. This temporarily links the scanner session to that specific employee.
 4. **Scan Palm:** The scanner prompts the employee to place their hand over the sensor. The machine reads the palm, encrypts the data, and saves it to the employee's database profile.
 
+**Note on Revocation:** If an employee needs to re-register their palm (e.g., they injured their hand), they cannot delete their own palm template from the mobile app for security reasons. Only an Administrator can remove or revoke a palm template using the Web Admin Dashboard.
+
 ### Phase 3: Daily Attendance (Checking In/Out)
 Once enrolled, daily usage is completely frictionless:
 1. **Walk Up & Scan:** The employee walks up to any registered scanner and places their hand over it.
