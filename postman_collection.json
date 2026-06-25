@@ -196,12 +196,12 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"session_token\": \"paste_the_session_token_here\",\n  \"hand_side\": \"right\"\n}"
+							"raw": "{\n  \"session_token\": \"paste_the_session_token_here\",\n  \"hand_side\": \"right\",\n  \"employee_code\": \"EMP001\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/pairing/approve",
+							"raw": "{{base_url}}/admin/pairing/approve",
 							"host": ["{{base_url}}"],
-							"path": ["pairing", "approve"]
+							"path": ["admin", "pairing", "approve"]
 						}
 					}
 				}

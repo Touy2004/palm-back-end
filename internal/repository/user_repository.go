@@ -59,6 +59,24 @@ func (r *UserRepository) FindByPhone(phone string) (*model.User, error) {
 	return &user, nil
 }
 
+func (r *UserRepository) FindByEmployeeCode(employeeCode string) (*model.User, error) {
+	var user model.User
+	query := `SELECT id, employee_code, full_name, email, phone, password_hash, role, department, status, EXISTS(SELECT 1 FROM palm_templates WHERE user_id = users.id AND status = 'active') as is_palm_registered, created_at, updated_at FROM users WHERE employee_code = $1`
+
+	err := r.db.QueryRow(context.Background(), query, employeeCode).Scan(
+		&user.ID, &user.EmployeeCode, &user.FullName, &user.Email, &user.Phone,
+		&user.PasswordHash, &user.Role, &user.Department, &user.Status, &user.IsPalmRegistered,
+		&user.CreatedAt, &user.UpdatedAt,
+	)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, errors.New("user not found")
+		}
+		return nil, err
+	}
+	return &user, nil
+}
+
 func (r *UserRepository) FindByID(id string) (*model.User, error) {
 	var user model.User
 	query := `SELECT id, employee_code, full_name, email, phone, password_hash, role, department, status, EXISTS(SELECT 1 FROM palm_templates WHERE user_id = users.id AND status = 'active') as is_palm_registered, created_at, updated_at FROM users WHERE id = $1`

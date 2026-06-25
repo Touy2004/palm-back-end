@@ -58,7 +58,7 @@ func main() {
 	// Init handlers
 	h := &handler.Handler{
 		Auth:   handler.NewAuthHandler(authService),
-		Admin:  handler.NewAdminHandler(adminService),
+		Admin:  handler.NewAdminHandler(adminService, userService, pairingService),
 		User:   handler.NewUserHandler(userService, pairingService),
 		Device: handler.NewDeviceHandler(deviceService, palmService, attendanceService),
 	}

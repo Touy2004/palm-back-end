@@ -64,11 +64,12 @@ Instead of showing raw code and JSON structures, this document tells the story o
   UPDATE device_pairing_sessions SET status = 'scanned', scanned_at = NOW() WHERE id = $2;
   ```
 
-* **`POST /pairing/approve`**: The employee clicks "Approve" on their phone and selects which hand they want to enroll (Left or Right). This route tells the server: "I am at this scanner, and I authorize it to scan my selected palm and link it to my account."
+* **`POST /admin/pairing/approve`**: (Admin Only) The Administrator scans the QR code on their device, enters the employee's `employee_code`, and selects which hand they want to enroll (Left or Right). This route tells the server: "I am an Admin at this scanner, and I authorize it to scan this specific employee's palm and link it to their account."
   ```sql
+  SELECT id FROM users WHERE employee_code = $1;
   UPDATE device_pairing_sessions 
-  SET user_id = $1, hand_side = $2, status = 'approved', approved_at = NOW() 
-  WHERE session_token = $3;
+  SET user_id = $2, hand_side = $3, status = 'approved', approved_at = NOW() 
+  WHERE session_token = $4;
   ```
 
 ---

@@ -43,12 +43,12 @@ func SetupRoutes(app *fiber.App, h *Handler, m *Middleware) {
 	// Pairing routes (Requires authentication)
 	pairing := api.Group("/pairing", m.Auth.Authenticate)
 	pairing.Post("/scan", h.User.ScanPairingQR)
-	pairing.Post("/approve", h.User.ApprovePairingQR)
 
 	// Admin only routes
 	admin := api.Group("/admin", m.Auth.Authenticate, m.Role.Require(constant.ROLE_ADMIN))
 
 	admin.Get("/dashboard/summary", h.Admin.GetDashboardSummary)
+	admin.Post("/pairing/approve", h.Admin.ApprovePairingQR)
 
 	// Admin Users (Search must be before :id to prevent collision in some routers)
 	admin.Get("/users/search", h.Admin.SearchUsers)

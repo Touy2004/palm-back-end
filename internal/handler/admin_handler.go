@@ -10,11 +10,53 @@ import (
 )
 
 type AdminHandler struct {
-	adminService *service.AdminService
+	adminService   *service.AdminService
+	userService    *service.UserService
+	pairingService *service.PairingService
 }
 
-func NewAdminHandler(adminService *service.AdminService) *AdminHandler {
-	return &AdminHandler{adminService: adminService}
+func NewAdminHandler(
+	adminService *service.AdminService,
+	userService *service.UserService,
+	pairingService *service.PairingService,
+) *AdminHandler {
+	return &AdminHandler{
+		adminService:   adminService,
+		userService:    userService,
+		pairingService: pairingService,
+	}
+}
+
+// Pairing Endpoints
+func (h *AdminHandler) ApprovePairingQR(c *fiber.Ctx) error {
+	var input struct {
+		SessionToken string `json:"session_token"`
+		HandSide     string `json:"hand_side"`
+		EmployeeCode string `json:"employee_code"`
+	}
+	if err := c.BodyParser(&input); err != nil {
+		return response.Error(c, fiber.StatusBadRequest, "Please provide valid approval data.", err.Error())
+	}
+
+	if input.HandSide == "" {
+		return response.Error(c, fiber.StatusBadRequest, "Please select whether you want to enroll the left or right hand.", nil)
+	}
+
+	if input.EmployeeCode == "" {
+		return response.Error(c, fiber.StatusBadRequest, "Employee code is required.", nil)
+	}
+
+	user, err := h.userService.FindByEmployeeCode(input.EmployeeCode)
+	if err != nil {
+		return response.Error(c, fiber.StatusNotFound, "Employee not found. Please check the employee code.", err.Error())
+	}
+
+	err = h.pairingService.ApproveSession(input.SessionToken, user.ID.String(), input.HandSide)
+	if err != nil {
+		return response.Error(c, fiber.StatusBadRequest, "We couldn't approve the scanner. Please try scanning the QR code again.", err.Error())
+	}
+
+	return response.Success(c, fiber.StatusOK, "Enrollment approved. The employee can now place their palm on the device.", nil)
 }
 
 // User Endpoints

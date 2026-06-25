@@ -24,9 +24,9 @@ Before employees can start checking in, the system needs to be set up:
 
 ### Phase 2: Palm Enrollment (The Pairing Flow)
 An employee cannot check in until their palm is securely linked to their account. This is a one-time process:
-1. **Start Pairing:** The physical scanner displays a QR code on its screen.
-2. **Scan QR:** The employee logs into their mobile app and scans the scanner's QR code.
-3. **Approve:** The employee clicks "Approve" on their phone. This temporarily links their phone to that specific scanner.
+1. **Start:** The administrator or employee clicks "Enroll New Palm" on the physical scanner's touchscreen.
+2. **QR Code:** The scanner displays a unique QR code on its screen.
+3. **Approve:** An Administrator scans the QR code using the admin app/dashboard and enters the employee's ID code. This temporarily links the scanner session to that specific employee.
 4. **Scan Palm:** The scanner prompts the employee to place their hand over the sensor. The machine reads the palm, encrypts the data, and saves it to the employee's database profile.
 
 ### Phase 3: Daily Attendance (Checking In/Out)
@@ -236,7 +236,7 @@ flowchart TD
     DM --> DM2[2.2 Monitor Status]:::process
     
     PE --> PE1[3.1 Generate QR Code]:::process
-    PE --> PE2[3.2 Mobile Approval]:::process
+    PE --> PE2[3.2 Admin Approval]:::process
     PE --> PE3[3.3 Capture Palm]:::process
     
     AP --> AP1[4.1 Scan Palm]:::process
@@ -277,7 +277,7 @@ flowchart LR
     System -- "Reports & Dashboards" --> Admin
 
     %% Flows - Employee
-    Employee -- "Login & Pairing Approval" --> System
+    Employee -- "Login" --> System
     System -- "Attendance History & Status" --> Employee
 
     %% Flows - Device
@@ -318,8 +318,9 @@ flowchart TD
 
     %% Palm Enrollment Flows
     Device -- "Request Session" --> P2
-    Employee -- "Approve Session" --> P2
-    P2 -- "Verify User" --> D1
+    Employee -- "Scan Palm" --> P2
+    Admin -- "Approve Session (Enter Emp Code)" --> P2
+    P2 -- "Palm Template" --> D3
     P2 -- "Save Template" --> D3
     Device -- "Send Palm Data" --> P2
 
@@ -372,18 +373,20 @@ flowchart LR
 flowchart TD
     Device[Hardware Scanner]:::entity
     Employee[Employee]:::entity
+    Admin[Admin]:::entity
     
     P2_1((2.1<br/>Generate QR Session)):::process
-    P2_2((2.2<br/>Approve Session)):::process
-    P2_3((2.3<br/>Capture & Encrypt Palm)):::process
+    P2_2((2.2<br/>Admin Approves Session)):::process
+    P2_3((2.3<br/>Scan & Extract Palm Vectors)):::process
     
     D1[(D1: Users DB)]:::datastore
     D3[(D3: Templates DB)]:::datastore
     
-    Device -- "Init Session" --> P2_1
+    Device -- "Display Session QR" --> P2_1
+    Admin -- "Scan QR & Enter Emp Code" --> P2_2
+    P2_2 -- "Session Approved" --> P2_3
     P2_1 -- "Show QR" --> Device
     
-    Employee -- "Scan & Approve via App" --> P2_2
     P2_2 -- "Validate User" --> D1
     P2_2 -- "Session Approved" --> P2_3
     
@@ -559,7 +562,7 @@ flowchart TD
     Setup --> App[Employee Logs into Mobile App]
     App --> Enroll[Palm Enrollment Phase]
     Enroll --> QR[Hardware shows QR Code]
-    QR --> Scan[Employee Scans QR & Approves]
+    QR --> Scan[Admin Scans QR & Approves]
     Scan --> Capture[Hardware Captures Palm Vector]
     Capture --> Daily[Daily Attendance Phase]
     Daily --> ScanPalm[Employee Places Hand on Scanner]
@@ -614,11 +617,11 @@ flowchart TD
     Choice -- Enroll Palm --> ScannerQR[Walk to Hardware Scanner]
     ScannerQR --> Cam[Open App Camera]
     Cam --> Scan[Scan Scanner's QR Code]
-    Scan --> Valid{Valid QR?}
-    Valid -- No --> Cam
-    Valid -- Yes --> Approve[Click 'Approve Pairing']
-    Approve --> Wait[Place Hand on Scanner]
-    Wait --> Success[Receive Success Notification]
+    Scan -- Valid? --> Valid{Is Session Valid?}
+    Valid -- No --> ScanErr[Show Error]
+    Valid -- Yes --> Approve[Admin Approves & Enters Emp Code]
+    Approve --> Wait[Employee Places Hand on Scanner]
+    Wait --> Success[Enrollment Complete]
     Success --> Choice
     
     Choice -- Logout --> End([End Session])

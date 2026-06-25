@@ -276,14 +276,16 @@ These endpoints facilitate the secure enrollment process where the mobile app "p
   }
   ```
 
-### 3.2 Approve Pairing
-* **Use for:** The user taps "Confirm" on their phone to securely link their mobile identity to the hardware session, authorizing it to read their palm.
-* **POST** `/pairing/approve`
+### 3.2 Approve Pairing (Admin Only)
+* **Use for:** An Administrator taps "Confirm" on their device and inputs the employee's `employee_code` to securely link the hardware session to that specific employee, authorizing it to read their palm.
+* **POST** `/admin/pairing/approve`
+* **Requires Role:** `admin`
 * **Body:** 
   ```json
   {
     "session_token": "abc123xyz...",
-    "hand_side": "right"
+    "hand_side": "right",
+    "employee_code": "EMP001"
   }
   ```
   *(Note: `hand_side` must be exactly `"left"` or `"right"`. The system enforces a maximum of 1 active template per hand side per user.)*
@@ -292,7 +294,7 @@ These endpoints facilitate the secure enrollment process where the mobile app "p
   {
     "code": 200,
     "status": "OK",
-    "message": "Enrollment approved. Please place your palm on the device.",
+    "message": "Enrollment approved. The employee can now place their palm on the device.",
     "data": null
   }
   ```

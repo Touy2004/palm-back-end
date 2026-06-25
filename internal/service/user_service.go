@@ -22,6 +22,10 @@ func NewUserService(userRepo *repository.UserRepository, palmRepo *repository.Pa
 	}
 }
 
+func (s *UserService) FindByEmployeeCode(employeeCode string) (*model.User, error) {
+	return s.userRepo.FindByEmployeeCode(employeeCode)
+}
+
 func (s *UserService) GetPalmTemplates(userID string) ([]model.PalmTemplate, error) {
 	return s.palmRepo.FindByUserID(userID)
 }

@@ -78,8 +78,9 @@ The physical scanner generates a QR code on its screen.
 ```
 * **Action:** Send request. Note down the `session_id` and the `qr_code_data` from the response.
 
-### Step 5: Employee Scans the QR Code
-The employee scans the QR code using their mobile app (using their employee access token).
+### Step 5: Admin Scans the QR Code
+The Administrator scans the QR code using their dashboard/app (using their Admin access token).
+* **Important:** In Postman, change your collection variable `access_token` BACK to the Admin token from Step 1!
 * **Endpoint:** `3. Pairing Flow` -> `Scan QR Code`
 * **Body (Raw JSON):**
 ```json
@@ -89,20 +90,21 @@ The employee scans the QR code using their mobile app (using their employee acce
 ```
 * **Action:** Send request. The server will respond with the device info ("Main Entrance Scanner").
 
-### Step 6: Employee Approves the Pairing
-The employee clicks "Approve" on their phone to link their account to the scanner.
-* **Endpoint:** `3. Pairing Flow` -> `Approve Pairing`
+### Step 6: Admin Approves the Pairing
+The Admin approves the pairing by providing the employee's `employee_code` to link the account to the scanner.
+* **Endpoint:** `5. Web Admin` -> `Approve Pairing (Admin Only)` (or `3. Pairing Flow` -> `Approve Pairing`)
 * **Body (Raw JSON):**
 ```json
 {
   "session_token": "<paste_the_session_token_here>",
-  "hand_side": "right"
+  "hand_side": "right",
+  "employee_code": "EMP001"
 }
 ```
 * **Action:** Send request. 
 
 ### Step 7: Device Checks Session Status
-The scanner checks if the user approved the session.
+The scanner checks if the Admin approved the session.
 * **Endpoint:** `4. Hardware Device` -> `Check Pairing Status`
 * *(Replace `session-uuid` in the URL with your `session_id`)*
 * **Action:** Send request. The `status` should now be `"approved"`, and it will return a `session_token`. Note this token!
