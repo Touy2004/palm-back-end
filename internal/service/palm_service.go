@@ -120,9 +120,6 @@ type EnrollInput struct {
 	Embeddings     [][]float32
 	LivenessPassed bool
 	QualityScore   float64
-	ThermalMin     float64
-	ThermalMax     float64
-	ThermalAvg     float64
 }
 
 func (s *PalmService) EnrollPalm(input EnrollInput) (*model.PalmTemplate, error) {

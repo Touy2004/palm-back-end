@@ -443,7 +443,6 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"device_code\": \"DEV-001\",\n  \"session_token\": \"a1b2c3d4e5f6\",\n  \"model_version\": \"v1.0\",\n  \"embedding_dim\": 128,\n  \"embeddings\": [[0.12, 0.44]],\n  \"liveness_passed\": true,\n  \"quality_score\": 0.98,\n  \"thermal_min\": 33.5,\n  \"thermal_max\": 36.2,\n  \"thermal_avg\": 35.1\n}"
             },
             "url": {
               "raw": "{{base_url}}/devices/palm/enroll",
@@ -470,7 +469,6 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"device_code\": \"DEV-001\",\n  \"model_version\": \"v1.0\",\n  \"embedding_dim\": 128,\n  \"embeddings\": [[0.12, 0.44]],\n  \"liveness_passed\": true,\n  \"quality_score\": 0.98,\n  \"thermal_min\": 33.5,\n  \"thermal_max\": 36.2,\n  \"thermal_avg\": 35.1\n}"
             },
             "url": {
               "raw": "{{base_url}}/devices/palm/identify",
@@ -497,7 +495,6 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"device_code\": \"DEV-001\",\n  \"model_version\": \"v1.0\",\n  \"embedding_dim\": 128,\n  \"embeddings\": [[0.12, 0.44]],\n  \"liveness_passed\": true,\n  \"quality_score\": 0.98,\n  \"thermal_min\": 33.5,\n  \"thermal_max\": 36.2,\n  \"thermal_avg\": 35.1\n}"
             },
             "url": {
               "raw": "{{base_url}}/devices/attendance/palm",

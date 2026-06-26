@@ -40,9 +40,6 @@ type ProcessAttendanceInput struct {
 	Embedding      []float32
 	LivenessPassed bool
 	QualityScore   float64
-	ThermalMin     float64
-	ThermalMax     float64
-	ThermalAvg     float64
 }
 
 type AttendanceResult struct {

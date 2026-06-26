@@ -81,9 +81,6 @@ func (h *DeviceHandler) EnrollPalm(c *fiber.Ctx) error {
 		Embeddings     [][]float32 `json:"embeddings"`
 		LivenessPassed bool        `json:"liveness_passed"`
 		QualityScore   float64     `json:"quality_score"`
-		ThermalMin     float64     `json:"thermal_min"`
-		ThermalMax     float64     `json:"thermal_max"`
-		ThermalAvg     float64     `json:"thermal_avg"`
 	}
 
 	if err := c.BodyParser(&payload); err != nil {
@@ -98,9 +95,6 @@ func (h *DeviceHandler) EnrollPalm(c *fiber.Ctx) error {
 		Embeddings:     payload.Embeddings,
 		LivenessPassed: payload.LivenessPassed,
 		QualityScore:   payload.QualityScore,
-		ThermalMin:     payload.ThermalMin,
-		ThermalMax:     payload.ThermalMax,
-		ThermalAvg:     payload.ThermalAvg,
 	}
 
 	template, err := h.palmSvc.EnrollPalm(enrollInput)
@@ -121,9 +115,6 @@ func (h *DeviceHandler) ProcessAttendance(c *fiber.Ctx) error {
 		Embeddings     [][]float32 `json:"embeddings"`
 		LivenessPassed bool        `json:"liveness_passed"`
 		QualityScore   float64     `json:"quality_score"`
-		ThermalMin     float64     `json:"thermal_min"`
-		ThermalMax     float64     `json:"thermal_max"`
-		ThermalAvg     float64     `json:"thermal_avg"`
 	}
 
 	if err := c.BodyParser(&payload); err != nil {
@@ -141,9 +132,6 @@ func (h *DeviceHandler) ProcessAttendance(c *fiber.Ctx) error {
 		Embedding:      payload.Embeddings[0], // Extract the first embedding
 		LivenessPassed: payload.LivenessPassed,
 		QualityScore:   payload.QualityScore,
-		ThermalMin:     payload.ThermalMin,
-		ThermalMax:     payload.ThermalMax,
-		ThermalAvg:     payload.ThermalAvg,
 	}
 
 	result, err := h.attendanceSvc.ProcessPalmAttendance(input)
@@ -168,9 +156,6 @@ func (h *DeviceHandler) IdentifyPalm(c *fiber.Ctx) error {
 		Embeddings     [][]float32 `json:"embeddings"`
 		LivenessPassed bool        `json:"liveness_passed"`
 		QualityScore   float64     `json:"quality_score"`
-		ThermalMin     float64     `json:"thermal_min"`
-		ThermalMax     float64     `json:"thermal_max"`
-		ThermalAvg     float64     `json:"thermal_avg"`
 	}
 
 	if err := c.BodyParser(&payload); err != nil {
@@ -188,9 +173,6 @@ func (h *DeviceHandler) IdentifyPalm(c *fiber.Ctx) error {
 		Embedding:      payload.Embeddings[0],
 		LivenessPassed: payload.LivenessPassed,
 		QualityScore:   payload.QualityScore,
-		ThermalMin:     payload.ThermalMin,
-		ThermalMax:     payload.ThermalMax,
-		ThermalAvg:     payload.ThermalAvg,
 	}
 
 	result, err := h.attendanceSvc.IdentifyPalm(input)

@@ -356,10 +356,7 @@ These endpoints are consumed EXCLUSIVELY by the physical palm scanners.
     "embedding_dim": 128,
     "embeddings": [[0.12, 0.44]],
     "liveness_passed": true,
-    "quality_score": 0.98,
-    "thermal_min": 33.5,
-    "thermal_max": 36.2,
-    "thermal_avg": 35.1
+    "quality_score": 0.98
   }
   ```
 * **Response (200 OK):**
@@ -385,10 +382,7 @@ These endpoints are consumed EXCLUSIVELY by the physical palm scanners.
     "embedding_dim": 128,
     "embeddings": [[0.12, 0.44]],
     "liveness_passed": true,
-    "quality_score": 0.98,
-    "thermal_min": 33.5,
-    "thermal_max": 36.2,
-    "thermal_avg": 35.1
+    "quality_score": 0.98
   }
   ```
 * **Response (200 OK):**
@@ -417,10 +411,7 @@ These endpoints are consumed EXCLUSIVELY by the physical palm scanners.
     "embedding_dim": 128,
     "embeddings": [[0.12, 0.44]],
     "liveness_passed": true,
-    "quality_score": 0.98,
-    "thermal_min": 33.5,
-    "thermal_max": 36.2,
-    "thermal_avg": 35.1
+    "quality_score": 0.98
   }
   ```
 * **Response (200 OK):**

@@ -121,10 +121,7 @@ The scanner reads the user's palm and sends the data to the server using the app
   "embedding_dim": 2,
   "embeddings": [[0.15, 0.88]],
   "liveness_passed": true,
-  "quality_score": 0.95,
-  "thermal_min": 34.1,
-  "thermal_max": 36.5,
-  "thermal_avg": 35.3
+  "quality_score": 0.95
 }
 ```
 * **Action:** Send request. The palm template is now saved to the employee!
@@ -144,10 +141,7 @@ The employee arrives the next morning and scans their palm. The device sends the
   "embedding_dim": 2,
   "embeddings": [[0.15, 0.88]], 
   "liveness_passed": true,
-  "quality_score": 0.98,
-  "thermal_min": 34.0,
-  "thermal_max": 36.6,
-  "thermal_avg": 35.5
+  "quality_score": 0.98
 }
 ```
 * **Action:** Send request. The server will match the embeddings `[0.15, 0.88]` to John Doe, create an attendance record, and return success!
