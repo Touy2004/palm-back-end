@@ -117,7 +117,7 @@ erDiagram
 Here is the database structure of the Palm Recognition Attendance System modeled in Chen's E-R notation style:
 
 ```mermaid
-flowchart TD
+flowchart LR
     %% Styling
     classDef entity fill:#fff,stroke:#000,stroke-width:1px;
     classDef attribute fill:#fff,stroke:#000,stroke-width:1px,rx:20,ry:20;
@@ -146,12 +146,12 @@ flowchart TD
     User ---|1| Approves ---|N| DevicePairingSession
 
     %% Attributes for User
-    U_ID([user_id]):::primaryKey
-    U_EmpCode([employee_code]):::attribute
-    U_Name([full_name]):::attribute
-    U_Phone([phone]):::attribute
-    U_Role([role]):::attribute
-    U_Pass([password_hash]):::attribute
+    U_ID([user_id (uuid)]):::primaryKey
+    U_EmpCode([employee_code (string)]):::attribute
+    U_Name([full_name (string)]):::attribute
+    U_Phone([phone (string)]):::attribute
+    U_Role([role (string)]):::attribute
+    U_Pass([password_hash (string)]):::attribute
 
     User --- U_ID
     User --- U_EmpCode
@@ -161,10 +161,10 @@ flowchart TD
     User --- U_Pass
 
     %% Attributes for PalmTemplate
-    PT_ID([template_id]):::primaryKey
-    PT_Hand([hand_side]):::attribute
-    PT_Encrypted([template_encrypted blob]):::attribute
-    PT_Status([status]):::attribute
+    PT_ID([template_id (uuid)]):::primaryKey
+    PT_Hand([hand_side (string)]):::attribute
+    PT_Encrypted([template_encrypted (blob)]):::attribute
+    PT_Status([status (string)]):::attribute
 
     PalmTemplate --- PT_ID
     PalmTemplate --- PT_Hand
@@ -172,11 +172,11 @@ flowchart TD
     PalmTemplate --- PT_Status
 
     %% Attributes for AttendanceLog
-    AL_ID([log_id]):::primaryKey
-    AL_Date([attendance_date]):::attribute
-    AL_InTime([check_in_time]):::attribute
-    AL_Status([status]):::attribute
-    AL_Score([confidence_score float]):::attribute
+    AL_ID([log_id (uuid)]):::primaryKey
+    AL_Date([attendance_date (date)]):::attribute
+    AL_InTime([check_in_time (timestamp)]):::attribute
+    AL_Status([status (string)]):::attribute
+    AL_Score([confidence_score (float)]):::attribute
 
     AttendanceLog --- AL_ID
     AttendanceLog --- AL_Date
@@ -185,25 +185,26 @@ flowchart TD
     AttendanceLog --- AL_Score
 
     %% Attributes for Device
-    D_ID([device_id]):::primaryKey
-    D_Code([device_code]):::attribute
-    D_Name([name]):::attribute
+    D_ID([device_id (uuid)]):::primaryKey
+    D_Code([device_code (string)]):::attribute
+    D_Name([name (string)]):::attribute
 
     Device --- D_ID
     Device --- D_Code
     Device --- D_Name
 
     %% Attributes for DevicePairingSession
-    DPS_ID([session_id]):::primaryKey
-    DPS_Token([session_token]):::attribute
-    DPS_Purpose([purpose]):::attribute
-    DPS_Status([status]):::attribute
+    DPS_ID([session_id (uuid)]):::primaryKey
+    DPS_Token([session_token (string)]):::attribute
+    DPS_Purpose([purpose (string)]):::attribute
+    DPS_Status([status (string)]):::attribute
 
     DevicePairingSession --- DPS_ID
     DevicePairingSession --- DPS_Token
     DevicePairingSession --- DPS_Purpose
     DevicePairingSession --- DPS_Status
 ```
+<p align="center"><b>ຮູບທີ 3.20 ສະແດງຮູບ E-R Model</b></p>
 
 ### Understanding the Relationships:
 * **Users & Palm Templates (1-to-Many):** One user can have multiple palm templates (e.g., left hand, right hand).
