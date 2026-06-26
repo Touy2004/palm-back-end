@@ -318,6 +318,7 @@ flowchart TD
     D2["D2 &nbsp;|&nbsp; Devices DB"]:::datastore
     D3["D3 &nbsp;|&nbsp; Templates DB"]:::datastore
     D4["D4 &nbsp;|&nbsp; Attendance DB"]:::datastore
+    D5["D5 &nbsp;|&nbsp; Sessions DB"]:::datastore
 
     %% Flows
     Admin --> P1
@@ -332,6 +333,7 @@ flowchart TD
     Admin --> P3
     P3 --> D1
     P3 --> D3
+    P3 --> D5
 
     Device --> P4
     P4 --> D3
@@ -425,13 +427,17 @@ flowchart TD
     
     D1["D1 &nbsp;|&nbsp; Users DB"]:::datastore
     D3["D3 &nbsp;|&nbsp; Templates DB"]:::datastore
+    D5["D5 &nbsp;|&nbsp; Sessions DB"]:::datastore
     
     Device --> P3_1
+    P3_1 --> D5
     P3_1 --> MobileApp
     MobileApp --> P3_2
+    P3_2 --> D5
     P3_2 --> Admin
     
     Admin --> P3_3
+    P3_3 --> D5
     P3_3 --> D1
     P3_3 --> Device
     
