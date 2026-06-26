@@ -269,26 +269,16 @@ Data Flow Diagrams map out how information flows through the system, from extern
 The Context Diagram provides a bird's-eye view of the entire system as a single process, showing its interactions with external entities.
 
 ```mermaid
-flowchart TD
+flowchart LR
     %% External Entities
-    Admin[Admin]:::entity
-    Employee[Employee]:::entity
-    Device[Hardware Scanner]:::entity
+    User["User"]:::entity
 
     %% Central System
-    System["0.0<hr/>Palm Recognition System"]:::process
+    System["0<hr/>Palm Recognition System"]:::process
 
-    %% Flows - Admin
-    Admin --> System
-    System --> Admin
-
-    %% Flows - Employee
-    Employee --> System
-    System --> Employee
-
-    %% Flows - Device
-    Device --> System
-    System --> Device
+    %% Flows
+    User -- "- User Data<br/>- Palm Data<br/>- Scan History Data" --> System
+    System -- "- Palm Data Reports<br/>- Scan History Reports" --> User
 
     %% Styling
     classDef entity fill:#fff,stroke:#000,stroke-width:1px,shape:rect,color:#000
