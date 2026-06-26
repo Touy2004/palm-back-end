@@ -307,10 +307,11 @@ flowchart TD
     Device[Hardware Scanner]:::entity
 
     %% Processes
-    P1["1.0<hr/>Manage Setup"]:::process
-    P2["2.0<hr/>Enroll Palm"]:::process
-    P3["3.0<hr/>Process Attendance"]:::process
-    P4["4.0<hr/>Generate Reports"]:::process
+    P1["1.0<hr/>User Management"]:::process
+    P2["2.0<hr/>Device Management"]:::process
+    P3["3.0<hr/>Palm Enrollment"]:::process
+    P4["4.0<hr/>Attendance Processing"]:::process
+    P5["5.0<hr/>Reporting & Analytics"]:::process
 
     %% Data Stores
     D1["D1 &nbsp;|&nbsp; Users DB"]:::datastore
@@ -321,23 +322,27 @@ flowchart TD
     %% Flows
     Admin --> P1
     P1 --> D1
-    P1 --> D2
 
-    Device --> P2
-    Employee --> P2
     Admin --> P2
-    P2 --> D3
+    Device --> P2
+    P2 --> D2
 
     Device --> P3
+    Employee --> P3
+    Admin --> P3
+    P3 --> D1
     P3 --> D3
-    P3 --> D4
-    P3 --> Device
 
-    Admin --> P4
-    Employee --> P4
-    D4 --> P4
-    P4 --> Admin
-    P4 --> Employee
+    Device --> P4
+    P4 --> D3
+    P4 --> D4
+    P4 --> Device
+
+    Admin --> P5
+    Employee --> P5
+    D4 --> P5
+    P5 --> Admin
+    P5 --> Employee
 
     %% Styling
     classDef entity fill:#fff,stroke:#000,stroke-width:1px,shape:rect,color:#000
@@ -348,108 +353,148 @@ flowchart TD
 ### 5.3 DFD Level 2 (Process Decomposition)
 Below are the decomposed Data Flow Diagrams for each of the main processes (1.0 to 4.0), showing the specific sub-processes involved.
 
-#### Process 1: Manage Setup
+#### Process 1: User Management
 ```mermaid
 flowchart LR
     Admin[Admin]:::entity
+    Employee[Employee]:::entity
     
-    P1_1["1.1<hr/>Create/Edit User"]:::process
-    P1_2["1.2<hr/>Register Device"]:::process
+    P1_1["1.1<hr/>User Authentication"]:::process
+    P1_2["1.2<hr/>Manage Profiles"]:::process
+    P1_3["1.3<hr/>Manage Access Status"]:::process
+    P1_4["1.4<hr/>Revoke Palm Templates"]:::process
     
     D1["D1 &nbsp;|&nbsp; Users DB"]:::datastore
-    D2["D2 &nbsp;|&nbsp; Devices DB"]:::datastore
+    D3["D3 &nbsp;|&nbsp; Templates DB"]:::datastore
     
     Admin --> P1_1
-    Admin --> P1_2
-    
+    Employee --> P1_1
     P1_1 --> D1
-    P1_2 --> D2
+    
+    Admin --> P1_2
+    P1_2 --> D1
+    
+    Admin --> P1_3
+    P1_3 --> D1
+    
+    Admin --> P1_4
+    P1_4 --> D3
 
     classDef entity fill:#fff,stroke:#000,stroke-width:1px,shape:rect,color:#000
     classDef process fill:#fff,stroke:#000,stroke-width:1px,shape:rect,color:#000
     classDef datastore fill:#fff,stroke:#000,stroke-width:1px,shape:rect,color:#000
 ```
 
-#### Process 2: Enroll Palm
+#### Process 2: Device Management
+```mermaid
+flowchart LR
+    Admin[Admin]:::entity
+    Device[Hardware Scanner]:::entity
+    
+    P2_1["2.1<hr/>Register Scanner"]:::process
+    P2_2["2.2<hr/>Update Settings"]:::process
+    P2_3["2.3<hr/>Monitor Heartbeat"]:::process
+    
+    D2["D2 &nbsp;|&nbsp; Devices DB"]:::datastore
+    
+    Admin --> P2_1
+    P2_1 --> D2
+    
+    Admin --> P2_2
+    P2_2 --> D2
+    
+    Device --> P2_3
+    P2_3 --> D2
+
+    classDef entity fill:#fff,stroke:#000,stroke-width:1px,shape:rect,color:#000
+    classDef process fill:#fff,stroke:#000,stroke-width:1px,shape:rect,color:#000
+    classDef datastore fill:#fff,stroke:#000,stroke-width:1px,shape:rect,color:#000
+```
+
+#### Process 3: Palm Enrollment
 ```mermaid
 flowchart TD
     Device[Hardware Scanner]:::entity
-    Employee[Employee]:::entity
+    MobileApp[Mobile App]:::entity
     Admin[Admin]:::entity
     
-    P2_1["2.1<hr/>Generate QR Session"]:::process
-    P2_2["2.2<hr/>Admin Approves Session"]:::process
-    P2_3["2.3<hr/>Scan & Extract Palm Vectors"]:::process
+    P3_1["3.1<hr/>Generate Session QR"]:::process
+    P3_2["3.2<hr/>Validate QR App"]:::process
+    P3_3["3.3<hr/>Admin Authorization"]:::process
+    P3_4["3.4<hr/>Capture & Encrypt Palm"]:::process
     
     D1["D1 &nbsp;|&nbsp; Users DB"]:::datastore
     D3["D3 &nbsp;|&nbsp; Templates DB"]:::datastore
     
-    Device --> P2_1
-    Admin --> P2_2
-    P2_2 --> P2_3
-    P2_1 --> Device
+    Device --> P3_1
+    P3_1 --> MobileApp
+    MobileApp --> P3_2
+    P3_2 --> Admin
     
-    P2_2 --> D1
+    Admin --> P3_3
+    P3_3 --> D1
+    P3_3 --> Device
     
-    Device --> P2_3
-    P2_3 --> D3
+    Device --> P3_4
+    P3_4 --> D3
 
     classDef entity fill:#fff,stroke:#000,stroke-width:1px,shape:rect,color:#000
     classDef process fill:#fff,stroke:#000,stroke-width:1px,shape:rect,color:#000
     classDef datastore fill:#fff,stroke:#000,stroke-width:1px,shape:rect,color:#000
 ```
 
-#### Process 3: Process Attendance
+#### Process 4: Attendance Processing
 ```mermaid
 flowchart TD
     Device[Hardware Scanner]:::entity
     
-    P3_1["3.1<hr/>Read Palm Vector"]:::process
-    P3_2["3.2<hr/>Match Identity"]:::process
-    P3_3["3.3<hr/>Record Attendance Log"]:::process
+    P4_1["4.1<hr/>Extract Vector"]:::process
+    P4_2["4.2<hr/>Biometric Matching"]:::process
+    P4_3["4.3<hr/>Record Attendance State"]:::process
     
     D3["D3 &nbsp;|&nbsp; Templates DB"]:::datastore
     D4["D4 &nbsp;|&nbsp; Attendance DB"]:::datastore
     
-    Device --> P3_1
-    P3_1 --> P3_2
+    Device --> P4_1
+    P4_1 --> P4_2
     
-    P3_2 --> D3
-    P3_2 --> P3_3
+    P4_2 --> D3
+    P4_2 --> P4_3
     
-    P3_3 --> D4
-    P3_3 --> Device
+    P4_3 --> D4
+    P4_3 --> Device
 
     classDef entity fill:#fff,stroke:#000,stroke-width:1px,shape:rect,color:#000
     classDef process fill:#fff,stroke:#000,stroke-width:1px,shape:rect,color:#000
     classDef datastore fill:#fff,stroke:#000,stroke-width:1px,shape:rect,color:#000
 ```
 
-#### Process 4: Generate Reports
+#### Process 5: Reporting & Analytics
 ```mermaid
 flowchart LR
     Admin[Admin]:::entity
     Employee[Employee]:::entity
     
-    P4_1["4.1<hr/>Query Daily History"]:::process
-    P4_2["4.2<hr/>Compute Monthly Summary"]:::process
-    P4_3["4.3<hr/>Export Formatted Data"]:::process
+    P5_1["5.1<hr/>Live Admin Dashboard"]:::process
+    P5_2["5.2<hr/>Generate Reports"]:::process
+    P5_3["5.3<hr/>View Company Logs"]:::process
+    P5_4["5.4<hr/>View Personal History"]:::process
     
     D1["D1 &nbsp;|&nbsp; Users DB"]:::datastore
     D4["D4 &nbsp;|&nbsp; Attendance DB"]:::datastore
     
-    Employee --> P4_1
-    Admin --> P4_2
+    Admin --> P5_1
+    D4 --> P5_1
     
-    D4 --> P4_1
-    D4 --> P4_2
-    D1 --> P4_2
+    Admin --> P5_2
+    D4 --> P5_2
+    D1 --> P5_2
     
-    P4_1 --> P4_3
-    P4_2 --> P4_3
+    Admin --> P5_3
+    D4 --> P5_3
     
-    P4_3 --> Admin
-    P4_3 --> Employee
+    Employee --> P5_4
+    D4 --> P5_4
 
     classDef entity fill:#fff,stroke:#000,stroke-width:1px,shape:rect,color:#000
     classDef process fill:#fff,stroke:#000,stroke-width:1px,shape:rect,color:#000
