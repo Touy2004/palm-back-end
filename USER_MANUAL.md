@@ -220,38 +220,38 @@ The Process Hierarchy Chart (or Functional Decomposition Diagram) breaks down th
 ```mermaid
 flowchart TD
     %% Main System
-    System[Palm Recognition Attendance System]:::root
+    System[ລະບົບຢືນຢັນຕົວຕົນດ້ວຍລາຍຝາມື]:::root
     
     %% Level 1 Modules
-    System --> UM[1. User Management]:::module
-    System --> DM[2. Device Management]:::module
-    System --> PE[3. Palm Enrollment]:::module
-    System --> AP[4. Attendance Processing]:::module
-    System --> RA[5. Reporting & Analytics]:::module
+    System --> UM[1. ການຈັດການຂໍ້ມູນຜູ້ໃຊ້]:::module
+    System --> DM[2. ການຈັດການອຸປະກອນ]:::module
+    System --> PE[3. ການລົງທະບຽນລາຍຝາມື]:::module
+    System --> AP[4. ປະມວນຜົນການລົງເວລາ]:::module
+    System --> RA[5. ການລາຍງານ ແລະ ວິເຄາະ]:::module
     
     %% Level 2 Processes
-    UM --> UM1[1.1 User Authentication]:::process
-    UM --> UM2[1.2 Manage Profiles]:::process
-    UM --> UM3[1.3 Manage Access Status]:::process
-    UM --> UM4[1.4 Revoke Palm Templates]:::process
+    UM --> UM1[1.1 ການຢືນຢັນຕົວຕົນຜູ້ໃຊ້]:::process
+    UM --> UM2[1.2 ຈັດການຂໍ້ມູນສ່ວນຕົວ]:::process
+    UM --> UM3[1.3 ຈັດການສະຖານະການເຂົ້າໃຊ້]:::process
+    UM --> UM4[1.4 ຍົກເລີກຂໍ້ມູນລາຍຝາມື]:::process
     
-    DM --> DM1[2.1 Register Scanner]:::process
-    DM --> DM2[2.2 Update Settings]:::process
-    DM --> DM3[2.3 Monitor Heartbeat]:::process
+    DM --> DM1[2.1 ລົງທະບຽນເຄື່ອງສະແກນ]:::process
+    DM --> DM2[2.2 ອັບເດດການຕັ້ງຄ່າ]:::process
+    DM --> DM3[2.3 ຕິດຕາມສະຖານະອຸປະກອນ]:::process
     
-    PE --> PE1[3.1 Generate Session QR]:::process
-    PE --> PE2[3.2 Validate QR App]:::process
-    PE --> PE3[3.3 Admin Authorization]:::process
-    PE --> PE4[3.4 Capture & Encrypt Palm]:::process
+    PE --> PE1[3.1 ສ້າງ QR Code ສໍາລັບເຊດຊັນ]:::process
+    PE --> PE2[3.2 ກວດສອບ QR ໃນແອັບ]:::process
+    PE --> PE3[3.3 ການອະນຸມັດຈາກຜູ້ດູແລ]:::process
+    PE --> PE4[3.4 ບັນທຶກ ແລະ ເຂົ້າລະຫັດລາຍຝາມື]:::process
     
-    AP --> AP1[4.1 Extract Vector]:::process
-    AP --> AP2[4.2 Biometric Matching]:::process
-    AP --> AP3[4.3 Record Attendance State]:::process
+    AP --> AP1[4.1 ສະກັດເວັກເຕີລາຍຝາມື]:::process
+    AP --> AP2[4.2 ປຽບທຽບຂໍ້ມູນທາງຊີວະມິຕິ]:::process
+    AP --> AP3[4.3 ບັນທຶກສະຖານະການລົງເວລາ]:::process
     
-    RA --> RA1[5.1 Live Admin Dashboard]:::process
-    RA --> RA2[5.2 Generate Reports]:::process
-    RA --> RA3[5.3 View Company Logs]:::process
-    RA --> RA4[5.4 View Personal History]:::process
+    RA --> RA1[5.1 ກະດານຄວບຄຸມຜູ້ດູແລ]:::process
+    RA --> RA2[5.2 ສ້າງລາຍງານ]:::process
+    RA --> RA3[5.3 ເບິ່ງປະຫວັດຂອງອົງກອນ]:::process
+    RA --> RA4[5.4 ເບິ່ງປະຫວັດສ່ວນຕົວ]:::process
 
     %% Styling
     classDef root fill:#1e293b,stroke:#000,stroke-width:2px,color:#fff,font-weight:bold
@@ -271,24 +271,24 @@ The Context Diagram provides a bird's-eye view of the entire system as a single 
 ```mermaid
 flowchart TD
     %% External Entities
-    Admin[Admin]:::entity
-    Employee[Employee]:::entity
-    Device[Hardware Scanner]:::entity
+    Admin["ຜູ້ດູແລ"]:::entity
+    Employee["ພະນັກງານ"]:::entity
+    Device["ອຸປະກອນສະແກນ"]:::entity
 
     %% Central System
-    System["0.0<hr/>Palm Recognition System"]:::process
+    System["0.0<hr/>ລະບົບຢືນຢັນຕົວຕົນດ້ວຍລາຍຝາມື"]:::process
 
     %% Flows - Admin
-    Admin -- "- User & Device Data<br/>- Approve Sessions" --> System
-    System -- "- Dashboard Reports<br/>- Attendance Logs" --> Admin
+    Admin -- "- ຂໍ້ມູນຜູ້ໃຊ້ ແລະ ອຸປະກອນ<br/>- ອະນຸມັດເຊດຊັນ" --> System
+    System -- "- ລາຍງານກະດານຄວບຄຸມ<br/>- ປະຫວັດການລົງເວລາ" --> Admin
 
     %% Flows - Employee
-    Employee -- "- Scan Palm<br/>- View History" --> System
-    System -- "- Check-in Results<br/>- Personal Logs" --> Employee
+    Employee -- "- ສະແກນລາຍຝາມື<br/>- ເບິ່ງປະຫວັດ" --> System
+    System -- "- ຜົນການລົງເວລາ<br/>- ປະຫວັດສ່ວນຕົວ" --> Employee
 
     %% Flows - Device
-    Device -- "- Scanned Palm Vectors<br/>- Heartbeat" --> System
-    System -- "- QR Sessions<br/>- Auth Results" --> Device
+    Device -- "- ຂໍ້ມູນເວັກເຕີລາຍຝາມື<br/>- ສະຖານະອຸປະກອນ (Heartbeat)" --> System
+    System -- "- ເຊດຊັນ QR<br/>- ຜົນການຢືນຢັນ" --> Device
 
     %% Styling
     classDef entity fill:#fff,stroke:#000,stroke-width:1px,shape:rect,color:#000
@@ -302,23 +302,23 @@ Level 1 breaks down the main system into its primary sub-processes and shows how
 ```mermaid
 flowchart TD
     %% External Entities
-    Admin[Admin]:::entity
-    Employee[Employee]:::entity
-    Device[Hardware Scanner]:::entity
+    Admin["ຜູ້ດູແລ"]:::entity
+    Employee["ພະນັກງານ"]:::entity
+    Device["ອຸປະກອນສະແກນ"]:::entity
 
     %% Processes
-    P1["1.0<hr/>User Management"]:::process
-    P2["2.0<hr/>Device Management"]:::process
-    P3["3.0<hr/>Palm Enrollment"]:::process
-    P4["4.0<hr/>Attendance Processing"]:::process
-    P5["5.0<hr/>Reporting & Analytics"]:::process
+    P1["1.0<hr/>ການຈັດການຂໍ້ມູນຜູ້ໃຊ້"]:::process
+    P2["2.0<hr/>ການຈັດການອຸປະກອນ"]:::process
+    P3["3.0<hr/>ການລົງທະບຽນລາຍຝາມື"]:::process
+    P4["4.0<hr/>ປະມວນຜົນການລົງເວລາ"]:::process
+    P5["5.0<hr/>ການລາຍງານ ແລະ ວິເຄາະ"]:::process
 
     %% Data Stores
-    D1["D1 &nbsp;|&nbsp; Users DB"]:::datastore
-    D2["D2 &nbsp;|&nbsp; Devices DB"]:::datastore
-    D3["D3 &nbsp;|&nbsp; Templates DB"]:::datastore
-    D4["D4 &nbsp;|&nbsp; Attendance DB"]:::datastore
-    D5["D5 &nbsp;|&nbsp; Sessions DB"]:::datastore
+    D1["D1 &nbsp;|&nbsp; ແຟ້ມຂໍ້ມູນຜູ້ໃຊ້"]:::datastore
+    D2["D2 &nbsp;|&nbsp; ແຟ້ມຂໍ້ມູນອຸປະກອນ"]:::datastore
+    D3["D3 &nbsp;|&nbsp; ແຟ້ມຂໍ້ມູນຕົ້ນແບບລາຍຝາມື"]:::datastore
+    D4["D4 &nbsp;|&nbsp; ແຟ້ມຂໍ້ມູນປະຫວັດການເຂົ້າ-ອອກ"]:::datastore
+    D5["D5 &nbsp;|&nbsp; ແຟ້ມຂໍ້ມູນເຊດຊັນ"]:::datastore
 
     %% Flows
     Admin --> P1
@@ -358,16 +358,16 @@ Below are the decomposed Data Flow Diagrams for each of the main processes (1.0 
 #### Process 1: User Management
 ```mermaid
 flowchart LR
-    Admin[Admin]:::entity
-    Employee[Employee]:::entity
+    Admin["ຜູ້ດູແລ"]:::entity
+    Employee["ພະນັກງານ"]:::entity
     
-    P1_1["1.1<hr/>User Authentication"]:::process
-    P1_2["1.2<hr/>Manage Profiles"]:::process
-    P1_3["1.3<hr/>Manage Access Status"]:::process
-    P1_4["1.4<hr/>Revoke Palm Templates"]:::process
+    P1_1["1.1<hr/>ການຢືນຢັນຕົວຕົນຜູ້ໃຊ້"]:::process
+    P1_2["1.2<hr/>ຈັດການຂໍ້ມູນສ່ວນຕົວ"]:::process
+    P1_3["1.3<hr/>ຈັດການສະຖານະການເຂົ້າໃຊ້"]:::process
+    P1_4["1.4<hr/>ຍົກເລີກຂໍ້ມູນລາຍຝາມື"]:::process
     
-    D1["D1 &nbsp;|&nbsp; Users DB"]:::datastore
-    D3["D3 &nbsp;|&nbsp; Templates DB"]:::datastore
+    D1["D1 &nbsp;|&nbsp; ແຟ້ມຂໍ້ມູນຜູ້ໃຊ້"]:::datastore
+    D3["D3 &nbsp;|&nbsp; ແຟ້ມຂໍ້ມູນຕົ້ນແບບລາຍຝາມື"]:::datastore
     
     Admin --> P1_1
     Employee --> P1_1
@@ -390,14 +390,14 @@ flowchart LR
 #### Process 2: Device Management
 ```mermaid
 flowchart LR
-    Admin[Admin]:::entity
-    Device[Hardware Scanner]:::entity
+    Admin["ຜູ້ດູແລ"]:::entity
+    Device["ອຸປະກອນສະແກນ"]:::entity
     
-    P2_1["2.1<hr/>Register Scanner"]:::process
-    P2_2["2.2<hr/>Update Settings"]:::process
-    P2_3["2.3<hr/>Monitor Heartbeat"]:::process
+    P2_1["2.1<hr/>ລົງທະບຽນເຄື່ອງສະແກນ"]:::process
+    P2_2["2.2<hr/>ອັບເດດການຕັ້ງຄ່າ"]:::process
+    P2_3["2.3<hr/>ຕິດຕາມສະຖານະອຸປະກອນ"]:::process
     
-    D2["D2 &nbsp;|&nbsp; Devices DB"]:::datastore
+    D2["D2 &nbsp;|&nbsp; ແຟ້ມຂໍ້ມູນອຸປະກອນ"]:::datastore
     
     Admin --> P2_1
     P2_1 --> D2
@@ -416,18 +416,18 @@ flowchart LR
 #### Process 3: Palm Enrollment
 ```mermaid
 flowchart TD
-    Device[Hardware Scanner]:::entity
-    MobileApp[Mobile App]:::entity
-    Admin[Admin]:::entity
+    Device["ອຸປະກອນສະແກນ"]:::entity
+    MobileApp["ແອັບມືຖື"]:::entity
+    Admin["ຜູ້ດູແລ"]:::entity
     
-    P3_1["3.1<hr/>Generate Session QR"]:::process
-    P3_2["3.2<hr/>Validate QR App"]:::process
-    P3_3["3.3<hr/>Admin Authorization"]:::process
-    P3_4["3.4<hr/>Capture & Encrypt Palm"]:::process
+    P3_1["3.1<hr/>ສ້າງ QR Code ສໍາລັບເຊດຊັນ"]:::process
+    P3_2["3.2<hr/>ກວດສອບ QR ໃນແອັບ"]:::process
+    P3_3["3.3<hr/>ການອະນຸມັດຈາກຜູ້ດູແລ"]:::process
+    P3_4["3.4<hr/>ບັນທຶກ ແລະ ເຂົ້າລະຫັດລາຍຝາມື"]:::process
     
-    D1["D1 &nbsp;|&nbsp; Users DB"]:::datastore
-    D3["D3 &nbsp;|&nbsp; Templates DB"]:::datastore
-    D5["D5 &nbsp;|&nbsp; Sessions DB"]:::datastore
+    D1["D1 &nbsp;|&nbsp; ແຟ້ມຂໍ້ມູນຜູ້ໃຊ້"]:::datastore
+    D3["D3 &nbsp;|&nbsp; ແຟ້ມຂໍ້ມູນຕົ້ນແບບລາຍຝາມື"]:::datastore
+    D5["D5 &nbsp;|&nbsp; ແຟ້ມຂໍ້ມູນເຊດຊັນ"]:::datastore
     
     Device --> P3_1
     P3_1 --> D5
@@ -452,14 +452,14 @@ flowchart TD
 #### Process 4: Attendance Processing
 ```mermaid
 flowchart TD
-    Device[Hardware Scanner]:::entity
+    Device["ອຸປະກອນສະແກນ"]:::entity
     
-    P4_1["4.1<hr/>Extract Vector"]:::process
-    P4_2["4.2<hr/>Biometric Matching"]:::process
-    P4_3["4.3<hr/>Record Attendance State"]:::process
+    P4_1["4.1<hr/>ສະກັດເວັກເຕີລາຍຝາມື"]:::process
+    P4_2["4.2<hr/>ປຽບທຽບຂໍ້ມູນທາງຊີວະມິຕິ"]:::process
+    P4_3["4.3<hr/>ບັນທຶກສະຖານະການລົງເວລາ"]:::process
     
-    D3["D3 &nbsp;|&nbsp; Templates DB"]:::datastore
-    D4["D4 &nbsp;|&nbsp; Attendance DB"]:::datastore
+    D3["D3 &nbsp;|&nbsp; ແຟ້ມຂໍ້ມູນຕົ້ນແບບລາຍຝາມື"]:::datastore
+    D4["D4 &nbsp;|&nbsp; ແຟ້ມຂໍ້ມູນປະຫວັດການເຂົ້າ-ອອກ"]:::datastore
     
     Device --> P4_1
     P4_1 --> P4_2
@@ -478,16 +478,16 @@ flowchart TD
 #### Process 5: Reporting & Analytics
 ```mermaid
 flowchart LR
-    Admin[Admin]:::entity
-    Employee[Employee]:::entity
+    Admin["ຜູ້ດູແລ"]:::entity
+    Employee["ພະນັກງານ"]:::entity
     
-    P5_1["5.1<hr/>Live Admin Dashboard"]:::process
-    P5_2["5.2<hr/>Generate Reports"]:::process
-    P5_3["5.3<hr/>View Company Logs"]:::process
-    P5_4["5.4<hr/>View Personal History"]:::process
+    P5_1["5.1<hr/>ກະດານຄວບຄຸມຜູ້ດູແລ"]:::process
+    P5_2["5.2<hr/>ສ້າງລາຍງານ"]:::process
+    P5_3["5.3<hr/>ເບິ່ງປະຫວັດຂອງອົງກອນ"]:::process
+    P5_4["5.4<hr/>ເບິ່ງປະຫວັດສ່ວນຕົວ"]:::process
     
-    D1["D1 &nbsp;|&nbsp; Users DB"]:::datastore
-    D4["D4 &nbsp;|&nbsp; Attendance DB"]:::datastore
+    D1["D1 &nbsp;|&nbsp; ແຟ້ມຂໍ້ມູນຜູ້ໃຊ້"]:::datastore
+    D4["D4 &nbsp;|&nbsp; ແຟ້ມຂໍ້ມູນປະຫວັດການເຂົ້າ-ອອກ"]:::datastore
     
     Admin --> P5_1
     D4 --> P5_1
