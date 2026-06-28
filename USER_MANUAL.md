@@ -214,88 +214,7 @@ flowchart LR
 
 ---
 
-### 3.2 Data Dictionary (ພົດຈະນານຸກົມຂໍ້ມູນ)
-
-The following tables define the structure of the 5 database tables used in the system, detailing the fields, data types, constraints, and relations.
-
-#### 1. User Table (ຕາຕະລາງຂໍ້ມູນຜູ້ໃຊ້)
-| ຊື່ຟິວ | ປະເພດຂໍ້ມູນ | ຍອມຮັບຄ່າວ່າງ | ຄີ | ການອ້າງອີງ |
-| :--- | :--- | :--- | :--- | :--- |
-| `id` | UUID | ບໍ່ | PK | - |
-| `employee_code` | VARCHAR(50) | ບໍ່ | - | - |
-| `full_name` | VARCHAR(150) | ບໍ່ | - | - |
-| `phone` | VARCHAR(30) | ບໍ່ | - | - |
-| `email` | VARCHAR(150) | ບໍ່ | - | - |
-| `department` | VARCHAR(100) | ບໍ່ | - | - |
-| `password_hash` | TEXT | ບໍ່ | - | - |
-| `role` | VARCHAR(30) | ບໍ່ | - | - |
-| `status` | VARCHAR(30) | ບໍ່ | - | - |
-| `created_at` | TIMESTAMP | ບໍ່ | - | - |
-| `updated_at` | TIMESTAMP | ບໍ່ | - | - |
-
-#### 2. PalmTemplate Table (ຕາຕະລາງຂໍ້ມູນຕົ້ນແບບລາຍຝາມື)
-| ຊື່ຟິວ | ປະເພດຂໍ້ມູນ | ຍອມຮັບຄ່າວ່າງ | ຄີ | ການອ້າງອີງ |
-| :--- | :--- | :--- | :--- | :--- |
-| `id` | UUID | ບໍ່ | PK | - |
-| `user_id` | UUID | ບໍ່ | FK | User |
-| `hand_side` | VARCHAR(10) | ບໍ່ | - | - |
-| `template_encrypted` | BYTEA | ບໍ່ | - | - |
-| `template_nonce` | BYTEA | ບໍ່ | - | - |
-| `embedding_dim` | INT | ບໍ່ | - | - |
-| `model_version` | VARCHAR(100) | ບໍ່ | - | - |
-| `threshold` | FLOAT | ບໍ່ | - | - |
-| `status` | VARCHAR(30) | ບໍ່ | - | - |
-| `registered_device_id`| UUID | ໄດ້ | FK | Device |
-| `created_at` | TIMESTAMP | ບໍ່ | - | - |
-| `updated_at` | TIMESTAMP | ບໍ່ | - | - |
-| `revoked_at` | TIMESTAMP | ໄດ້ | - | - |
-
-#### 3. AttendanceLog Table (ຕາຕະລາງຂໍ້ມູນປະຫວັດການເຂົ້າ-ອອກ)
-| ຊື່ຟິວ | ປະເພດຂໍ້ມູນ | ຍອມຮັບຄ່າວ່າງ | ຄີ | ການອ້າງອີງ |
-| :--- | :--- | :--- | :--- | :--- |
-| `id` | UUID | ບໍ່ | PK | - |
-| `user_id` | UUID | ບໍ່ | FK | User |
-| `device_id` | UUID | ໄດ້ | FK | Device |
-| `attendance_date` | DATE | ບໍ່ | - | - |
-| `check_in_time` | TIMESTAMP | ໄດ້ | - | - |
-| `check_out_time` | TIMESTAMP | ໄດ້ | - | - |
-| `check_in_score` | FLOAT | ໄດ້ | - | - |
-| `check_out_score` | FLOAT | ໄດ້ | - | - |
-| `check_in_liveness` | BOOLEAN | ໄດ້ | - | - |
-| `check_out_liveness`| BOOLEAN | ໄດ້ | - | - |
-| `status` | VARCHAR(30) | ບໍ່ | - | - |
-| `created_at` | TIMESTAMP | ບໍ່ | - | - |
-| `updated_at` | TIMESTAMP | ບໍ່ | - | - |
-
-#### 4. Device Table (ຕາຕະລາງຂໍ້ມູນອຸປະກອນ)
-| ຊື່ຟິວ | ປະເພດຂໍ້ມູນ | ຍອມຮັບຄ່າວ່າງ | ຄີ | ການອ້າງອີງ |
-| :--- | :--- | :--- | :--- | :--- |
-| `id` | UUID | ບໍ່ | PK | - |
-| `device_code` | VARCHAR(100) | ບໍ່ | - | - |
-| `name` | VARCHAR(150) | ບໍ່ | - | - |
-| `location` | VARCHAR(150) | ບໍ່ | - | - |
-| `status` | VARCHAR(30) | ບໍ່ | - | - |
-| `last_seen_at` | TIMESTAMP | ໄດ້ | - | - |
-| `created_at` | TIMESTAMP | ບໍ່ | - | - |
-| `updated_at` | TIMESTAMP | ບໍ່ | - | - |
-
-#### 5. DevicePairingSession Table (ຕາຕະລາງຂໍ້ມູນເຊດຊັນ)
-| ຊື່ຟິວ | ປະເພດຂໍ້ມູນ | ຍອມຮັບຄ່າວ່າງ | ຄີ | ການອ້າງອີງ |
-| :--- | :--- | :--- | :--- | :--- |
-| `id` | UUID | ບໍ່ | PK | - |
-| `device_id` | UUID | ບໍ່ | FK | Device |
-| `session_token` | TEXT | ບໍ່ | - | - |
-| `user_id` | UUID | ໄດ້ | FK | User |
-| `hand_side` | VARCHAR(10) | ໄດ້ | - | - |
-| `purpose` | VARCHAR(50) | ບໍ່ | - | - |
-| `status` | VARCHAR(30) | ບໍ່ | - | - |
-| `expires_at` | TIMESTAMP | ບໍ່ | - | - |
-| `scanned_at` | TIMESTAMP | ໄດ້ | - | - |
-| `approved_at` | TIMESTAMP | ໄດ້ | - | - |
-| `completed_at` | TIMESTAMP | ໄດ້ | - | - |
-| `created_at` | TIMESTAMP | ບໍ່ | - | - |
-
----
+## 4. Process Hierarchy Chart
 
 The Process Hierarchy Chart (or Functional Decomposition Diagram) breaks down the entire system into its core functional modules and their sub-processes.
 
@@ -591,93 +510,93 @@ flowchart LR
 
 ---
 
-## 6. Data Dictionary
+### 6. Data Dictionary (ພົດຈະນານຸກົມຂໍ້ມູນ)
 
-The following tables define the structure, data types, and constraints for each table in the database.
+ຕາຕະລາງລຸ່ມນີ້ອະທິບາຍໂຄງສ້າງຂອງຖານຂໍ້ມູນທັງ 5 ຕາຕະລາງທີ່ໃຊ້ໃນລະບົບ, ເຊິ່ງປະກອບມີລາຍລະອຽດຂອງຟິວ, ປະເພດຂໍ້ມູນ, ຂໍ້ກໍານົດຕ່າງໆ, ແລະ ຄວາມສຳພັນ.
 
 ### 6.1 `users`
-Stores all employee and administrator profiles.
+ເກັບຂໍ້ມູນໂປຣໄຟລ໌ຂອງພະນັກງານ ແລະ ຜູ້ດູແລລະບົບທັງໝົດ.
 
-| Column Name | Data Type | Constraints | Description |
+| ຊື່ຟິວ (Column) | ປະເພດຂໍ້ມູນ (Type) | ຂໍ້ກຳນົດ (Constraints) | ຄຳອະທິບາຍ (Description) |
 |---|---|---|---|
-| `id` | UUID | Primary Key | Unique identifier for the user |
-| `employee_code` | VARCHAR(50) | Unique, Not Null | Public ID/Code for the employee |
-| `full_name` | VARCHAR(100) | Not Null | User's full name |
-| `email` | VARCHAR(100) | Unique | User's email address |
-| `phone` | VARCHAR(20) | Unique | User's phone number |
-| `password_hash` | VARCHAR(255) | Not Null | Bcrypt hashed password |
-| `role` | VARCHAR(20) | Default 'EMPLOYEE' | 'ADMIN' or 'EMPLOYEE' |
-| `department` | VARCHAR(50) | | Department the user belongs to |
-| `status` | VARCHAR(20) | Default 'active' | User account status (active/inactive) |
-| `created_at` | TIMESTAMP | Default NOW() | Profile creation time |
-| `updated_at` | TIMESTAMP | Default NOW() | Profile last update time |
+| `id` | UUID | Primary Key | ລະຫັດສະເພາະສຳລັບຜູ້ໃຊ້ |
+| `employee_code` | VARCHAR(50) | Unique, Not Null | ລະຫັດພະນັກງານ |
+| `full_name` | VARCHAR(100) | Not Null | ຊື່ ແລະ ນາມສະກຸນຂອງຜູ້ໃຊ້ |
+| `email` | VARCHAR(100) | Unique | ທີ່ຢູ່ອີເມວຂອງຜູ້ໃຊ້ |
+| `phone` | VARCHAR(20) | Unique | ເບີໂທລະສັບຂອງຜູ້ໃຊ້ |
+| `password_hash` | VARCHAR(255) | Not Null | ລະຫັດຜ່ານທີ່ຖືກເຂົ້າລະຫັດແບບ Bcrypt |
+| `role` | VARCHAR(20) | Default 'EMPLOYEE' | ກຳນົດສິດເປັນ 'ADMIN' ຫຼື 'EMPLOYEE' |
+| `department` | VARCHAR(50) | | ພະແນກທີ່ຜູ້ໃຊ້ສັງກັດຢູ່ |
+| `status` | VARCHAR(20) | Default 'active' | ສະຖານະບັນຊີຜູ້ໃຊ້ (active/inactive) |
+| `created_at` | TIMESTAMP | Default NOW() | ເວລາທີ່ສ້າງໂປຣໄຟລ໌ |
+| `updated_at` | TIMESTAMP | Default NOW() | ເວລາທີ່ມີການອັບເດດໂປຣໄຟລ໌ລ່າສຸດ |
 
 ### 6.2 `devices`
-Stores physical hardware scanners registered to the system.
+ເກັບຂໍ້ມູນອຸປະກອນສະແກນຮາດແວທີ່ລົງທະບຽນໃນລະບົບ.
 
-| Column Name | Data Type | Constraints | Description |
+| ຊື່ຟິວ (Column) | ປະເພດຂໍ້ມູນ (Type) | ຂໍ້ກຳນົດ (Constraints) | ຄຳອະທິບາຍ (Description) |
 |---|---|---|---|
-| `id` | UUID | Primary Key | Unique identifier for the device |
-| `device_code` | VARCHAR(50) | Unique, Not Null | Serial number or hardware ID |
-| `name` | VARCHAR(100) | Not Null | Human-readable name (e.g. "Lobby Scanner") |
-| `location` | VARCHAR(100) | | Physical location of the device |
-| `status` | VARCHAR(20) | Default 'active' | Device operational status |
-| `last_seen_at` | TIMESTAMP | | Last time the device pinged the server |
-| `created_at` | TIMESTAMP | Default NOW() | Registration time |
+| `id` | UUID | Primary Key | ລະຫັດສະເພາະສຳລັບອຸປະກອນ |
+| `device_code` | VARCHAR(50) | Unique, Not Null | ໝາຍເລກເຄື່ອງ ຫຼື ລະຫັດຮາດແວ |
+| `name` | VARCHAR(100) | Not Null | ຊື່ອຸປະກອນ (ເຊັ່ນ: "ເຄື່ອງສະແກນໜ້າປະຕູ") |
+| `location` | VARCHAR(100) | | ສະຖານທີ່ຕັ້ງຂອງອຸປະກອນ |
+| `status` | VARCHAR(20) | Default 'active' | ສະຖານະການເຮັດວຽກຂອງອຸປະກອນ |
+| `last_seen_at` | TIMESTAMP | | ເວລາລ່າສຸດທີ່ອຸປະກອນເຊື່ອມຕໍ່ກັບເຊີບເວີ |
+| `created_at` | TIMESTAMP | Default NOW() | ເວລາທີ່ລົງທະບຽນ |
 
 ### 6.3 `device_pairing_sessions`
-Temporary sessions created when a scanner generates a QR code for palm enrollment.
+ເຊດຊັນຊົ່ວຄາວທີ່ສ້າງຂຶ້ນເມື່ອເຄື່ອງສະແກນສ້າງ QR code ສຳລັບລົງທະບຽນລາຍຝາມື.
 
-| Column Name | Data Type | Constraints | Description |
+| ຊື່ຟິວ (Column) | ປະເພດຂໍ້ມູນ (Type) | ຂໍ້ກຳນົດ (Constraints) | ຄຳອະທິບາຍ (Description) |
 |---|---|---|---|
-| `id` | UUID | Primary Key | Session identifier |
-| `device_id` | UUID | Foreign Key | The scanner generating the session |
-| `session_token` | TEXT | Unique, Not Null | The token embedded in the QR code |
-| `user_id` | UUID | Foreign Key | The user who approved the session |
-| `purpose` | VARCHAR(50) | Not Null | Usually 'enrollment' |
-| `status` | VARCHAR(30) | Default 'pending' | pending, approved, completed |
-| `expires_at` | TIMESTAMP | Not Null | When the QR code expires |
-| `scanned_at` | TIMESTAMP | | When the user scanned the QR |
-| `approved_at` | TIMESTAMP | | When the user clicked "Approve" |
-| `completed_at` | TIMESTAMP | | When the palm vector was saved |
-| `created_at` | TIMESTAMP | Default NOW() | Session creation time |
+| `id` | UUID | Primary Key | ລະຫັດເຊດຊັນ |
+| `device_id` | UUID | Foreign Key | ເຄື່ອງສະແກນທີ່ສ້າງເຊດຊັນນີ້ |
+| `session_token` | TEXT | Unique, Not Null | ໂທເຄັນທີ່ຝັງຢູ່ໃນ QR code |
+| `user_id` | UUID | Foreign Key | ຜູ້ໃຊ້ທີ່ອະນຸມັດເຊດຊັນນີ້ |
+| `purpose` | VARCHAR(50) | Not Null | ຈຸດປະສົງ (ປົກກະຕິແມ່ນ 'enrollment') |
+| `status` | VARCHAR(30) | Default 'pending' | ສະຖານະ (pending, approved, completed) |
+| `expires_at` | TIMESTAMP | Not Null | ເວລາທີ່ QR code ໝົດອາຍຸ |
+| `scanned_at` | TIMESTAMP | | ເວລາທີ່ຜູ້ໃຊ້ສະແກນ QR |
+| `approved_at` | TIMESTAMP | | ເວລາທີ່ຜູ້ໃຊ້ກົດ "ອະນຸມັດ" |
+| `completed_at` | TIMESTAMP | | ເວລາທີ່ຂໍ້ມູນເວັກເຕີລາຍຝາມືຖືກບັນທຶກ |
+| `created_at` | TIMESTAMP | Default NOW() | ເວລາທີ່ສ້າງເຊດຊັນ |
 
 ### 6.4 `palm_templates`
-Securely stores the encrypted biometric vectors.
+ເກັບຮັກສາຂໍ້ມູນເວັກເຕີຊີວະມິຕິທີ່ຖືກເຂົ້າລະຫັດຢ່າງປອດໄພ.
 
-| Column Name | Data Type | Constraints | Description |
+| ຊື່ຟິວ (Column) | ປະເພດຂໍ້ມູນ (Type) | ຂໍ້ກຳນົດ (Constraints) | ຄຳອະທິບາຍ (Description) |
 |---|---|---|---|
-| `id` | UUID | Primary Key | Template identifier |
-| `user_id` | UUID | Foreign Key, Not Null | The owner of the template |
-| `hand_side` | VARCHAR(10) | Not Null | 'left' or 'right' |
-| `template_encrypted` | BYTEA | Not Null | AES-256 encrypted vector data |
-| `template_nonce` | BYTEA | Not Null | Nonce used for decryption |
-| `embedding_dim` | INT | Default 128 | Vector dimensions |
-| `model_version` | VARCHAR(100) | Not Null | AI model used for extraction |
-| `threshold` | NUMERIC(5,4) | Default 0.8200 | Match threshold for this template |
-| `status` | VARCHAR(30) | Default 'active' | Template status |
-| `registered_device_id`| UUID | Foreign Key | Device used to capture template |
-| `created_at` | TIMESTAMP | Default NOW() | Enrollment time |
-| `updated_at` | TIMESTAMP | Default NOW() | Last update time |
-| `revoked_at` | TIMESTAMP | | If the template was revoked |
+| `id` | UUID | Primary Key | ລະຫັດຕົ້ນແບບ |
+| `user_id` | UUID | Foreign Key, Not Null | ເຈົ້າຂອງຕົ້ນແບບນີ້ |
+| `hand_side` | VARCHAR(10) | Not Null | ມືຊ້າຍ ຫຼື ມືຂວາ ('left' ຫຼື 'right') |
+| `template_encrypted` | BYTEA | Not Null | ຂໍ້ມູນເວັກເຕີທີ່ເຂົ້າລະຫັດດ້ວຍ AES-256 |
+| `template_nonce` | BYTEA | Not Null | Nonce ທີ່ໃຊ້ສຳລັບຖອດລະຫັດ |
+| `embedding_dim` | INT | Default 128 | ຂະໜາດຂອງເວັກເຕີ (ມິຕິ) |
+| `model_version` | VARCHAR(100) | Not Null | ໂມເດວ AI ທີ່ໃຊ້ສະກັດຂໍ້ມູນ |
+| `threshold` | NUMERIC(5,4) | Default 0.8200 | ຄ່າຄວາມແມ່ນຍຳ (Threshold) ສຳລັບຕົ້ນແບບນີ້ |
+| `status` | VARCHAR(30) | Default 'active' | ສະຖານະຂອງຕົ້ນແບບ |
+| `registered_device_id`| UUID | Foreign Key | ອຸປະກອນທີ່ໃຊ້ບັນທຶກຕົ້ນແບບ |
+| `created_at` | TIMESTAMP | Default NOW() | ເວລາທີ່ລົງທະບຽນ |
+| `updated_at` | TIMESTAMP | Default NOW() | ເວລາທີ່ມີການອັບເດດລ່າສຸດ |
+| `revoked_at` | TIMESTAMP | | ເວລາທີ່ຕົ້ນແບບຖືກຍົກເລີກ (ຖ້າມີ) |
 
 ### 6.5 `attendance_logs`
-Records daily check-ins and check-outs for all users.
+ບັນທຶກປະຫວັດການເຂົ້າ-ອອກວຽກປະຈຳວັນຂອງຜູ້ໃຊ້ທັງໝົດ.
 
-| Column Name | Data Type | Constraints | Description |
+| ຊື່ຟິວ (Column) | ປະເພດຂໍ້ມູນ (Type) | ຂໍ້ກຳນົດ (Constraints) | ຄຳອະທິບາຍ (Description) |
 |---|---|---|---|
-| `id` | UUID | Primary Key | Log identifier |
-| `user_id` | UUID | Foreign Key, Not Null | Employee who checked in |
-| `device_id` | UUID | Foreign Key | Scanner used for attendance |
-| `attendance_date` | DATE | Not Null | The calendar date of the log |
-| `check_in_time` | TIMESTAMP | | Exact time of first scan |
-| `check_out_time` | TIMESTAMP | | Exact time of latest scan |
-| `check_in_score` | NUMERIC(6,5) | | Biometric confidence score (0-1) |
-| `check_out_score`| NUMERIC(6,5) | | Biometric confidence score (0-1) |
-| `check_in_liveness`| BOOLEAN | Default false | Passed hardware anti-spoofing |
-| `check_out_liveness`| BOOLEAN | Default false | Passed hardware anti-spoofing |
-| `status` | VARCHAR(20) | Default 'present' | present, late, incomplete, absent |
-| `created_at` | TIMESTAMP | Default NOW() | Time the log was created |
+| `id` | UUID | Primary Key | ລະຫັດປະຫວັດ |
+| `user_id` | UUID | Foreign Key, Not Null | ພະນັກງານທີ່ລົງເວລາ |
+| `device_id` | UUID | Foreign Key | ເຄື່ອງສະແກນທີ່ໃຊ້ລົງເວລາ |
+| `attendance_date` | DATE | Not Null | ວັນທີຂອງການລົງເວລາ |
+| `check_in_time` | TIMESTAMP | | ເວລາທີ່ສະແກນຄັ້ງທຳອິດ (ເຂົ້າວຽກ) |
+| `check_out_time` | TIMESTAMP | | ເວລາທີ່ສະແກນຄັ້ງລ່າສຸດ (ອອກວຽກ) |
+| `check_in_score` | NUMERIC(6,5) | | ຄະແນນຄວາມໝັ້ນໃຈທາງຊີວະມິຕິ (0-1) |
+| `check_out_score`| NUMERIC(6,5) | | ຄະແນນຄວາມໝັ້ນໃຈທາງຊີວະມິຕິ (0-1) |
+| `check_in_liveness`| BOOLEAN | Default false | ຜ່ານການກວດສອບການປອມແປງຈາກຮາດແວ |
+| `check_out_liveness`| BOOLEAN | Default false | ຜ່ານການກວດສອບການປອມແປງຈາກຮາດແວ |
+| `status` | VARCHAR(20) | Default 'present' | ສະຖານະ (present, late, incomplete, absent) |
+| `created_at` | TIMESTAMP | Default NOW() | ເວລາທີ່ສ້າງປະຫວັດນີ້ |
 
 *(Note: `user_id` + `attendance_date` is a UNIQUE compound key to prevent duplicate daily records).*
 
