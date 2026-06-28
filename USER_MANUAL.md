@@ -214,7 +214,88 @@ flowchart LR
 
 ---
 
-## 4. Process Hierarchy Chart
+### 3.2 Data Dictionary (ພົດຈະນານຸກົມຂໍ້ມູນ)
+
+The following tables define the structure of the 5 database tables used in the system, detailing the fields, data types, constraints, and relations.
+
+#### 1. User Table (ຕາຕະລາງຂໍ້ມູນຜູ້ໃຊ້)
+| Field Name | Data Type | Allow Null | Key | Reference |
+| :--- | :--- | :--- | :--- | :--- |
+| `id` | UUID | NO | PK | - |
+| `employee_code` | VARCHAR(50) | NO | - | - |
+| `full_name` | VARCHAR(150) | NO | - | - |
+| `phone` | VARCHAR(30) | NO | - | - |
+| `email` | VARCHAR(150) | NO | - | - |
+| `department` | VARCHAR(100) | NO | - | - |
+| `password_hash` | TEXT | NO | - | - |
+| `role` | VARCHAR(30) | NO | - | - |
+| `status` | VARCHAR(30) | NO | - | - |
+| `created_at` | TIMESTAMP | NO | - | - |
+| `updated_at` | TIMESTAMP | NO | - | - |
+
+#### 2. PalmTemplate Table (ຕາຕະລາງຂໍ້ມູນຕົ້ນແບບລາຍຝາມື)
+| Field Name | Data Type | Allow Null | Key | Reference |
+| :--- | :--- | :--- | :--- | :--- |
+| `id` | UUID | NO | PK | - |
+| `user_id` | UUID | NO | FK | User |
+| `hand_side` | VARCHAR(10) | NO | - | - |
+| `template_encrypted` | BYTEA | NO | - | - |
+| `template_nonce` | BYTEA | NO | - | - |
+| `embedding_dim` | INT | NO | - | - |
+| `model_version` | VARCHAR(100) | NO | - | - |
+| `threshold` | FLOAT | NO | - | - |
+| `status` | VARCHAR(30) | NO | - | - |
+| `registered_device_id`| UUID | YES | FK | Device |
+| `created_at` | TIMESTAMP | NO | - | - |
+| `updated_at` | TIMESTAMP | NO | - | - |
+| `revoked_at` | TIMESTAMP | YES | - | - |
+
+#### 3. AttendanceLog Table (ຕາຕະລາງຂໍ້ມູນປະຫວັດການເຂົ້າ-ອອກ)
+| Field Name | Data Type | Allow Null | Key | Reference |
+| :--- | :--- | :--- | :--- | :--- |
+| `id` | UUID | NO | PK | - |
+| `user_id` | UUID | NO | FK | User |
+| `device_id` | UUID | YES | FK | Device |
+| `attendance_date` | DATE | NO | - | - |
+| `check_in_time` | TIMESTAMP | YES | - | - |
+| `check_out_time` | TIMESTAMP | YES | - | - |
+| `check_in_score` | FLOAT | YES | - | - |
+| `check_out_score` | FLOAT | YES | - | - |
+| `check_in_liveness` | BOOLEAN | YES | - | - |
+| `check_out_liveness`| BOOLEAN | YES | - | - |
+| `status` | VARCHAR(30) | NO | - | - |
+| `created_at` | TIMESTAMP | NO | - | - |
+| `updated_at` | TIMESTAMP | NO | - | - |
+
+#### 4. Device Table (ຕາຕະລາງຂໍ້ມູນອຸປະກອນ)
+| Field Name | Data Type | Allow Null | Key | Reference |
+| :--- | :--- | :--- | :--- | :--- |
+| `id` | UUID | NO | PK | - |
+| `device_code` | VARCHAR(100) | NO | - | - |
+| `name` | VARCHAR(150) | NO | - | - |
+| `location` | VARCHAR(150) | NO | - | - |
+| `status` | VARCHAR(30) | NO | - | - |
+| `last_seen_at` | TIMESTAMP | YES | - | - |
+| `created_at` | TIMESTAMP | NO | - | - |
+| `updated_at` | TIMESTAMP | NO | - | - |
+
+#### 5. DevicePairingSession Table (ຕາຕະລາງຂໍ້ມູນເຊດຊັນ)
+| Field Name | Data Type | Allow Null | Key | Reference |
+| :--- | :--- | :--- | :--- | :--- |
+| `id` | UUID | NO | PK | - |
+| `device_id` | UUID | NO | FK | Device |
+| `session_token` | TEXT | NO | - | - |
+| `user_id` | UUID | YES | FK | User |
+| `hand_side` | VARCHAR(10) | YES | - | - |
+| `purpose` | VARCHAR(50) | NO | - | - |
+| `status` | VARCHAR(30) | NO | - | - |
+| `expires_at` | TIMESTAMP | NO | - | - |
+| `scanned_at` | TIMESTAMP | YES | - | - |
+| `approved_at` | TIMESTAMP | YES | - | - |
+| `completed_at` | TIMESTAMP | YES | - | - |
+| `created_at` | TIMESTAMP | NO | - | - |
+
+---
 
 The Process Hierarchy Chart (or Functional Decomposition Diagram) breaks down the entire system into its core functional modules and their sub-processes.
 
