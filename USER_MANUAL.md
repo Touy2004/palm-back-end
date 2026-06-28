@@ -600,6 +600,29 @@ flowchart LR
 
 *(Note: `user_id` + `attendance_date` is a UNIQUE compound key to prevent duplicate daily records).*
 
+### 6.6 ຕາຕະລາງຄວາມສຳພັນ (Relationship Tables)
+
+**ຕາຕະລາງຄວາມສຳພັນຂອງຜູ້ໃຊ້ງານ (users)**
+| <u>id</u> | employee_code | full_name | phone | email | department | password_hash | role | status | created_at | updated_at |
+|---|---|---|---|---|---|---|---|---|---|---|
+
+**ຕາຕະລາງຄວາມສຳພັນຂອງອຸປະກອນ (devices)**
+| <u>id</u> | device_code | name | location | status | last_seen_at | created_at | updated_at |
+|---|---|---|---|---|---|---|---|
+
+**ຕາຕະລາງຄວາມສຳພັນຂອງເຊດຊັນ (device_pairing_sessions)**
+| <u>id</u> | user_id | device_id | session_token | hand_side | purpose | status | expires_at | scanned_at | approved_at | completed_at | created_at |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+
+**ຕາຕະລາງຄວາມສຳພັນຂອງຕົ້ນແບບລາຍຝາມື (palm_templates)**
+| <u>id</u> | user_id | registered_device_id | hand_side | template_encrypted | template_nonce | embedding_dim | model_version | threshold | status | created_at | updated_at | revoked_at |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+
+**ຕາຕະລາງຄວາມສຳພັນຂອງປະຫວັດການເຂົ້າ-ອອກ (attendance_logs)**
+| <u>id</u> | user_id | device_id | attendance_date | check_in_time | check_out_time | check_in_score | check_out_score | check_in_liveness | check_out_liveness | status | created_at | updated_at |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+
+
 ---
 
 ## 7. Step-by-Step Flowcharts
